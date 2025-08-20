@@ -1,0 +1,249 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Blog - Pahana Edu Book Shop</title>
+    <link rel="stylesheet" href="blog-new.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body>
+    <!-- Header -->
+    <header class="main-header">
+        <div class="header-container">
+            <div class="logo-section">
+                <div class="logo">
+                    <span class="logo-icon">📚</span>
+                    <span class="logo-text">Pahana Edu</span>
+                </div>
+                <span class="tagline">The Book Shop</span>
+            </div>
+            
+            <!-- Navigation Bar -->
+            <nav class="main-navigation">
+                <a href="landingpage.html" class="nav-item">
+                    <i class="fas fa-home"></i>
+                    <span>Home</span>
+                </a>
+                <a href="booklist.html" class="nav-item">
+                    <i class="fas fa-book"></i>
+                    <span>Browse Books</span>
+                </a>
+                <a href="contact.html" class="nav-item">
+                    <i class="fas fa-envelope"></i>
+                    <span>Contact</span>
+                </a>
+                <a href="blog-new.html" class="nav-item active">
+                    <i class="fas fa-blog"></i>
+                    <span>Blog</span>
+                </a>
+                <a href="order.html" class="nav-item">
+                    <i class="fas fa-shopping-cart"></i>
+                    <span>Order</span>
+                </a>
+            </nav>
+            
+            
+        </div>
+    </header>
+
+    <!-- Hero Section -->
+    <section class="hero">
+        <div class="container">
+            <div class="hero-content">
+                <h1 class="hero-title">Discover Our Blog</h1>
+                <p class="hero-subtitle">Explore insights, book reviews, and educational content</p>
+                <div class="search-box">
+                    <input type="text" id="searchInput" placeholder="Search blogs...">
+                    <button id="searchBtn"><i class="fas fa-search"></i></button>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Main Content -->
+    <main class="main-content">
+        <div class="container">
+            <div class="content-grid">
+                <!-- Blog Posts Section -->
+                <section class="blog-section">
+                    <div class="section-header">
+                        <h2>Latest Posts</h2>
+                        <div class="filter-tabs">
+                            <button class="filter-btn active" data-filter="all">All</button>
+                            <button class="filter-btn" data-filter="featured">Featured</button>
+                            <button class="filter-btn" data-filter="popular">Popular</button>
+                        </div>
+                    </div>
+                    
+                    <!-- Loading Skeleton -->
+                    <div id="loadingSkeleton" class="loading-skeleton">
+                        <div class="skeleton-card"></div>
+                        <div class="skeleton-card"></div>
+                        <div class="skeleton-card"></div>
+                    </div>
+                    
+                    <!-- Blog Posts Grid -->
+                    <div id="blogGrid" class="blog-grid">
+                        <!-- Blog posts will be loaded here -->
+                    </div>
+                    
+                    <!-- Load More Button -->
+                    <div class="load-more-container">
+                        <button id="loadMoreBtn" class="load-more-btn">
+                            <span>Load More Posts</span>
+                            <i class="fas fa-arrow-down"></i>
+                        </button>
+                    </div>
+                </section>
+
+                <!-- Sidebar -->
+                <aside class="sidebar">
+                    <!-- About Section -->
+                    <div class="sidebar-widget">
+                        <h3>About Our Blog</h3>
+                        <p>Discover the latest in education, book reviews, and learning tips from Pahana Edu Book Shop.</p>
+                        <div class="social-links">
+                            <a href="#" class="social-link"><i class="fab fa-facebook"></i></a>
+                            <a href="#" class="social-link"><i class="fab fa-twitter"></i></a>
+                            <a href="#" class="social-link"><i class="fab fa-instagram"></i></a>
+                        </div>
+                    </div>
+
+                    <!-- Popular Posts -->
+                    <div class="sidebar-widget">
+                        <h3>Popular Posts</h3>
+                        <div id="popularPosts" class="popular-posts">
+                            <!-- Popular posts will be loaded here -->
+                        </div>
+                    </div>
+
+                    <!-- Categories -->
+                    <div class="sidebar-widget">
+                        <h3>Categories</h3>
+                        <div class="categories">
+                            <a href="#" class="category-link" data-category="education">Education</a>
+                            <a href="#" class="category-link" data-category="books">Book Reviews</a>
+                            <a href="#" class="category-link" data-category="tips">Study Tips</a>
+                            <a href="#" class="category-link" data-category="news">News</a>
+                        </div>
+                    </div>
+
+                    <!-- Newsletter -->
+                    <div class="sidebar-widget newsletter-widget">
+                        <h3>Subscribe to Newsletter</h3>
+                        <p>Get the latest posts and updates delivered to your inbox.</p>
+                        <form id="newsletterForm" class="newsletter-form">
+                            <input type="email" placeholder="Enter your email" required>
+                            <button type="submit">Subscribe</button>
+                        </form>
+                    </div>
+                </aside>
+            </div>
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="pahana-footer">
+        <div class="footer-waves">
+            <div class="wave wave1"></div>
+            <div class="wave wave2"></div>
+            <div class="wave wave3"></div>
+        </div>
+        
+        <div class="footer-content">
+            <!-- Categories Section -->
+            <div class="footer-section animate-on-scroll">
+                <div class="section-icon">
+                    <i class="fas fa-book-open"></i>
+                </div>
+                <h4>Categories</h4>
+                <ul class="footer-links">
+                    <li><a href="booklist.html#featuredCarousel" class="hover-effect">Featured Books</a></li>
+                    <li><a href="booklist.html#newArrivalsCarousel" class="hover-effect">New Arrivals</a></li>
+                    <li><a href="booklist.html#childrenCarousel" class="hover-effect">Children's Books</a></li>
+                    <li><a href="booklist.html#novelsCarousel" class="hover-effect">Novels</a></li>
+                    <li><a href="#" class="hover-effect">Galle Literary</a></li>
+                </ul>
+            </div>
+            
+            <!-- Quick Links Section -->
+            <div class="footer-section animate-on-scroll">
+                <div class="section-icon">
+                    <i class="fas fa-link"></i>
+                </div>
+                <h4>Quick Links</h4>
+                <ul class="footer-links">
+                    <li><a href="landingpage.html" class="hover-effect">Home</a></li>
+                    <li><a href="#" class="hover-effect">About Us</a></li>
+                    <li><a href="contact.html" class="hover-effect">Contact Us</a></li>
+                    <li><a href="login.html" class="hover-effect">Sign Up/ Login</a></li>
+                    <li><a href="#" class="hover-effect" id="dashboardLink">My Account</a></li>
+                </ul>
+            </div>
+            
+        
+            
+            <!-- Contact Details Section -->
+            <div class="footer-section contact-section animate-on-scroll">
+                <div class="section-icon">
+                    <i class="fas fa-address-card"></i>
+                </div>
+                <h4>Contact Details</h4>
+                <div class="contact-info">
+                    <div class="contact-item">
+                        <div class="contact-icon">
+                            <i class="fas fa-map-marker-alt"></i>
+                        </div>
+                        <span>No.30, Stanley Thilakarathne Mawatha, Nugegoda, Sri Lanka, 10250</span>
+                    </div>
+                    <div class="contact-item">
+                        <div class="contact-icon">
+                            <i class="fas fa-phone"></i>
+                        </div>
+                        <span>+94 711304050 / 0112820820</span>
+                    </div>
+                    <div class="contact-item">
+                        <div class="contact-icon">
+                            <i class="fas fa-envelope"></i>
+                        </div>
+                        <span>pahanaedu@gmail.com</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Footer Bottom -->
+        <div class="footer-bottom">
+            <div class="footer-bottom-content">
+                <div class="footer-logo">
+                    <div class="logo-container">
+                        <span class="logo-icon">📚</span>
+                        <div class="logo-text-container">
+                            <span class="logo-text">Pahana Edu</span>
+                            <span class="tagline">The Book Shop</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="social-links">
+                    <a href="#" class="social-link facebook"><i class="fab fa-facebook"></i></a>
+                    <a href="#" class="social-link twitter"><i class="fab fa-twitter"></i></a>
+                    <a href="#" class="social-link instagram"><i class="fab fa-instagram"></i></a>
+                    <a href="#" class="social-link linkedin"><i class="fab fa-linkedin"></i></a>
+                </div>
+                <div class="copyright">
+                    <p>&copy; 2024 Pahana Edu Book Shop. All rights reserved.</p>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Back to Top Button -->
+    <button id="backToTop" class="back-to-top">
+        <i class="fas fa-arrow-up"></i>
+    </button>
+
+    <script src="blog-new.js"></script>
+</body>
+</html> 

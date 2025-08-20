@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Login - Pahana Edu</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="login.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@700;400&display=swap" rel="stylesheet">
+</head>
+<body>
+  <div class="header-bar">
+    <div></div>
+    <div class="signup-link">
+      <span class="spanbtn">Don't have an account?</span>
+      <a href="register.html" class="signup-btn">Sign up</a>
+    </div>
+  </div>
+  <div class="background-shape"></div>
+  <div class="container">
+    <div class="logo">📚 <span>Pahana Edu</span></div>
+    <h2>Welcome back!</h2>
+    <div class="divider"><span>OR</span></div>
+    <form id="loginForm">
+      <div class="input-group">
+        <label for="username">Username</label>
+        <input type="text" name="username" id="username" placeholder="Enter your username" required />
+      </div>
+      <div class="input-group password-group">
+        <label for="password">Password</label>
+        <input type="password" name="password" id="password" placeholder="Enter password" required />
+      </div>
+      <div id="loginError" style="color:red; margin-bottom:10px;"></div>
+      <button type="submit" class="login-btn">Log In</button>
+    </form>
+ 
+    <div class="footer">
+      Don't have an account? <a href="register.html">Sign up</a>
+    </div>
+  </div>
+  <script src="auth.js"></script>
+</body>
+</html>

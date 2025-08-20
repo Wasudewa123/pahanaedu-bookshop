@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test All Books Endpoint</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; }
+        .test-section { margin: 20px 0; padding: 15px; border: 1px solid #ddd; border-radius: 5px; }
+        .success { color: green; }
+        .error { color: red; }
+        .info { color: blue; }
+        button { padding: 10px 15px; margin: 5px; background: #007bff; color: white; border: none; border-radius: 3px; cursor: pointer; }
+        button:hover { background: #0056b3; }
+        pre { background: #f8f9fa; padding: 10px; border-radius: 3px; overflow-x: auto; }
+        .book-list { margin: 20px 0; }
+        .book-item { padding: 10px; border: 1px solid #eee; margin: 5px 0; border-radius: 3px; }
+    </style>
+</head>
+<body>
+    <h1>Test All Books Endpoint</h1>
+    
+    <div class="test-section">
+        <h2>Test Old Endpoint (Paginated)</h2>
+        <button onclick="testOldEndpoint()">Test /api/books (Paginated)</button>
+        <div id="old-result"></div>
+    </div>
+    
+    <div class="test-section">
+        <h2>Test New Endpoint (All Books)</h2>
+        <button onclick="testNewEndpoint()">Test /api/books/all (All Books)</button>
+        <div id="new-result"></div>
+    </div>
+    
+    <div class="test-section">
+        <h2>Compare Results</h2>
+        <button onclick="compareEndpoints()">Compare Both Endpoints</button>
+        <div id="compare-result"></div>
+    </div>
+
+    <script>
+        async function testOldEndpoint() {
+            const resultDiv = document.getElementById('old-result');
+            resultDiv.innerHTML = '<p class="info">Testing old endpoint...</p>';
+            
+            try {
+                const response = await fetch('http://localhost:8080/api/books', {
+                    method: 'GET',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    }
+                });
+                
+                const data = await response.json();
+                const books = data.books || [];
+                
+                resultDiv.innerHTML = `
+                    <p class="success">✅ Old endpoint returned ${books.length} books</p>
+                    <p><strong>Total books in database:</strong> ${data.totalBooks}</p>
+                    <p><strong>Page size:</strong> ${data.pageSize}</p>
+                    <p><strong>Current page:</strong> ${data.currentPage}</p>
+                    <p><strong>Total pages:</strong> ${data.totalPages}</p>
+                    <div class="book-list">
+                        <h3>Books returned:</h3>
+                        ${books.map(book => `
+                            <div class="book-item">
+                                <strong>${book.title}</strong> by ${book.author} - Rs. ${book.price}
+                            </div>
+                        `).join('')}
+                    </div>
+                `;
+            } catch (error) {
+                resultDiv.innerHTML = `<p class="error">❌ Error: ${error.message}</p>`;
+            }
+        }
+        
+        async function testNewEndpoint() {
+            const resultDiv = document.getElementById('new-result');
+            resultDiv.innerHTML = '<p class="info">Testing new endpoint...</p>';
+            
+            try {
+                const response = await fetch('http://localhost:8080/api/books/all', {
+                    method: 'GET',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    }
+                });
+                
+                const data = await response.json();
+                const books = data.books || [];
+                
+                resultDiv.innerHTML = `
+                    <p class="success">✅ New endpoint returned ${books.length} books</p>
+                    <p><strong>Total books:</strong> ${data.totalBooks}</p>
+                    <div class="book-list">
+                        <h3>All books returned:</h3>
+                        ${books.map(book => `
+                            <div class="book-item">
+                                <strong>${book.title}</strong> by ${book.author} - Rs. ${book.price}
+                            </div>
+                        `).join('')}
+                    </div>
+                `;
+            } catch (error) {
+                resultDiv.innerHTML = `<p class="error">❌ Error: ${error.message}</p>`;
+            }
+        }
+        
+        async function compareEndpoints() {
+            const resultDiv = document.getElementById('compare-result');
+            resultDiv.innerHTML = '<p class="info">Comparing endpoints...</p>';
+            
+            try {
+                const [oldResponse, newResponse] = await Promise.all([
+                    fetch('http://localhost:8080/api/books'),
+                    fetch('http://localhost:8080/api/books/all')
+                ]);
+                
+                const oldData = await oldResponse.json();
+                const newData = await newResponse.json();
+                
+                const oldBooks = oldData.books || [];
+                const newBooks = newData.books || [];
+                
+                resultDiv.innerHTML = `
+                    <h3>Comparison Results:</h3>
+                    <table style="width: 100%; border-collapse: collapse;">
+                        <tr style="background: #f8f9fa;">
+                            <th style="border: 1px solid #ddd; padding: 8px;">Endpoint</th>
+                            <th style="border: 1px solid #ddd; padding: 8px;">Books Returned</th>
+                            <th style="border: 1px solid #ddd; padding: 8px;">Total in DB</th>
+                        </tr>
+                        <tr>
+                            <td style="border: 1px solid #ddd; padding: 8px;"><strong>/api/books</strong></td>
+                            <td style="border: 1px solid #ddd; padding: 8px;">${oldBooks.length}</td>
+                            <td style="border: 1px solid #ddd; padding: 8px;">${oldData.totalBooks}</td>
+                        </tr>
+                        <tr>
+                            <td style="border: 1px solid #ddd; padding: 8px;"><strong>/api/books/all</strong></td>
+                            <td style="border: 1px solid #ddd; padding: 8px;">${newBooks.length}</td>
+                            <td style="border: 1px solid #ddd; padding: 8px;">${newData.totalBooks}</td>
+                        </tr>
+                    </table>
+                    <br>
+                    <p class="success">✅ The new endpoint should return ALL books (${newData.totalBooks}) instead of just the first page!</p>
+                `;
+            } catch (error) {
+                resultDiv.innerHTML = `<p class="error">❌ Error: ${error.message}</p>`;
+            }
+        }
+    </script>
+</body>
+</html> 

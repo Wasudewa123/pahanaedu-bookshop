@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test Order Page</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; }
+        .test-section { margin: 20px 0; padding: 15px; border: 1px solid #ddd; border-radius: 5px; }
+        .success { color: green; }
+        .error { color: red; }
+        .info { color: blue; }
+        button { padding: 10px 15px; margin: 5px; background: #007bff; color: white; border: none; border-radius: 3px; cursor: pointer; }
+        button:hover { background: #0056b3; }
+        .book-item { padding: 8px; border: 1px solid #eee; margin: 5px 0; border-radius: 3px; }
+        .order-link { color: #007bff; text-decoration: none; }
+        .order-link:hover { text-decoration: underline; }
+    </style>
+</head>
+<body>
+    <h1>Test Order Page Functionality</h1>
+    
+    <div class="test-section">
+        <h2>Test Book Details Loading</h2>
+        <button onclick="testBookDetails()">Test Book Details API</button>
+        <div id="book-details-result"></div>
+    </div>
+    
+    <div class="test-section">
+        <h2>Test Recently Bought Books</h2>
+        <button onclick="testRecentlyBoughtBooks()">Test Recently Bought Books</button>
+        <div id="recently-bought-result"></div>
+    </div>
+    
+    <div class="test-section">
+        <h2>Test Order Page Links</h2>
+        <button onclick="generateOrderLinks()">Generate Order Links</button>
+        <div id="order-links-result"></div>
+    </div>
+
+    <script>
+        async function testBookDetails() {
+            const resultDiv = document.getElementById('book-details-result');
+            resultDiv.innerHTML = '<p class="info">Testing book details loading...</p>';
+            
+            try {
+                // First, get all books
+                const allBooksResponse = await fetch('http://localhost:8080/api/books/all');
+                
+                if (allBooksResponse.ok) {
+                    const allBooksData = await allBooksResponse.json();
+                    const books = allBooksData.books || [];
+                    
+                    if (books.length > 0) {
+                        // Test with the first book
+                        const testBook = books[0];
+                        const bookId = testBook.id || testBook._id;
+                        
+                        resultDiv.innerHTML = `
+                            <h3>Book Details Test Results:</h3>
+                            <p><strong>Total books in database:</strong> ${books.length}</p>
+                            <p><strong>Testing with book:</strong> ${testBook.title}</p>
+                            <p><strong>Book ID:</strong> ${bookId}</p>
+                            
+                            <h4>Book Details:</h4>
+                            <div class="book-item">
+                                <strong>Title:</strong> ${testBook.title}<br>
+                                <strong>Author:</strong> ${testBook.author}<br>
+                                <strong>Price:</strong> Rs. ${testBook.price}<br>
+                                <strong>Description:</strong> ${testBook.description || 'No description'}<br>
+                                <strong>Image URL:</strong> ${testBook.imageUrl || 'Default image'}
+                            </div>
+                            
+                            <h4>Order Page Link:</h4>
+                            <a href="order.html?bookId=${encodeURIComponent(bookId)}&bookTitle=${encodeURIComponent(testBook.title)}" 
+                               class="order-link" target="_blank">
+                                Open Order Page for "${testBook.title}"
+                            </a>
+                        `;
+                    } else {
+                        resultDiv.innerHTML = '<p class="error">No books found in database</p>';
+                    }
+                } else {
+                    resultDiv.innerHTML = '<p class="error">Failed to load books from API</p>';
+                }
+            } catch (error) {
+                resultDiv.innerHTML = `<p class="error">Error: ${error.message}</p>`;
+            }
+        }
+        
+        async function testRecentlyBoughtBooks() {
+            const resultDiv = document.getElementById('recently-bought-result');
+            resultDiv.innerHTML = '<p class="info">Testing recently bought books...</p>';
+            
+            try {
+                const response = await fetch('http://localhost:8080/api/books/all');
+                
+                if (response.ok) {
+                    const data = await response.json();
+                    const books = data.books || [];
+                    
+                    // Shuffle books to show different ones
+                    const shuffledBooks = [...books].sort(() => Math.random() - 0.5);
+                    const selectedBooks = shuffledBooks.slice(0, 8);
+                    
+                    resultDiv.innerHTML = `
+                        <h3>Recently Bought Books Test Results:</h3>
+                        <p><strong>Total books in database:</strong> ${books.length}</p>
+                        <p><strong>Selected books for display:</strong> ${selectedBooks.length}</p>
+                        
+                        <h4>Books to be displayed:</h4>
+                        ${selectedBooks.map((book, index) => `
+                            <div class="book-item">
+                                <strong>${index + 1}. ${book.title}</strong><br>
+                                Author: ${book.author}<br>
+                                Price: Rs. ${book.price}<br>
+                                ID: ${book.id || book._id}
+                            </div>
+                        `).join('')}
+                        
+                        <p class="success">✅ These books should appear in the "Recently Bought Together" section on the order page!</p>
+                    `;
+                } else {
+                    resultDiv.innerHTML = '<p class="error">Failed to load books from API</p>';
+                }
+            } catch (error) {
+                resultDiv.innerHTML = `<p class="error">Error: ${error.message}</p>`;
+            }
+        }
+        
+        async function generateOrderLinks() {
+            const resultDiv = document.getElementById('order-links-result');
+            resultDiv.innerHTML = '<p class="info">Generating order links...</p>';
+            
+            try {
+                const response = await fetch('http://localhost:8080/api/books/all');
+                
+                if (response.ok) {
+                    const data = await response.json();
+                    const books = data.books || [];
+                    
+                    // Take first 5 books for testing
+                    const testBooks = books.slice(0, 5);
+                    
+                    resultDiv.innerHTML = `
+                        <h3>Order Page Links for Testing:</h3>
+                        <p><strong>Total books available:</strong> ${books.length}</p>
+                        <p><strong>Test links generated:</strong> ${testBooks.length}</p>
+                        
+                        <h4>Click these links to test the order page:</h4>
+                        ${testBooks.map((book, index) => {
+                            const bookId = book.id || book._id;
+                            const orderUrl = `order.html?bookId=${encodeURIComponent(bookId)}&bookTitle=${encodeURIComponent(book.title)}`;
+                            return `
+                                <div class="book-item">
+                                    <strong>${index + 1}. ${book.title}</strong><br>
+                                    Author: ${book.author} | Price: Rs. ${book.price}<br>
+                                    <a href="${orderUrl}" class="order-link" target="_blank">
+                                        🛒 Order this book
+                                    </a>
+                                </div>
+                            `;
+                        }).join('')}
+                        
+                        <p class="info">💡 Click any link above to test the order page with real book data!</p>
+                    `;
+                } else {
+                    resultDiv.innerHTML = '<p class="error">Failed to load books from API</p>';
+                }
+            } catch (error) {
+                resultDiv.innerHTML = `<p class="error">Error: ${error.message}</p>`;
+            }
+        }
+    </script>
+</body>
+</html> 

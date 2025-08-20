@@ -1,0 +1,650 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Billing Form Debug - Pahana Book Shop</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: #f8fafc;
+            color: #1e293b;
+            line-height: 1.6;
+            padding: 2rem;
+        }
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+            background: white;
+            padding: 2rem;
+            border-radius: 1rem;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+        }
+        .header {
+            text-align: center;
+            margin-bottom: 2rem;
+            padding-bottom: 1rem;
+            border-bottom: 2px solid #e2e8f0;
+        }
+        .debug-section {
+            margin-bottom: 2rem;
+            padding: 1.5rem;
+            border: 1px solid #e2e8f0;
+            border-radius: 0.5rem;
+            background: #f8fafc;
+        }
+        .debug-button {
+            background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%);
+            color: white;
+            border: none;
+            padding: 1rem 2rem;
+            border-radius: 0.5rem;
+            cursor: pointer;
+            font-weight: 500;
+            font-size: 1rem;
+            width: 100%;
+            margin-bottom: 1rem;
+            transition: all 0.3s ease;
+        }
+        .debug-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);
+        }
+        .result {
+            margin-top: 1rem;
+            padding: 1rem;
+            border-radius: 0.5rem;
+            background: white;
+            border-left: 4px solid #3b82f6;
+        }
+        .result.success {
+            border-left-color: #10b981;
+            background: #f0fdf4;
+        }
+        .result.error {
+            border-left-color: #ef4444;
+            background: #fef2f2;
+        }
+        .result pre {
+            background: #1e293b;
+            color: #e2e8f0;
+            padding: 1rem;
+            border-radius: 0.5rem;
+            overflow-x: auto;
+            font-size: 0.875rem;
+        }
+        .form-section {
+            background: white;
+            padding: 1.5rem;
+            border-radius: 0.5rem;
+            margin-bottom: 1rem;
+            border: 1px solid #e2e8f0;
+        }
+        .form-group {
+            margin-bottom: 1rem;
+        }
+        .form-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 500;
+        }
+        .form-group input, .form-group select {
+            width: 100%;
+            padding: 0.75rem;
+            border: 1px solid #d1d5db;
+            border-radius: 0.5rem;
+            font-size: 1rem;
+        }
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1rem;
+        }
+        .status {
+            display: inline-block;
+            padding: 0.25rem 0.75rem;
+            border-radius: 0.25rem;
+            font-size: 0.875rem;
+            font-weight: 500;
+        }
+        .status.success {
+            background: #dcfce7;
+            color: #166534;
+        }
+        .status.error {
+            background: #fef2f2;
+            color: #dc2626;
+        }
+        .status.warning {
+            background: #fef3c7;
+            color: #d97706;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1><i class="fas fa-bug"></i> Billing Form Debug</h1>
+            <p>Comprehensive debugging tool to identify billing form issues</p>
+        </div>
+
+        <div class="debug-section">
+            <h3><i class="fas fa-server"></i> Step 1: Check Backend Status</h3>
+            <p>First, let's verify the Spring Boot application is running:</p>
+            <button class="debug-button" onclick="checkBackendStatus()">
+                <i class="fas fa-server"></i> Check Backend Status
+            </button>
+            <div id="backend-result"></div>
+        </div>
+
+        <div class="debug-section">
+            <h3><i class="fas fa-user"></i> Step 2: Test Customer Fetch</h3>
+            <p>Test if customer fetching works:</p>
+            <div class="form-section">
+                <div class="form-group">
+                    <label>Account Number</label>
+                    <input type="text" id="test-account" value="ACC71751" placeholder="Enter account number">
+                </div>
+                <button class="debug-button" onclick="testCustomerFetch()">
+                    <i class="fas fa-search"></i> Test Customer Fetch
+                </button>
+            </div>
+            <div id="customer-result"></div>
+        </div>
+
+        <div class="debug-section">
+            <h3><i class="fas fa-book"></i> Step 3: Test Book Selection</h3>
+            <p>Test if book selection and adding works:</p>
+            <div class="form-section">
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>Select Book</label>
+                        <select id="test-book-select">
+                            <option value="">Choose a book...</option>
+                            <option value="1">The Great Gatsby - Rs. 1500</option>
+                            <option value="2">To Kill a Mockingbird - Rs. 1200</option>
+                            <option value="3">1984 - Rs. 1800</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Quantity</label>
+                        <input type="number" id="test-quantity" value="1" min="1">
+                    </div>
+                </div>
+                <button class="debug-button" onclick="testBookAddition()">
+                    <i class="fas fa-plus"></i> Test Add Book to Bill
+                </button>
+            </div>
+            <div id="book-result"></div>
+        </div>
+
+        <div class="debug-section">
+            <h3><i class="fas fa-calculator"></i> Step 4: Test Bill Generation</h3>
+            <p>Test the complete bill generation process:</p>
+            <div class="form-section">
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>Payment Method</label>
+                        <select id="test-payment-method">
+                            <option value="">Select payment method...</option>
+                            <option value="cash">Cash</option>
+                            <option value="card">Card</option>
+                            <option value="upi">UPI</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Transaction ID (Optional)</label>
+                        <input type="text" id="test-transaction-id" placeholder="Optional">
+                    </div>
+                </div>
+                <button class="debug-button" onclick="testBillGeneration()">
+                    <i class="fas fa-calculator"></i> Test Bill Generation
+                </button>
+            </div>
+            <div id="bill-result"></div>
+        </div>
+
+        <div class="debug-section">
+            <h3><i class="fas fa-code"></i> Step 5: Debug Data</h3>
+            <p>Show the exact data being sent to the backend:</p>
+            <button class="debug-button" onclick="showDebugData()">
+                <i class="fas fa-code"></i> Show Debug Data
+            </button>
+            <div id="debug-data-result"></div>
+        </div>
+
+        <div class="debug-section">
+            <h3><i class="fas fa-tools"></i> Step 6: Fix Issues</h3>
+            <p>Automatically fix common issues:</p>
+            <button class="debug-button" onclick="fixCommonIssues()">
+                <i class="fas fa-tools"></i> Fix Common Issues
+            </button>
+            <div id="fix-result"></div>
+        </div>
+    </div>
+
+    <script>
+        // Global variables for testing
+        let testCustomer = null;
+        let testBillItems = [];
+
+        // Check backend status
+        async function checkBackendStatus() {
+            const resultDiv = document.getElementById('backend-result');
+            resultDiv.innerHTML = '<div class="loading"><i class="fas fa-spinner fa-spin"></i><p>Checking backend...</p></div>';
+            
+            try {
+                const response = await fetch('http://localhost:8080/api/admin/customers');
+                
+                if (response.ok) {
+                    resultDiv.innerHTML = `
+                        <div class="result success">
+                            <h4><i class="fas fa-check-circle"></i> Backend Online</h4>
+                            <p><strong>Status:</strong> <span class="status success">✓ Running</span></p>
+                            <p><strong>Response:</strong> ${response.status} ${response.statusText}</p>
+                            <p><strong>Message:</strong> Spring Boot application is running successfully</p>
+                        </div>
+                    `;
+                } else {
+                    resultDiv.innerHTML = `
+                        <div class="result error">
+                            <h4><i class="fas fa-times-circle"></i> Backend Error</h4>
+                            <p><strong>Status:</strong> <span class="status error">✗ Error</span></p>
+                            <p><strong>Response:</strong> ${response.status} ${response.statusText}</p>
+                            <p><strong>Solution:</strong> Start your Spring Boot application</p>
+                        </div>
+                    `;
+                }
+            } catch (error) {
+                resultDiv.innerHTML = `
+                    <div class="result error">
+                        <h4><i class="fas fa-times-circle"></i> Connection Failed</h4>
+                        <p><strong>Status:</strong> <span class="status error">✗ Failed</span></p>
+                        <p><strong>Error:</strong> ${error.message}</p>
+                        <p><strong>Solution:</strong> Start your Spring Boot application on port 8080</p>
+                    </div>
+                `;
+            }
+        }
+
+        // Test customer fetch
+        async function testCustomerFetch() {
+            const resultDiv = document.getElementById('customer-result');
+            const accountNumber = document.getElementById('test-account').value;
+            
+            resultDiv.innerHTML = '<div class="loading"><i class="fas fa-spinner fa-spin"></i><p>Fetching customer...</p></div>';
+            
+            try {
+                // Try billing API first
+                const response = await fetch(`http://localhost:8080/api/billing/customer/${accountNumber}`);
+                if (response.ok) {
+                    const data = await response.json();
+                    if (data.success && data.customer) {
+                        testCustomer = data.customer;
+                        resultDiv.innerHTML = `
+                            <div class="result success">
+                                <h4><i class="fas fa-check-circle"></i> Customer Found</h4>
+                                <p><strong>Status:</strong> <span class="status success">✓ Success</span></p>
+                                <p><strong>Account Number:</strong> ${data.customer.accountNumber}</p>
+                                <p><strong>Name:</strong> ${data.customer.name}</p>
+                                <p><strong>Email:</strong> ${data.customer.email || 'N/A'}</p>
+                                <p><strong>Phone:</strong> ${data.customer.phone || 'N/A'}</p>
+                            </div>
+                        `;
+                        return;
+                    }
+                }
+                
+                // Try admin API as fallback
+                const adminResponse = await fetch('http://localhost:8080/api/admin/customers');
+                if (adminResponse.ok) {
+                    const customers = await adminResponse.json();
+                    const customer = customers.find(c => c.accountNumber === accountNumber);
+                    if (customer) {
+                        testCustomer = customer;
+                        resultDiv.innerHTML = `
+                            <div class="result success">
+                                <h4><i class="fas fa-check-circle"></i> Customer Found (via Admin API)</h4>
+                                <p><strong>Status:</strong> <span class="status success">✓ Success</span></p>
+                                <p><strong>Account Number:</strong> ${customer.accountNumber}</p>
+                                <p><strong>Name:</strong> ${customer.name}</p>
+                                <p><strong>Email:</strong> ${customer.email || 'N/A'}</p>
+                                <p><strong>Phone:</strong> ${customer.phone || 'N/A'}</p>
+                            </div>
+                        `;
+                        return;
+                    }
+                }
+                
+                resultDiv.innerHTML = `
+                    <div class="result error">
+                        <h4><i class="fas fa-times-circle"></i> Customer Not Found</h4>
+                        <p><strong>Status:</strong> <span class="status error">✗ Failed</span></p>
+                        <p><strong>Account Number:</strong> ${accountNumber}</p>
+                        <p><strong>Solution:</strong> Add the customer to the database first</p>
+                    </div>
+                `;
+            } catch (error) {
+                resultDiv.innerHTML = `
+                    <div class="result error">
+                        <h4><i class="fas fa-times-circle"></i> Error Fetching Customer</h4>
+                        <p><strong>Status:</strong> <span class="status error">✗ Error</span></p>
+                        <p><strong>Error:</strong> ${error.message}</p>
+                    </div>
+                `;
+            }
+        }
+
+        // Test book addition
+        function testBookAddition() {
+            const resultDiv = document.getElementById('book-result');
+            const bookSelect = document.getElementById('test-book-select');
+            const quantityInput = document.getElementById('test-quantity');
+            
+            if (!bookSelect.value) {
+                resultDiv.innerHTML = `
+                    <div class="result error">
+                        <h4><i class="fas fa-times-circle"></i> No Book Selected</h4>
+                        <p><strong>Status:</strong> <span class="status error">✗ Failed</span></p>
+                        <p><strong>Error:</strong> Please select a book</p>
+                    </div>
+                `;
+                return;
+            }
+            
+            if (!quantityInput.value || quantityInput.value <= 0) {
+                resultDiv.innerHTML = `
+                    <div class="result error">
+                        <h4><i class="fas fa-times-circle"></i> Invalid Quantity</h4>
+                        <p><strong>Status:</strong> <span class="status error">✗ Failed</span></p>
+                        <p><strong>Error:</strong> Please enter a valid quantity</p>
+                    </div>
+                `;
+                return;
+            }
+            
+            const bookId = bookSelect.value;
+            const quantity = parseInt(quantityInput.value);
+            const price = getBookPrice(bookId);
+            const title = getBookTitle(bookId);
+            
+            const newItem = {
+                id: Date.now(),
+                bookId: bookId,
+                title: title,
+                price: price,
+                quantity: quantity,
+                subtotal: price * quantity
+            };
+            
+            testBillItems.push(newItem);
+            
+            resultDiv.innerHTML = `
+                <div class="result success">
+                    <h4><i class="fas fa-check-circle"></i> Book Added Successfully</h4>
+                    <p><strong>Status:</strong> <span class="status success">✓ Success</span></p>
+                    <p><strong>Book:</strong> ${title}</p>
+                    <p><strong>Quantity:</strong> ${quantity}</p>
+                    <p><strong>Price:</strong> Rs. ${price}</p>
+                    <p><strong>Subtotal:</strong> Rs. ${price * quantity}</p>
+                    <p><strong>Total Items:</strong> ${testBillItems.length}</p>
+                </div>
+            `;
+        }
+
+        // Test bill generation
+        async function testBillGeneration() {
+            const resultDiv = document.getElementById('bill-result');
+            
+            if (!testCustomer) {
+                resultDiv.innerHTML = `
+                    <div class="result error">
+                        <h4><i class="fas fa-times-circle"></i> No Customer Selected</h4>
+                        <p><strong>Status:</strong> <span class="status error">✗ Failed</span></p>
+                        <p><strong>Error:</strong> Please fetch a customer first</p>
+                    </div>
+                `;
+                return;
+            }
+            
+            if (testBillItems.length === 0) {
+                resultDiv.innerHTML = `
+                    <div class="result error">
+                        <h4><i class="fas fa-times-circle"></i> No Items in Bill</h4>
+                        <p><strong>Status:</strong> <span class="status error">✗ Failed</span></p>
+                        <p><strong>Error:</strong> Please add at least one book to the bill</p>
+                    </div>
+                `;
+                return;
+            }
+            
+            const paymentMethod = document.getElementById('test-payment-method').value;
+            if (!paymentMethod) {
+                resultDiv.innerHTML = `
+                    <div class="result error">
+                        <h4><i class="fas fa-times-circle"></i> No Payment Method</h4>
+                        <p><strong>Status:</strong> <span class="status error">✗ Failed</span></p>
+                        <p><strong>Error:</strong> Please select a payment method</p>
+                    </div>
+                `;
+                return;
+            }
+            
+            resultDiv.innerHTML = '<div class="loading"><i class="fas fa-spinner fa-spin"></i><p>Generating bill...</p></div>';
+            
+            try {
+                // Calculate totals
+                const subtotal = testBillItems.reduce((sum, item) => sum + item.subtotal, 0);
+                const discount = 0; // No discount for test
+                const tax = subtotal * 0.15; // 15% tax
+                const total = subtotal + tax;
+                
+                const billData = {
+                    customerAccountNumber: testCustomer.accountNumber,
+                    items: testBillItems.map(item => ({
+                        bookId: item.bookId,
+                        title: item.title,
+                        quantity: item.quantity,
+                        price: item.price
+                    })),
+                    subtotal: subtotal,
+                    discount: discount,
+                    tax: tax,
+                    total: total,
+                    paymentMethod: paymentMethod,
+                    transactionId: document.getElementById('test-transaction-id').value || '',
+                    adminNotes: 'Test bill generated from debug tool'
+                };
+                
+                console.log('Sending bill data:', billData);
+                
+                const response = await fetch('http://localhost:8080/api/billing/generate', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(billData)
+                });
+                
+                const responseText = await response.text();
+                console.log('Response text:', responseText);
+                
+                let data;
+                try {
+                    data = JSON.parse(responseText);
+                } catch (e) {
+                    data = { message: 'Invalid JSON response', raw: responseText };
+                }
+                
+                if (response.ok && data.success) {
+                    const bill = data.bill;
+                    resultDiv.innerHTML = `
+                        <div class="result success">
+                            <h4><i class="fas fa-check-circle"></i> Bill Generated Successfully!</h4>
+                            <p><strong>Status:</strong> <span class="status success">✓ Success</span></p>
+                            <p><strong>Bill Number:</strong> ${bill.billNumber}</p>
+                            <p><strong>Customer:</strong> ${bill.customerName}</p>
+                            <p><strong>Total:</strong> Rs. ${bill.total}</p>
+                            <p><strong>Status:</strong> ${bill.status}</p>
+                            <p><strong>Items:</strong> ${bill.items ? bill.items.length : 0} books</p>
+                            <p style="margin-top: 1rem; color: #059669; font-weight: bold;">
+                                <i class="fas fa-trophy"></i> SUCCESS! The billing system is working!
+                            </p>
+                        </div>
+                    `;
+                } else {
+                    resultDiv.innerHTML = `
+                        <div class="result error">
+                            <h4><i class="fas fa-times-circle"></i> Failed to Generate Bill</h4>
+                            <p><strong>Status:</strong> <span class="status error">✗ Failed</span></p>
+                            <p><strong>Error:</strong> ${data.message || 'Unknown error'}</p>
+                            <p><strong>Response Status:</strong> ${response.status}</p>
+                            <p><strong>Raw Response:</strong></p>
+                            <pre>${responseText}</pre>
+                        </div>
+                    `;
+                }
+            } catch (error) {
+                resultDiv.innerHTML = `
+                    <div class="result error">
+                        <h4><i class="fas fa-times-circle"></i> Connection Error</h4>
+                        <p><strong>Status:</strong> <span class="status error">✗ Error</span></p>
+                        <p><strong>Error:</strong> ${error.message}</p>
+                        <p><strong>Solution:</strong> Make sure your Spring Boot application is running</p>
+                    </div>
+                `;
+            }
+        }
+
+        // Show debug data
+        function showDebugData() {
+            const resultDiv = document.getElementById('debug-data-result');
+            
+            const debugInfo = {
+                customer: testCustomer,
+                billItems: testBillItems,
+                paymentMethod: document.getElementById('test-payment-method').value,
+                transactionId: document.getElementById('test-transaction-id').value,
+                totals: {
+                    subtotal: testBillItems.reduce((sum, item) => sum + item.subtotal, 0),
+                    discount: 0,
+                    tax: testBillItems.reduce((sum, item) => sum + item.subtotal, 0) * 0.15,
+                    total: testBillItems.reduce((sum, item) => sum + item.subtotal, 0) * 1.15
+                }
+            };
+            
+            resultDiv.innerHTML = `
+                <div class="result success">
+                    <h4><i class="fas fa-code"></i> Debug Data</h4>
+                    <p><strong>Status:</strong> <span class="status success">✓ Data Collected</span></p>
+                    <p><strong>Debug Information:</strong></p>
+                    <pre>${JSON.stringify(debugInfo, null, 2)}</pre>
+                </div>
+            `;
+        }
+
+        // Fix common issues
+        async function fixCommonIssues() {
+            const resultDiv = document.getElementById('fix-result');
+            resultDiv.innerHTML = '<div class="loading"><i class="fas fa-spinner fa-spin"></i><p>Fixing issues...</p></div>';
+            
+            let fixes = [];
+            
+            // Check if customer exists, if not create one
+            if (!testCustomer) {
+                try {
+                    const customerData = {
+                        accountNumber: 'ACC71751',
+                        name: 'Pasan Perera',
+                        email: 'pasan@example.com',
+                        phone: '+94 77 123 4567',
+                        address: '123 Main Street, Colombo, Sri Lanka'
+                    };
+                    
+                    const response = await fetch('http://localhost:8080/api/admin/customers', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify(customerData)
+                    });
+                    
+                    if (response.ok) {
+                        fixes.push('✅ Created test customer (ACC71751)');
+                        testCustomer = customerData;
+                    } else {
+                        fixes.push('❌ Failed to create test customer');
+                    }
+                } catch (error) {
+                    fixes.push('❌ Error creating test customer: ' + error.message);
+                }
+            } else {
+                fixes.push('✅ Customer already exists');
+            }
+            
+            // Add a test book if no items
+            if (testBillItems.length === 0) {
+                const testItem = {
+                    id: Date.now(),
+                    bookId: '1',
+                    title: 'The Great Gatsby',
+                    price: 1500,
+                    quantity: 1,
+                    subtotal: 1500
+                };
+                testBillItems.push(testItem);
+                fixes.push('✅ Added test book to bill');
+            } else {
+                fixes.push('✅ Bill items already exist');
+            }
+            
+            // Set payment method if not set
+            const paymentMethod = document.getElementById('test-payment-method');
+            if (!paymentMethod.value) {
+                paymentMethod.value = 'cash';
+                fixes.push('✅ Set payment method to Cash');
+            } else {
+                fixes.push('✅ Payment method already set');
+            }
+            
+            resultDiv.innerHTML = `
+                <div class="result success">
+                    <h4><i class="fas fa-tools"></i> Issues Fixed</h4>
+                    <p><strong>Status:</strong> <span class="status success">✓ Fixes Applied</span></p>
+                    <p><strong>Applied Fixes:</strong></p>
+                    <ul>
+                        ${fixes.map(fix => `<li>${fix}</li>`).join('')}
+                    </ul>
+                    <p><strong>Next Step:</strong> Try generating a bill again</p>
+                </div>
+            `;
+        }
+
+        // Helper functions
+        function getBookPrice(bookId) {
+            const prices = {
+                '1': 1500,
+                '2': 1200,
+                '3': 1800
+            };
+            return prices[bookId] || 0;
+        }
+
+        function getBookTitle(bookId) {
+            const titles = {
+                '1': 'The Great Gatsby',
+                '2': 'To Kill a Mockingbird',
+                '3': '1984'
+            };
+            return titles[bookId] || 'Unknown Book';
+        }
+
+        // Initialize page
+        document.addEventListener('DOMContentLoaded', function() {
+            checkBackendStatus();
+        });
+    </script>
+</body>
+</html>

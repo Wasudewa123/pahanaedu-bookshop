@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test Delete Bill Functionality</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+        .test-section {
+            background: white;
+            padding: 20px;
+            margin: 20px 0;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        .test-button {
+            background: #dc2626;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            margin: 5px;
+        }
+        .test-button:hover {
+            background: #b91c1c;
+        }
+        .success { color: #059669; }
+        .error { color: #dc2626; }
+        .info { color: #2563eb; }
+        .log {
+            background: #f3f4f6;
+            padding: 10px;
+            border-radius: 5px;
+            margin: 10px 0;
+            font-family: monospace;
+            white-space: pre-wrap;
+        }
+    </style>
+</head>
+<body>
+    <h1>🧪 Test Delete Bill Functionality</h1>
+    
+    <div class="test-section">
+        <h2>1. Test Backend Connectivity</h2>
+        <button class="test-button" onclick="testBackendConnectivity()">Test Backend</button>
+        <div id="backend-status"></div>
+    </div>
+    
+    <div class="test-section">
+        <h2>2. List All Bills</h2>
+        <button class="test-button" onclick="listAllBills()">List Bills</button>
+        <div id="bills-list"></div>
+    </div>
+    
+    <div class="test-section">
+        <h2>3. Test Delete Bill</h2>
+        <input type="text" id="bill-number" placeholder="Enter bill number to delete" style="padding: 8px; margin-right: 10px;">
+        <button class="test-button" onclick="testDeleteBill()">Delete Bill</button>
+        <div id="delete-result"></div>
+    </div>
+    
+    <div class="test-section">
+        <h2>4. Test Logs</h2>
+        <div id="test-logs" class="log"></div>
+    </div>
+
+    <script>
+        function log(message, type = 'info') {
+            const logsDiv = document.getElementById('test-logs');
+            const timestamp = new Date().toLocaleTimeString();
+            const logEntry = `[${timestamp}] ${type.toUpperCase()}: ${message}\n`;
+            logsDiv.textContent += logEntry;
+        }
+
+        async function testBackendConnectivity() {
+            const statusDiv = document.getElementById('backend-status');
+            statusDiv.innerHTML = '<p>Testing backend connectivity...</p>';
+            
+            try {
+                const response = await fetch('http://localhost:8080/api/billing/all');
+                if (response.ok) {
+                    const data = await response.json();
+                    statusDiv.innerHTML = `<p class="success">✅ Backend is accessible</p>
+                                        <p>Found ${data.bills ? data.bills.length : 0} bills</p>`;
+                    log('Backend connectivity test successful', 'success');
+                } else {
+                    statusDiv.innerHTML = `<p class="error">❌ Backend error: ${response.status}</p>`;
+                    log(`Backend error: ${response.status}`, 'error');
+                }
+            } catch (error) {
+                statusDiv.innerHTML = `<p class="error">❌ Backend connection failed: ${error.message}</p>`;
+                log(`Backend connection failed: ${error.message}`, 'error');
+            }
+        }
+
+        async function listAllBills() {
+            const billsDiv = document.getElementById('bills-list');
+            billsDiv.innerHTML = '<p>Loading bills...</p>';
+            
+            try {
+                const response = await fetch('http://localhost:8080/api/billing/all');
+                if (response.ok) {
+                    const data = await response.json();
+                    if (data.success && data.bills) {
+                        let html = '<h3>Available Bills:</h3><ul>';
+                        data.bills.forEach(bill => {
+                            html += `<li><strong>ID:</strong> ${bill.id || 'N/A'}, <strong>Bill Number:</strong> ${bill.billNumber || 'N/A'}, <strong>Customer:</strong> ${bill.customerName || 'N/A'}</li>`;
+                        });
+                        html += '</ul>';
+                        billsDiv.innerHTML = html;
+                        log(`Found ${data.bills.length} bills`, 'success');
+                    } else {
+                        billsDiv.innerHTML = '<p class="error">No bills found or error in response</p>';
+                        log('No bills found or error in response', 'error');
+                    }
+                } else {
+                    billsDiv.innerHTML = `<p class="error">Failed to fetch bills: ${response.status}</p>`;
+                    log(`Failed to fetch bills: ${response.status}`, 'error');
+                }
+            } catch (error) {
+                billsDiv.innerHTML = `<p class="error">Error fetching bills: ${error.message}</p>`;
+                log(`Error fetching bills: ${error.message}`, 'error');
+            }
+        }
+
+        async function testDeleteBill() {
+            const billNumber = document.getElementById('bill-number').value.trim();
+            if (!billNumber) {
+                alert('Please enter a bill number');
+                return;
+            }
+            
+            const resultDiv = document.getElementById('delete-result');
+            resultDiv.innerHTML = '<p>Testing delete...</p>';
+            
+            try {
+                log(`Attempting to delete bill: ${billNumber}`, 'info');
+                
+                const response = await fetch(`http://localhost:8080/api/billing/bill/${billNumber}`, {
+                    method: 'DELETE',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    }
+                });
+                
+                if (response.ok) {
+                    const data = await response.json();
+                    resultDiv.innerHTML = `<p class="success">✅ Bill deleted successfully!</p>
+                                        <p>Response: ${JSON.stringify(data, null, 2)}</p>`;
+                    log(`Bill ${billNumber} deleted successfully`, 'success');
+                } else {
+                    const errorData = await response.json().catch(() => ({ message: 'Unknown error' }));
+                    resultDiv.innerHTML = `<p class="error">❌ Failed to delete bill: ${errorData.message}</p>
+                                        <p>Status: ${response.status}</p>`;
+                    log(`Failed to delete bill ${billNumber}: ${errorData.message}`, 'error');
+                }
+            } catch (error) {
+                resultDiv.innerHTML = `<p class="error">❌ Error deleting bill: ${error.message}</p>`;
+                log(`Error deleting bill ${billNumber}: ${error.message}`, 'error');
+            }
+        }
+
+        // Auto-test backend connectivity on page load
+        window.onload = function() {
+            log('Test page loaded', 'info');
+            setTimeout(testBackendConnectivity, 1000);
+        };
+    </script>
+</body>
+</html>

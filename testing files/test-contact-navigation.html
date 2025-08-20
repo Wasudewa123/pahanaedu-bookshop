@@ -1,0 +1,236 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Contact Navigation Test - Pahana Book Shop</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            margin: 0;
+            padding: 20px;
+            min-height: 100vh;
+            color: #333;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 20px;
+            padding: 40px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+        }
+        
+        h1 {
+            text-align: center;
+            color: #667eea;
+            margin-bottom: 30px;
+            font-size: 2.5rem;
+        }
+        
+        .success-message {
+            background: #d4edda;
+            color: #155724;
+            padding: 20px;
+            border-radius: 10px;
+            margin-bottom: 30px;
+            border-left: 5px solid #28a745;
+        }
+        
+        .test-section {
+            margin-bottom: 30px;
+            padding: 20px;
+            border: 2px solid #e9ecef;
+            border-radius: 10px;
+            background: #f8f9fa;
+        }
+        
+        .test-section h3 {
+            color: #495057;
+            margin-bottom: 15px;
+        }
+        
+        .page-links {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 15px;
+            margin-top: 15px;
+        }
+        
+        .page-link {
+            display: block;
+            padding: 15px 20px;
+            background: #667eea;
+            color: white;
+            text-decoration: none;
+            border-radius: 8px;
+            text-align: center;
+            transition: all 0.3s ease;
+            font-weight: 500;
+        }
+        
+        .page-link:hover {
+            background: #5a6fd8;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.3);
+        }
+        
+        .nav-test {
+            background: #e3f2fd;
+            padding: 15px;
+            border-radius: 8px;
+            margin-top: 10px;
+        }
+        
+        .nav-test h4 {
+            color: #1976d2;
+            margin-bottom: 10px;
+        }
+        
+        .nav-test ul {
+            list-style: none;
+            padding: 0;
+        }
+        
+        .nav-test li {
+            margin-bottom: 5px;
+            padding: 5px 0;
+        }
+        
+        .nav-test li:before {
+            content: "✅ ";
+            color: #4caf50;
+        }
+        
+        .footer-test {
+            background: #f3e5f5;
+            padding: 15px;
+            border-radius: 8px;
+            margin-top: 10px;
+        }
+        
+        .footer-test h4 {
+            color: #7b1fa2;
+            margin-bottom: 10px;
+        }
+        
+        .status-indicator {
+            display: inline-block;
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            margin-right: 8px;
+        }
+        
+        .status-success {
+            background: #28a745;
+        }
+        
+        .status-pending {
+            background: #ffc107;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🎯 Contact Navigation Test</h1>
+        
+        <div class="success-message">
+            <h2>✅ Contact Page Successfully Linked!</h2>
+            <p>All navigation bars across the website have been updated to link to the contact page. Users can now access the contact page from any page on the website.</p>
+        </div>
+        
+        <div class="test-section">
+            <h3>📋 Updated Pages</h3>
+            <p>The following pages have been updated with proper contact page navigation:</p>
+            
+            <div class="page-links">
+                <a href="src/landingpage.html" class="page-link" target="_blank">
+                    🏠 Landing Page
+                </a>
+                <a href="src/booklist.html" class="page-link" target="_blank">
+                    📚 Book List
+                </a>
+                <a href="src/dashboard.html" class="page-link" target="_blank">
+                    👤 Dashboard
+                </a>
+                <a href="src/order.html" class="page-link" target="_blank">
+                    🛒 Order Page
+                </a>
+                <a href="src/profile-edit.html" class="page-link" target="_blank">
+                    ✏️ Profile Edit
+                </a>
+                <a href="src/contact.html" class="page-link" target="_blank">
+                    📞 Contact Page
+                </a>
+            </div>
+        </div>
+        
+        <div class="test-section">
+            <h3>🔗 Navigation Bar Updates</h3>
+            <p>Contact links in the main navigation bars have been updated:</p>
+            
+            <div class="nav-test">
+                <h4>Main Navigation Bars:</h4>
+                <ul>
+                    <li>Landing Page - Contact link now points to contact.html</li>
+                    <li>Book List - Contact nav item now links to contact.html</li>
+                    <li>Dashboard - Contact nav item now links to contact.html</li>
+                    <li>Order Page - Contact nav item now links to contact.html</li>
+                    <li>Profile Edit - Contact nav link now points to contact.html</li>
+                </ul>
+            </div>
+        </div>
+        
+        <div class="test-section">
+            <h3>📄 Footer Updates</h3>
+            <p>Contact links in footer sections have been updated:</p>
+            
+            <div class="footer-test">
+                <h4>Footer Contact Links:</h4>
+                <ul>
+                    <li>Book List footer - "Contact Us" link updated</li>
+                    <li>Dashboard footer - "Contact Us" link updated</li>
+                    <li>Order Page footer - "Contact Us" link updated</li>
+                    <li>Profile Edit footer - "Contact Us" link updated</li>
+                </ul>
+            </div>
+        </div>
+        
+        <div class="test-section">
+            <h3>🧪 Testing Instructions</h3>
+            <p>To verify the contact navigation is working:</p>
+            <ol>
+                <li>Click on any of the page links above to open the pages</li>
+                <li>Look for the "Contact" link in the navigation bar</li>
+                <li>Click on the "Contact" link - it should take you to the contact page</li>
+                <li>Also check the footer "Contact Us" links</li>
+                <li>Verify that the contact page loads with all its features (carousel, form, etc.)</li>
+            </ol>
+        </div>
+        
+        <div class="test-section">
+            <h3>🎨 Contact Page Features</h3>
+            <p>The contact page includes all requested features:</p>
+            <ul>
+                <li><span class="status-indicator status-success"></span>Dark theme with carousel</li>
+                <li><span class="status-indicator status-success"></span>Auto-changing image carousel</li>
+                <li><span class="status-indicator status-success"></span>"Get in Touch" section with three contact cards</li>
+                <li><span class="status-indicator status-success"></span>Working Gmail contact form</li>
+                <li><span class="status-indicator status-success"></span>Responsive design</li>
+                <li><span class="status-indicator status-success"></span>Professional styling</li>
+            </ul>
+        </div>
+        
+        <div class="test-section">
+            <h3>🚀 Quick Access</h3>
+            <p>Test the contact page directly:</p>
+            <a href="src/contact.html" class="page-link" target="_blank" style="max-width: 300px; margin: 0 auto; display: block;">
+                🎯 Open Contact Page
+            </a>
+        </div>
+    </div>
+</body>
+</html> 

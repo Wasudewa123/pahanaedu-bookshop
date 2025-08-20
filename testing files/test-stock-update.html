@@ -1,0 +1,330 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test Stock Update Functionality</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+        .test-section {
+            background: white;
+            padding: 20px;
+            margin: 20px 0;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        .book-card {
+            border: 1px solid #ddd;
+            padding: 15px;
+            margin: 10px 0;
+            border-radius: 8px;
+            background: white;
+        }
+        .book-image {
+            width: 100px;
+            height: 150px;
+            object-fit: cover;
+            border-radius: 4px;
+        }
+        .stock-status {
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 12px;
+            font-weight: bold;
+            margin: 5px 0;
+        }
+        .in-stock { background: #d4edda; color: #155724; }
+        .low-stock { background: #fff3cd; color: #856404; }
+        .out-of-stock { background: #f8d7da; color: #721c24; }
+        .form-group {
+            margin: 15px 0;
+        }
+        .form-group label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+        }
+        .form-group input, .form-group select {
+            width: 100%;
+            padding: 8px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+        }
+        .btn {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            margin: 5px;
+        }
+        .btn-primary { background: #007bff; color: white; }
+        .btn-success { background: #28a745; color: white; }
+        .btn-danger { background: #dc3545; color: white; }
+        .toast {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            padding: 15px;
+            border-radius: 4px;
+            color: white;
+            z-index: 1000;
+        }
+        .toast.success { background: #28a745; }
+        .toast.error { background: #dc3545; }
+        .toast.info { background: #17a2b8; }
+        .loading {
+            opacity: 0.6;
+            pointer-events: none;
+        }
+    </style>
+</head>
+<body>
+    <h1>Test Stock Update Functionality</h1>
+    
+    <div class="test-section">
+        <h2>Current Book Data</h2>
+        <div id="current-books">
+            <p>Loading books...</p>
+        </div>
+    </div>
+    
+    <div class="test-section">
+        <h2>Test Stock Update</h2>
+        <div class="form-group">
+            <label for="book-id">Book ID:</label>
+            <input type="text" id="book-id" placeholder="Enter book ID">
+        </div>
+        <div class="form-group">
+            <label for="new-quantity">New Stock Quantity:</label>
+            <input type="number" id="new-quantity" min="0" placeholder="Enter new quantity">
+        </div>
+        <div class="form-group">
+            <label for="new-status">New Status:</label>
+            <select id="new-status">
+                <option value="IN_STOCK">In Stock</option>
+                <option value="LOW_STOCK">Low Stock</option>
+                <option value="OUT_OF_STOCK">Out of Stock</option>
+            </select>
+        </div>
+        <button class="btn btn-primary" onclick="testStockUpdate()">Test Stock Update</button>
+        <button class="btn btn-success" onclick="refreshBooks()">Refresh Books</button>
+    </div>
+    
+    <div class="test-section">
+        <h2>API Response Log</h2>
+        <div id="api-log" style="background: #f8f9fa; padding: 15px; border-radius: 4px; max-height: 300px; overflow-y: auto;">
+            <p>API calls will be logged here...</p>
+        </div>
+    </div>
+
+    <script>
+        let currentBooks = [];
+        
+        // Load books on page load
+        document.addEventListener('DOMContentLoaded', () => {
+            loadBooks();
+        });
+        
+        // Load books from backend
+        async function loadBooks() {
+            try {
+                logApiCall('Loading books from /api/books...');
+                
+                const response = await fetch('http://localhost:8080/api/books');
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+                
+                const data = await response.json();
+                const books = Array.isArray(data) ? data : (data.books || data.data || []);
+                
+                currentBooks = books;
+                displayBooks(books);
+                
+                logApiCall(`Successfully loaded ${books.length} books`);
+                
+                // Auto-fill first book ID for testing
+                if (books.length > 0) {
+                    document.getElementById('book-id').value = books[0].id;
+                    document.getElementById('new-quantity').value = books[0].stockQuantity || 0;
+                    document.getElementById('new-status').value = books[0].status || 'IN_STOCK';
+                }
+                
+            } catch (error) {
+                logApiCall(`Error loading books: ${error.message}`, 'error');
+                showToast(`Error loading books: ${error.message}`, 'error');
+            }
+        }
+        
+        // Display books in UI
+        function displayBooks(books) {
+            const container = document.getElementById('current-books');
+            
+            if (!books || books.length === 0) {
+                container.innerHTML = '<p>No books found</p>';
+                return;
+            }
+            
+            container.innerHTML = books.map(book => `
+                <div class="book-card">
+                    <div style="display: flex; gap: 15px;">
+                        <img src="${book.imageUrl || 'https://via.placeholder.com/100x150?text=Book'}" 
+                             alt="${book.title}" class="book-image" 
+                             onerror="this.src='https://via.placeholder.com/100x150?text=Book'">
+                        <div>
+                            <h3>${book.title}</h3>
+                            <p><strong>Author:</strong> ${book.author}</p>
+                            <p><strong>ID:</strong> ${book.id}</p>
+                            <p><strong>Price:</strong> Rs. ${book.price}</p>
+                            <p><strong>Current Stock:</strong> ${book.stockQuantity || 0}</p>
+                            <div class="stock-status ${getStatusClass(book.status)}">
+                                ${getStatusText(book.status)}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `).join('');
+        }
+        
+        // Test stock update functionality
+        async function testStockUpdate() {
+            const bookId = document.getElementById('book-id').value.trim();
+            const newQuantity = parseInt(document.getElementById('new-quantity').value);
+            const newStatus = document.getElementById('new-status').value;
+            
+            if (!bookId) {
+                showToast('Please enter a book ID', 'error');
+                return;
+            }
+            
+            if (isNaN(newQuantity) || newQuantity < 0) {
+                showToast('Please enter a valid quantity', 'error');
+                return;
+            }
+            
+            try {
+                logApiCall(`Updating stock for book ${bookId}...`);
+                
+                // Show loading state
+                const btn = event.target;
+                const originalText = btn.textContent;
+                btn.textContent = 'Updating...';
+                btn.classList.add('loading');
+                
+                // Send update to backend
+                const response = await fetch(`http://localhost:8080/api/books/${bookId}/stock`, {
+                    method: 'PUT',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        stockQuantity: newQuantity,
+                        status: newStatus
+                    })
+                });
+                
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+                
+                const result = await response.json();
+                
+                if (result.success) {
+                    logApiCall(`Stock updated successfully for book ${bookId}`, 'success');
+                    showToast('Stock updated successfully!', 'success');
+                    
+                    // Update local book data
+                    const bookIndex = currentBooks.findIndex(b => b.id === bookId);
+                    if (bookIndex !== -1) {
+                        currentBooks[bookIndex].stockQuantity = newQuantity;
+                        currentBooks[bookIndex].status = newStatus;
+                    }
+                    
+                    // Refresh display
+                    displayBooks(currentBooks);
+                    
+                } else {
+                    throw new Error(result.message || 'Failed to update stock');
+                }
+                
+            } catch (error) {
+                logApiCall(`Error updating stock: ${error.message}`, 'error');
+                showToast(`Error updating stock: ${error.message}`, 'error');
+            } finally {
+                // Reset button state
+                const btn = event.target;
+                btn.textContent = originalText;
+                btn.classList.remove('loading');
+            }
+        }
+        
+        // Refresh books data
+        async function refreshBooks() {
+            await loadBooks();
+        }
+        
+        // Helper functions
+        function getStatusClass(status) {
+            switch(status) {
+                case 'IN_STOCK': return 'in-stock';
+                case 'LOW_STOCK': return 'low-stock';
+                case 'OUT_OF_STOCK': return 'out-of-stock';
+                default: return 'unknown';
+            }
+        }
+        
+        function getStatusText(status) {
+            switch(status) {
+                case 'IN_STOCK': return 'In Stock';
+                case 'LOW_STOCK': return 'Low Stock';
+                case 'OUT_OF_STOCK': return 'Out of Stock';
+                default: return 'Unknown';
+            }
+        }
+        
+        function logApiCall(message, type = 'info') {
+            const log = document.getElementById('api-log');
+            const timestamp = new Date().toLocaleTimeString();
+            const logEntry = document.createElement('div');
+            logEntry.style.marginBottom = '10px';
+            logEntry.style.padding = '5px';
+            logEntry.style.borderRadius = '3px';
+            
+            switch(type) {
+                case 'success':
+                    logEntry.style.background = '#d4edda';
+                    logEntry.style.color = '#155724';
+                    break;
+                case 'error':
+                    logEntry.style.background = '#f8d7da';
+                    logEntry.style.color = '#721c24';
+                    break;
+                default:
+                    logEntry.style.background = '#d1ecf1';
+                    logEntry.style.color = '#0c5460';
+            }
+            
+            logEntry.innerHTML = `<strong>[${timestamp}]</strong> ${message}`;
+            log.appendChild(logEntry);
+            log.scrollTop = log.scrollHeight;
+        }
+        
+        function showToast(message, type = 'info') {
+            const toast = document.createElement('div');
+            toast.className = `toast ${type}`;
+            toast.textContent = message;
+            document.body.appendChild(toast);
+            
+            setTimeout(() => {
+                toast.remove();
+            }, 3000);
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,239 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test New Categorization</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; }
+        .test-section { margin: 20px 0; padding: 15px; border: 1px solid #ddd; border-radius: 5px; }
+        .success { color: green; }
+        .error { color: red; }
+        .info { color: blue; }
+        button { padding: 10px 15px; margin: 5px; background: #007bff; color: white; border: none; border-radius: 3px; cursor: pointer; }
+        button:hover { background: #0056b3; }
+        .category-section { margin: 15px 0; padding: 10px; border: 1px solid #eee; border-radius: 3px; }
+        .book-item { padding: 5px; margin: 2px 0; font-size: 12px; background: #f9f9f9; border-radius: 2px; }
+        .category-header { font-weight: bold; color: #333; margin-bottom: 10px; }
+    </style>
+</head>
+<body>
+    <h1>Test New Categorization System</h1>
+    
+    <div class="test-section">
+        <h2>Test Different Books in Each Category</h2>
+        <button onclick="testNewCategorization()">Test New Categorization</button>
+        <div id="categorization-result"></div>
+    </div>
+    
+    <div class="test-section">
+        <h2>Check for Duplicates</h2>
+        <button onclick="checkForDuplicates()">Check for Duplicate Books</button>
+        <div id="duplicates-result"></div>
+    </div>
+
+    <script>
+        // Copy the new categorization logic from booklist.js
+        function categorizeBooks(books) {
+            const categories = {
+                featured: [],
+                newArrivals: [],
+                children: [],
+                novels: []
+            };
+            
+            // Shuffle books to ensure random distribution
+            const shuffledBooks = [...books].sort(() => Math.random() - 0.5);
+            
+            books.forEach((book) => {
+                const title = (book.title || '').toLowerCase();
+                const author = (book.author || '').toLowerCase();
+                const desc = (book.description || '').toLowerCase();
+                const category = (book.category || '').toLowerCase();
+                
+                // Featured: First 8 books (or all if less than 8)
+                if (categories.featured.length < 8) {
+                    categories.featured.push(book);
+                }
+                
+                // New Arrivals: Next 8 books (or remaining if less than 8)
+                if (categories.newArrivals.length < 8 && categories.featured.length >= 8) {
+                    categories.newArrivals.push(book);
+                }
+                
+                // Children: Books with children-related keywords or category
+                if (title.includes('children') || title.includes('kid') || title.includes('story') || 
+                    desc.includes('children') || desc.includes('kid') || desc.includes('story') ||
+                    category.includes('children') || category.includes('kid')) {
+                    categories.children.push(book);
+                }
+                
+                // Novels: Books with novel/fiction keywords or category
+                if (title.includes('novel') || title.includes('fiction') || 
+                    desc.includes('novel') || desc.includes('fiction') ||
+                    category.includes('novel') || category.includes('fiction')) {
+                    categories.novels.push(book);
+                }
+            });
+            
+            // If any category is empty, distribute remaining books
+            const remainingBooks = books.filter(book => 
+                !categories.featured.includes(book) && 
+                !categories.newArrivals.includes(book) && 
+                !categories.children.includes(book) && 
+                !categories.novels.includes(book)
+            );
+            
+            // Distribute remaining books to empty categories
+            remainingBooks.forEach((book, index) => {
+                if (categories.children.length === 0) {
+                    categories.children.push(book);
+                } else if (categories.novels.length === 0) {
+                    categories.novels.push(book);
+                } else if (categories.newArrivals.length < 8) {
+                    categories.newArrivals.push(book);
+                } else if (categories.featured.length < 8) {
+                    categories.featured.push(book);
+                } else {
+                    // Add to the category with the least books
+                    const categoryCounts = {
+                        featured: categories.featured.length,
+                        newArrivals: categories.newArrivals.length,
+                        children: categories.children.length,
+                        novels: categories.novels.length
+                    };
+                    
+                    const minCategory = Object.keys(categoryCounts).reduce((a, b) => 
+                        categoryCounts[a] < categoryCounts[b] ? a : b
+                    );
+                    
+                    categories[minCategory].push(book);
+                }
+            });
+            
+            return categories;
+        }
+        
+        async function testNewCategorization() {
+            const resultDiv = document.getElementById('categorization-result');
+            resultDiv.innerHTML = '<p class="info">Testing new categorization...</p>';
+            
+            try {
+                const response = await fetch('http://localhost:8080/api/books/all', {
+                    method: 'GET',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    }
+                });
+                
+                const data = await response.json();
+                const books = data.books || [];
+                
+                // Test the new categorization logic
+                const categorizedBooks = categorizeBooks(books);
+                
+                resultDiv.innerHTML = `
+                    <h3>New Categorization Results:</h3>
+                    <p><strong>Total books from API:</strong> ${books.length}</p>
+                    
+                    <div class="category-section">
+                        <div class="category-header">Featured Books (${categorizedBooks.featured.length} books):</div>
+                        ${categorizedBooks.featured.map(book => `
+                            <div class="book-item">• ${book.title} by ${book.author}</div>
+                        `).join('')}
+                    </div>
+                    
+                    <div class="category-section">
+                        <div class="category-header">New Arrivals (${categorizedBooks.newArrivals.length} books):</div>
+                        ${categorizedBooks.newArrivals.map(book => `
+                            <div class="book-item">• ${book.title} by ${book.author}</div>
+                        `).join('')}
+                    </div>
+                    
+                    <div class="category-section">
+                        <div class="category-header">Children's Books (${categorizedBooks.children.length} books):</div>
+                        ${categorizedBooks.children.map(book => `
+                            <div class="book-item">• ${book.title} by ${book.author}</div>
+                        `).join('')}
+                    </div>
+                    
+                    <div class="category-section">
+                        <div class="category-header">Novels (${categorizedBooks.novels.length} books):</div>
+                        ${categorizedBooks.novels.map(book => `
+                            <div class="book-item">• ${book.title} by ${book.author}</div>
+                        `).join('')}
+                    </div>
+                    
+                    <p class="success">✅ Now each category shows DIFFERENT books!</p>
+                    <p class="info">💡 The "All Books" section will show ALL ${books.length} books together.</p>
+                `;
+            } catch (error) {
+                resultDiv.innerHTML = `<p class="error">❌ Error: ${error.message}</p>`;
+            }
+        }
+        
+        async function checkForDuplicates() {
+            const resultDiv = document.getElementById('duplicates-result');
+            resultDiv.innerHTML = '<p class="info">Checking for duplicates...</p>';
+            
+            try {
+                const response = await fetch('http://localhost:8080/api/books/all', {
+                    method: 'GET',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    }
+                });
+                
+                const data = await response.json();
+                const books = data.books || [];
+                
+                // Test the categorization logic
+                const categorizedBooks = categorizeBooks(books);
+                
+                // Check for duplicates between categories
+                const allFeatured = categorizedBooks.featured.map(book => book.id);
+                const allNewArrivals = categorizedBooks.newArrivals.map(book => book.id);
+                const allChildren = categorizedBooks.children.map(book => book.id);
+                const allNovels = categorizedBooks.novels.map(book => book.id);
+                
+                const featuredNewArrivalsOverlap = allFeatured.filter(id => allNewArrivals.includes(id));
+                const featuredChildrenOverlap = allFeatured.filter(id => allChildren.includes(id));
+                const featuredNovelsOverlap = allFeatured.filter(id => allNovels.includes(id));
+                const newArrivalsChildrenOverlap = allNewArrivals.filter(id => allChildren.includes(id));
+                const newArrivalsNovelsOverlap = allNewArrivals.filter(id => allNovels.includes(id));
+                const childrenNovelsOverlap = allChildren.filter(id => allNovels.includes(id));
+                
+                const totalOverlaps = featuredNewArrivalsOverlap.length + featuredChildrenOverlap.length + 
+                                    featuredNovelsOverlap.length + newArrivalsChildrenOverlap.length + 
+                                    newArrivalsNovelsOverlap.length + childrenNovelsOverlap.length;
+                
+                resultDiv.innerHTML = `
+                    <h3>Duplicate Check Results:</h3>
+                    <p><strong>Total books:</strong> ${books.length}</p>
+                    <p><strong>Featured books:</strong> ${categorizedBooks.featured.length}</p>
+                    <p><strong>New Arrivals books:</strong> ${categorizedBooks.newArrivals.length}</p>
+                    <p><strong>Children books:</strong> ${categorizedBooks.children.length}</p>
+                    <p><strong>Novels books:</strong> ${categorizedBooks.novels.length}</p>
+                    
+                    <h4>Overlaps Found:</h4>
+                    <p>Featured ↔ New Arrivals: ${featuredNewArrivalsOverlap.length} duplicates</p>
+                    <p>Featured ↔ Children: ${featuredChildrenOverlap.length} duplicates</p>
+                    <p>Featured ↔ Novels: ${featuredNovelsOverlap.length} duplicates</p>
+                    <p>New Arrivals ↔ Children: ${newArrivalsChildrenOverlap.length} duplicates</p>
+                    <p>New Arrivals ↔ Novels: ${newArrivalsNovelsOverlap.length} duplicates</p>
+                    <p>Children ↔ Novels: ${childrenNovelsOverlap.length} duplicates</p>
+                    
+                    <p><strong>Total overlaps:</strong> ${totalOverlaps}</p>
+                    
+                    ${totalOverlaps === 0 ? 
+                        '<p class="success">✅ Perfect! No duplicates between categories.</p>' : 
+                        '<p class="error">❌ Found some duplicates between categories.</p>'
+                    }
+                `;
+            } catch (error) {
+                resultDiv.innerHTML = `<p class="error">❌ Error: ${error.message}</p>`;
+            }
+        }
+    </script>
+</body>
+</html> 

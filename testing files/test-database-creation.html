@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test Database Creation</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; }
+        .test-section { margin: 20px 0; padding: 15px; border: 1px solid #ddd; border-radius: 5px; }
+        .success { color: green; }
+        .error { color: red; }
+        .info { color: blue; }
+        button { padding: 10px 15px; margin: 5px; background: #007bff; color: white; border: none; border-radius: 3px; cursor: pointer; }
+        button:hover { background: #0056b3; }
+        pre { background: #f8f9fa; padding: 10px; border-radius: 3px; overflow-x: auto; }
+    </style>
+</head>
+<body>
+    <h1>Test Database Creation</h1>
+    
+    <div class="test-section">
+        <h2>Test Admin Book API</h2>
+        <button onclick="testAdminBooks()">Test Admin Books API</button>
+        <div id="admin-result"></div>
+    </div>
+    
+    <div class="test-section">
+        <h2>Test Customer Book API</h2>
+        <button onclick="testCustomerBooks()">Test Customer Books API</button>
+        <div id="customer-result"></div>
+    </div>
+    
+    <div class="test-section">
+        <h2>Test Billing API</h2>
+        <button onclick="testBilling()">Test Billing API</button>
+        <div id="billing-result"></div>
+    </div>
+    
+    <div class="test-section">
+        <h2>Test Book Statistics</h2>
+        <button onclick="testBookStats()">Test Book Statistics</button>
+        <div id="stats-result"></div>
+    </div>
+
+    <script>
+        async function testAdminBooks() {
+            const resultDiv = document.getElementById('admin-result');
+            resultDiv.innerHTML = '<p class="info">Testing admin books API...</p>';
+            
+            try {
+                const response = await fetch('http://localhost:8080/api/books', {
+                    method: 'GET',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    }
+                });
+                
+                const data = await response.json();
+                resultDiv.innerHTML = `
+                    <p class="success">✅ Admin Books API working!</p>
+                    <pre>${JSON.stringify(data, null, 2)}</pre>
+                `;
+            } catch (error) {
+                resultDiv.innerHTML = `<p class="error">❌ Error: ${error.message}</p>`;
+            }
+        }
+        
+        async function testCustomerBooks() {
+            const resultDiv = document.getElementById('customer-result');
+            resultDiv.innerHTML = '<p class="info">Testing customer books API...</p>';
+            
+            try {
+                const response = await fetch('http://localhost:8080/api/customer/books', {
+                    method: 'GET',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    }
+                });
+                
+                const data = await response.json();
+                resultDiv.innerHTML = `
+                    <p class="success">✅ Customer Books API working!</p>
+                    <pre>${JSON.stringify(data, null, 2)}</pre>
+                `;
+            } catch (error) {
+                resultDiv.innerHTML = `<p class="error">❌ Error: ${error.message}</p>`;
+            }
+        }
+        
+        async function testBilling() {
+            const resultDiv = document.getElementById('billing-result');
+            resultDiv.innerHTML = '<p class="info">Testing billing API...</p>';
+            
+            try {
+                const response = await fetch('http://localhost:8080/api/bills', {
+                    method: 'GET',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    }
+                });
+                
+                const data = await response.json();
+                resultDiv.innerHTML = `
+                    <p class="success">✅ Billing API working!</p>
+                    <pre>${JSON.stringify(data, null, 2)}</pre>
+                `;
+            } catch (error) {
+                resultDiv.innerHTML = `<p class="error">❌ Error: ${error.message}</p>`;
+            }
+        }
+        
+        async function testBookStats() {
+            const resultDiv = document.getElementById('stats-result');
+            resultDiv.innerHTML = '<p class="info">Testing book statistics API...</p>';
+            
+            try {
+                const response = await fetch('http://localhost:8080/api/books/stats', {
+                    method: 'GET',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    }
+                });
+                
+                const data = await response.json();
+                resultDiv.innerHTML = `
+                    <p class="success">✅ Book Statistics API working!</p>
+                    <pre>${JSON.stringify(data, null, 2)}</pre>
+                `;
+            } catch (error) {
+                resultDiv.innerHTML = `<p class="error">❌ Error: ${error.message}</p>`;
+            }
+        }
+    </script>
+</body>
+</html> 

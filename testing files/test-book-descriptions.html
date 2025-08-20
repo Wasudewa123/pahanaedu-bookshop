@@ -1,0 +1,219 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test Book Descriptions</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; }
+        .test-section { margin: 20px 0; padding: 15px; border: 1px solid #ddd; border-radius: 5px; }
+        .book-card { 
+            border: 1px solid #ddd; 
+            padding: 15px; 
+            margin: 10px 0; 
+            border-radius: 8px; 
+            background: white;
+        }
+        .book-title { font-size: 18px; font-weight: bold; margin: 0 0 5px 0; }
+        .book-author { color: #666; margin: 0 0 10px 0; }
+        .book-desc { 
+            color: #333; 
+            margin: 10px 0; 
+            line-height: 1.4;
+            font-style: italic;
+        }
+        .book-price { font-size: 16px; font-weight: bold; color: #007bff; }
+        .test-instructions {
+            background: #e7f3ff;
+            padding: 15px;
+            border-radius: 8px;
+            margin: 20px 0;
+        }
+        .status-badge {
+            display: inline-block;
+            padding: 2px 8px;
+            border-radius: 12px;
+            font-size: 0.7rem;
+            font-weight: 600;
+            margin-left: 10px;
+        }
+        .in-stock { background: #d4edda; color: #155724; }
+        .low-stock { background: #fff3cd; color: #856404; }
+        .out-of-stock { background: #f8d7da; color: #721c24; }
+    </style>
+</head>
+<body>
+    <h1>Test Book Descriptions</h1>
+    
+    <div class="test-instructions">
+        <h3>Test Instructions:</h3>
+        <ol>
+            <li>Check if all books have descriptions displayed</li>
+            <li>Verify descriptions are meaningful and not placeholder text</li>
+            <li>Check if descriptions appear in both booklist and order pages</li>
+        </ol>
+    </div>
+    
+    <div class="test-section">
+        <h2>Sample Books with Descriptions</h2>
+        <div id="bookContainer">
+            <!-- Books will be loaded here -->
+        </div>
+    </div>
+
+    <script>
+        // Sample books with descriptions (same as in admin-dashboard.js)
+        const sampleBooks = [
+            {
+                id: '1',
+                title: 'HOT CHOCOLATE',
+                author: 'RUVINI SILVA',
+                price: 1000,
+                imageUrl: 'image/Book Shop.jpg',
+                category: 'Featured',
+                status: 'IN_STOCK',
+                stockQuantity: 15,
+                rating: 4.5,
+                ratingCount: 12,
+                format: 'Paperback',
+                isbn: '978-1234567890',
+                language: 'English',
+                publishedYear: 2024,
+                publisher: 'Pahana Books',
+                pages: 250,
+                description: 'A delightful story about friendship and adventure.'
+            },
+            {
+                id: '2',
+                title: 'The Farthest Shore',
+                author: 'Ursula K. Le Guin',
+                price: 1200,
+                imageUrl: 'image/Bookshop2.png',
+                category: 'Novels',
+                status: 'LOW_STOCK',
+                stockQuantity: 3,
+                rating: 4.8,
+                ratingCount: 25,
+                format: 'Hardcover',
+                isbn: '978-0987654321',
+                language: 'English',
+                publishedYear: 1972,
+                publisher: 'Atheneum',
+                pages: 272,
+                description: 'A fantasy novel about a young wizard\'s journey.'
+            },
+            {
+                id: '3',
+                title: 'Lord of the ring',
+                author: 'J.R.R. Tolkien',
+                price: 1500,
+                imageUrl: 'image/bookstore.webp',
+                category: 'Featured',
+                status: 'IN_STOCK',
+                stockQuantity: 20,
+                rating: 4.9,
+                ratingCount: 150,
+                format: 'Hardcover',
+                isbn: '978-1122334455',
+                language: 'English',
+                publishedYear: 1954,
+                publisher: 'Allen & Unwin',
+                pages: 423,
+                description: 'An epic fantasy novel about a quest to destroy a powerful ring.'
+            },
+            {
+                id: '4',
+                title: 'WISH',
+                author: 'Sameera Ekanayake',
+                price: 850,
+                imageUrl: 'image/Book Shop.jpg',
+                category: 'Children',
+                status: 'IN_STOCK',
+                stockQuantity: 8,
+                rating: 4.2,
+                ratingCount: 8,
+                format: 'Paperback',
+                isbn: '978-4455667788',
+                language: 'English',
+                publishedYear: 2023,
+                publisher: 'Pahana Books',
+                pages: 120,
+                description: 'A heartwarming children\'s story about making wishes come true.'
+            },
+            {
+                id: '5',
+                title: 'The Little Prince',
+                author: 'Antoine de Saint-Exupéry',
+                price: 950,
+                imageUrl: 'image/Bookshop2.png',
+                category: 'Children',
+                status: 'IN_STOCK',
+                stockQuantity: 12,
+                rating: 4.7,
+                ratingCount: 45,
+                format: 'Paperback',
+                isbn: '978-9988776655',
+                language: 'English',
+                publishedYear: 1943,
+                publisher: 'Reynal & Hitchcock',
+                pages: 96,
+                description: 'A timeless classic about love, friendship, and the meaning of life.'
+            }
+        ];
+        
+        // Initialize the page
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log("Test page loaded");
+            displayBooks();
+        });
+        
+        // Display books with descriptions (same logic as booklist.js)
+        function displayBooks() {
+            const container = document.getElementById('bookContainer');
+            
+            if (!container) {
+                console.error('Book container not found');
+                return;
+            }
+            
+            try {
+                container.innerHTML = sampleBooks.map(book => {
+                    // Determine stock status
+                    let stockStatus = '';
+                    let stockClass = '';
+                    
+                    if (book.stockQuantity > 0) {
+                        if (book.stockQuantity <= 5) {
+                            stockStatus = `Low Stock (${book.stockQuantity})`;
+                            stockClass = 'low-stock';
+                        } else {
+                            stockStatus = `In Stock (${book.stockQuantity})`;
+                            stockClass = 'in-stock';
+                        }
+                    } else {
+                        stockStatus = 'Out of Stock';
+                        stockClass = 'out-of-stock';
+                    }
+                    
+                    return `
+                        <div class="book-card">
+                            <div class="book-title">${book.title || 'Untitled'}</div>
+                            <div class="book-author">by ${book.author || 'Unknown Author'}</div>
+                            <div class="book-desc">${book.description || 'No description available'}</div>
+                            <div style="margin-top: 10px;">
+                                <span class="book-price">Rs. ${(book.price || 0).toFixed(2)}</span>
+                                <span class="status-badge ${stockClass}">${stockStatus}</span>
+                            </div>
+                        </div>
+                    `;
+                }).join("");
+                
+                console.log(`Successfully displayed ${sampleBooks.length} books with descriptions`);
+            } catch (error) {
+                console.error('Error displaying books:', error);
+                container.innerHTML = '<div class="error">Error displaying books.</div>';
+            }
+        }
+    </script>
+</body>
+</html> 

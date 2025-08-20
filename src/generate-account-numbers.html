@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Generate Account Numbers</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 50px auto;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+        .container {
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        h1 {
+            color: #333;
+            text-align: center;
+        }
+        button {
+            background: #007bff;
+            color: white;
+            padding: 12px 30px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+            margin: 10px;
+        }
+        button:hover {
+            background: #0056b3;
+        }
+        .customer-list {
+            margin-top: 20px;
+        }
+        .customer-item {
+            background: #f8f9fa;
+            padding: 15px;
+            margin: 10px 0;
+            border-radius: 5px;
+            border-left: 4px solid #007bff;
+        }
+        .account-number {
+            font-weight: bold;
+            color: #007bff;
+        }
+        .success {
+            background: #d4edda;
+            color: #155724;
+            padding: 15px;
+            border-radius: 5px;
+            margin: 10px 0;
+        }
+        .error {
+            background: #f8d7da;
+            color: #721c24;
+            padding: 15px;
+            border-radius: 5px;
+            margin: 10px 0;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Generate Account Numbers for Existing Customers</h1>
+        <p>This will add account numbers to all existing customers that don't have them.</p>
+        
+        <button onclick="generateAccountNumbers()">Generate Account Numbers</button>
+        <button onclick="loadCustomers()">Load All Customers</button>
+        
+        <div id="message"></div>
+        <div id="customer-list" class="customer-list"></div>
+    </div>
+
+    <script>
+        async function generateAccountNumbers() {
+            const messageDiv = document.getElementById('message');
+            messageDiv.innerHTML = '<div class="success">Generating account numbers...</div>';
+            
+            try {
+                const response = await fetch('http://localhost:8080/api/admin/customers');
+                
+                if (response.ok) {
+                    messageDiv.innerHTML = '<div class="success">✅ Account numbers generated successfully! Refresh the admin dashboard to see the changes.</div>';
+                    loadCustomers();
+                } else {
+                    messageDiv.innerHTML = '<div class="error">❌ Failed to generate account numbers</div>';
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                messageDiv.innerHTML = '<div class="error">❌ Connection error. Make sure the application is running.</div>';
+            }
+        }
+
+        async function loadCustomers() {
+            const customerListDiv = document.getElementById('customer-list');
+            customerListDiv.innerHTML = '<h3>Loading customers...</h3>';
+            
+            try {
+                const response = await fetch('http://localhost:8080/api/admin/customers');
+                
+                if (response.ok) {
+                    const customers = await response.json();
+                    displayCustomers(customers);
+                } else {
+                    customerListDiv.innerHTML = '<div class="error">Failed to load customers</div>';
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                customerListDiv.innerHTML = '<div class="error">Connection error. Make sure the application is running.</div>';
+            }
+        }
+
+        function displayCustomers(customers) {
+            const customerListDiv = document.getElementById('customer-list');
+            
+            if (customers.length === 0) {
+                customerListDiv.innerHTML = '<h3>No customers found</h3>';
+                return;
+            }
+            
+            let html = '<h3>All Customers:</h3>';
+            customers.forEach(customer => {
+                html += `
+                    <div class="customer-item">
+                        <p><strong>Name:</strong> ${customer.name || customer.username}</p>
+                        <p><strong>Email:</strong> ${customer.email || 'N/A'}</p>
+                        <p><strong>Account Number:</strong> <span class="account-number">${customer.accountNumber || 'Not assigned'}</span></p>
+                        <p><strong>ID:</strong> ${customer.id}</p>
+                    </div>
+                `;
+            });
+            
+            customerListDiv.innerHTML = html;
+        }
+
+        // Load customers on page load
+        window.onload = function() {
+            loadCustomers();
+        };
+    </script>
+</body>
+</html> 

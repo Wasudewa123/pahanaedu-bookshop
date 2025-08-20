@@ -1,0 +1,26 @@
+{
+  "_id": {
+    "$oid": "68893092cbdbddd3945121ae"
+  },
+  "bookId": "test-book-123",
+  "bookTitle": "Test Book with All Fields",
+  "firstName": "John",
+  "lastName": "Doe",
+  "customerName": "John Doe",
+  "email": "test@example.com",
+  "phone": "+94 711304050",
+  "quantity": 1,
+  "totalPrice": 1500,
+  "paymentMethod": "CASH_ON_DELIVERY",
+  "company": "Test Company",
+  "streetAddress": "123 Test Street",
+  "city": "Colombo",
+  "postalCode": "10250",
+  "country": "Sri Lanka",
+  "state": "Western Province",
+  "orderDate": {
+    "$date": "2025-07-29T20:45:00.000Z"
+  },
+  "status": "PENDING",
+  "_class": "com.example.demo.model.Order"
+} 

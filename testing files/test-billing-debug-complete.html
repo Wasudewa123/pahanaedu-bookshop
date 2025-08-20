@@ -1,0 +1,777 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Billing System Debug - Pahana Book Shop</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 2rem;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+            overflow: hidden;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 2rem;
+            text-align: center;
+        }
+
+        .header h1 {
+            font-size: 2.5rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .header p {
+            font-size: 1.1rem;
+            opacity: 0.9;
+        }
+
+        .section {
+            padding: 2rem;
+            border-bottom: 1px solid #e2e8f0;
+        }
+
+        .section:last-child {
+            border-bottom: none;
+        }
+
+        .section h3 {
+            color: #2d3748;
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .button {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 0.75rem 1.5rem;
+            border-radius: 10px;
+            cursor: pointer;
+            font-size: 1rem;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            margin: 0.5rem;
+        }
+
+        .button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(0,0,0,0.2);
+        }
+
+        .button.success {
+            background: linear-gradient(135deg, #48bb78 0%, #38a169 100%);
+        }
+
+        .button.error {
+            background: linear-gradient(135deg, #f56565 0%, #e53e3e 100%);
+        }
+
+        .button.warning {
+            background: linear-gradient(135deg, #ed8936 0%, #dd6b20 100%);
+        }
+
+        .result {
+            margin: 1rem 0;
+            padding: 1rem;
+            border-radius: 10px;
+            border-left: 4px solid;
+        }
+
+        .result.success {
+            background: #f0fff4;
+            border-color: #48bb78;
+            color: #2f855a;
+        }
+
+        .result.error {
+            background: #fed7d7;
+            border-color: #f56565;
+            color: #c53030;
+        }
+
+        .result.warning {
+            background: #fef5e7;
+            border-color: #ed8936;
+            color: #c05621;
+        }
+
+        .result.info {
+            background: #ebf8ff;
+            border-color: #4299e1;
+            color: #2b6cb0;
+        }
+
+        .loading {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            color: #4a5568;
+        }
+
+        .form-group {
+            margin-bottom: 1rem;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 500;
+            color: #2d3748;
+        }
+
+        .form-group input, .form-group select {
+            width: 100%;
+            padding: 0.75rem;
+            border: 2px solid #e2e8f0;
+            border-radius: 8px;
+            font-size: 1rem;
+            transition: border-color 0.3s ease;
+        }
+
+        .form-group input:focus, .form-group select:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1rem;
+        }
+
+        .debug-data {
+            background: #f7fafc;
+            border: 1px solid #e2e8f0;
+            border-radius: 8px;
+            padding: 1rem;
+            margin: 1rem 0;
+            font-family: 'Courier New', monospace;
+            font-size: 0.9rem;
+            max-height: 300px;
+            overflow-y: auto;
+        }
+
+        .customer-list {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            gap: 1rem;
+            margin: 1rem 0;
+        }
+
+        .customer-item {
+            background: #f7fafc;
+            border: 2px solid #e2e8f0;
+            border-radius: 10px;
+            padding: 1rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .customer-item:hover {
+            border-color: #667eea;
+            background: #edf2f7;
+        }
+
+        .customer-item.selected {
+            border-color: #667eea;
+            background: #ebf8ff;
+        }
+
+        .book-item {
+            background: #f7fafc;
+            border: 2px solid #e2e8f0;
+            border-radius: 10px;
+            padding: 1rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .book-item:hover {
+            border-color: #667eea;
+            background: #edf2f7;
+        }
+
+        .book-item.selected {
+            border-color: #667eea;
+            background: #ebf8ff;
+        }
+
+        .bill-items {
+            margin: 1rem 0;
+        }
+
+        .bill-item {
+            background: #f7fafc;
+            border: 1px solid #e2e8f0;
+            border-radius: 8px;
+            padding: 1rem;
+            margin: 0.5rem 0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .bill-item button {
+            background: #f56565;
+            color: white;
+            border: none;
+            padding: 0.25rem 0.5rem;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1><i class="fas fa-bug"></i> Billing System Debug Tool</h1>
+            <p>Comprehensive debugging for the Pahana Book Shop billing system</p>
+        </div>
+
+        <div class="section">
+            <h3><i class="fas fa-server"></i> Step 1: Backend Status Check</h3>
+            <button class="button" onclick="checkBackendStatus()">
+                <i class="fas fa-server"></i> Check Backend Status
+            </button>
+            <div id="backend-result"></div>
+        </div>
+
+        <div class="section">
+            <h3><i class="fas fa-database"></i> Step 2: Database Check</h3>
+            <button class="button" onclick="checkDatabase()">
+                <i class="fas fa-database"></i> Check Database Collections
+            </button>
+            <div id="database-result"></div>
+        </div>
+
+        <div class="section">
+            <h3><i class="fas fa-users"></i> Step 3: Customer Check</h3>
+            <button class="button" onclick="checkCustomers()">
+                <i class="fas fa-users"></i> Check All Customers
+            </button>
+            <div id="customers-result"></div>
+        </div>
+
+        <div class="section">
+            <h3><i class="fas fa-book"></i> Step 4: Book Check</h3>
+            <button class="button" onclick="checkBooks()">
+                <i class="fas fa-book"></i> Check All Books
+            </button>
+            <div id="books-result"></div>
+        </div>
+
+        <div class="section">
+            <h3><i class="fas fa-file-invoice"></i> Step 5: Bill Generation Test</h3>
+            
+            <div class="form-row">
+                <div class="form-group">
+                    <label>Customer Account Number</label>
+                    <input type="text" id="test-account" placeholder="Enter account number">
+                </div>
+                <div class="form-group">
+                    <label>Customer Name</label>
+                    <input type="text" id="test-customer-name" readonly>
+                </div>
+            </div>
+
+            <button class="button" onclick="testCustomerFetch()">
+                <i class="fas fa-search"></i> Test Customer Fetch
+            </button>
+
+            <div class="form-row">
+                <div class="form-group">
+                    <label>Select Book</label>
+                    <select id="test-book-select">
+                        <option value="">Choose a book...</option>
+                        <option value="1">The Great Gatsby - Rs. 1500</option>
+                        <option value="2">To Kill a Mockingbird - Rs. 1200</option>
+                        <option value="3">1984 - Rs. 1800</option>
+                        <option value="4">Pride and Prejudice - Rs. 1000</option>
+                        <option value="5">The Hobbit - Rs. 1600</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Quantity</label>
+                    <input type="number" id="test-quantity" value="1" min="1">
+                </div>
+            </div>
+
+            <button class="button" onclick="addTestItem()">
+                <i class="fas fa-plus"></i> Add Test Item
+            </button>
+
+            <div id="test-items"></div>
+
+            <button class="button success" onclick="testBillGeneration()">
+                <i class="fas fa-calculator"></i> Test Bill Generation
+            </button>
+
+            <div id="bill-test-result"></div>
+        </div>
+
+        <div class="section">
+            <h3><i class="fas fa-code"></i> Step 6: Debug Data</h3>
+            <button class="button" onclick="showDebugData()">
+                <i class="fas fa-code"></i> Show Debug Data
+            </button>
+            <div id="debug-data" class="debug-data"></div>
+        </div>
+    </div>
+
+    <script>
+        // Global variables
+        let debugData = {
+            backendStatus: null,
+            customers: [],
+            books: [],
+            bills: [],
+            selectedCustomer: null,
+            testItems: []
+        };
+
+        // Step 1: Check Backend Status
+        async function checkBackendStatus() {
+            const resultDiv = document.getElementById('backend-result');
+            resultDiv.innerHTML = '<div class="loading"><i class="fas fa-spinner fa-spin"></i> Checking backend...</div>';
+            
+            try {
+                const response = await fetch('http://localhost:8080/api/admin/customers');
+                if (response.ok) {
+                    debugData.backendStatus = 'running';
+                    resultDiv.innerHTML = `
+                        <div class="result success">
+                            <h4><i class="fas fa-check-circle"></i> Backend is Running</h4>
+                            <p><strong>Status:</strong> ✅ Connected successfully</p>
+                            <p><strong>Response Time:</strong> ${response.headers.get('date') || 'N/A'}</p>
+                        </div>
+                    `;
+                } else {
+                    debugData.backendStatus = 'error';
+                    resultDiv.innerHTML = `
+                        <div class="result error">
+                            <h4><i class="fas fa-times-circle"></i> Backend Error</h4>
+                            <p><strong>Status:</strong> ❌ HTTP ${response.status}</p>
+                            <p><strong>Message:</strong> ${response.statusText}</p>
+                        </div>
+                    `;
+                }
+            } catch (error) {
+                debugData.backendStatus = 'error';
+                resultDiv.innerHTML = `
+                    <div class="result error">
+                        <h4><i class="fas fa-times-circle"></i> Backend Connection Failed</h4>
+                        <p><strong>Error:</strong> ${error.message}</p>
+                        <p><strong>Solution:</strong> Make sure the Spring Boot application is running on port 8080</p>
+                    </div>
+                `;
+            }
+        }
+
+        // Step 2: Check Database
+        async function checkDatabase() {
+            const resultDiv = document.getElementById('database-result');
+            resultDiv.innerHTML = '<div class="loading"><i class="fas fa-spinner fa-spin"></i> Checking database...</div>';
+            
+            try {
+                // Check customers
+                const customersResponse = await fetch('http://localhost:8080/api/admin/customers');
+                const customers = customersResponse.ok ? await customersResponse.json() : [];
+                
+                // Check books
+                const booksResponse = await fetch('http://localhost:8080/api/admin/books');
+                const books = booksResponse.ok ? await booksResponse.json() : [];
+                
+                // Check bills
+                const billsResponse = await fetch('http://localhost:8080/api/admin/bills');
+                const bills = billsResponse.ok ? await billsResponse.json() : [];
+                
+                debugData.customers = customers;
+                debugData.books = books;
+                debugData.bills = bills;
+                
+                resultDiv.innerHTML = `
+                    <div class="result success">
+                        <h4><i class="fas fa-check-circle"></i> Database Collections</h4>
+                        <p><strong>Customers:</strong> ${customers.length} records</p>
+                        <p><strong>Books:</strong> ${books.length} records</p>
+                        <p><strong>Bills:</strong> ${bills.length} records</p>
+                    </div>
+                `;
+            } catch (error) {
+                resultDiv.innerHTML = `
+                    <div class="result error">
+                        <h4><i class="fas fa-times-circle"></i> Database Check Failed</h4>
+                        <p><strong>Error:</strong> ${error.message}</p>
+                    </div>
+                `;
+            }
+        }
+
+        // Step 3: Check Customers
+        async function checkCustomers() {
+            const resultDiv = document.getElementById('customers-result');
+            resultDiv.innerHTML = '<div class="loading"><i class="fas fa-spinner fa-spin"></i> Loading customers...</div>';
+            
+            try {
+                const response = await fetch('http://localhost:8080/api/admin/customers');
+                if (response.ok) {
+                    const customers = await response.json();
+                    debugData.customers = customers;
+                    
+                    if (customers.length > 0) {
+                        let html = '<div class="customer-list">';
+                        customers.forEach(customer => {
+                            html += `
+                                <div class="customer-item" onclick="selectTestCustomer('${customer.accountNumber}')">
+                                    <strong>${customer.name}</strong><br>
+                                    <small>${customer.accountNumber}</small><br>
+                                    <small>${customer.email || 'No email'}</small>
+                                </div>
+                            `;
+                        });
+                        html += '</div>';
+                        
+                        resultDiv.innerHTML = `
+                            <div class="result success">
+                                <h4><i class="fas fa-check-circle"></i> Customers Found</h4>
+                                <p><strong>Total:</strong> ${customers.length} customers</p>
+                                ${html}
+                            </div>
+                        `;
+                    } else {
+                        resultDiv.innerHTML = `
+                            <div class="result warning">
+                                <h4><i class="fas fa-exclamation-triangle"></i> No Customers Found</h4>
+                                <p>There are no customers in the database.</p>
+                                <button class="button" onclick="addTestCustomer()">Add Test Customer</button>
+                            </div>
+                        `;
+                    }
+                } else {
+                    resultDiv.innerHTML = `
+                        <div class="result error">
+                            <h4><i class="fas fa-times-circle"></i> Failed to Load Customers</h4>
+                            <p><strong>Status:</strong> ${response.status}</p>
+                        </div>
+                    `;
+                }
+            } catch (error) {
+                resultDiv.innerHTML = `
+                    <div class="result error">
+                        <h4><i class="fas fa-times-circle"></i> Error Loading Customers</h4>
+                        <p><strong>Error:</strong> ${error.message}</p>
+                    </div>
+                `;
+            }
+        }
+
+        // Step 4: Check Books
+        async function checkBooks() {
+            const resultDiv = document.getElementById('books-result');
+            resultDiv.innerHTML = '<div class="loading"><i class="fas fa-spinner fa-spin"></i> Loading books...</div>';
+            
+            try {
+                const response = await fetch('http://localhost:8080/api/admin/books');
+                if (response.ok) {
+                    const books = await response.json();
+                    debugData.books = books;
+                    
+                    if (books.length > 0) {
+                        let html = '<div class="customer-list">';
+                        books.slice(0, 5).forEach(book => {
+                            html += `
+                                <div class="book-item">
+                                    <strong>${book.title}</strong><br>
+                                    <small>Rs. ${book.price}</small><br>
+                                    <small>Stock: ${book.stockQuantity}</small>
+                                </div>
+                            `;
+                        });
+                        html += '</div>';
+                        
+                        resultDiv.innerHTML = `
+                            <div class="result success">
+                                <h4><i class="fas fa-check-circle"></i> Books Found</h4>
+                                <p><strong>Total:</strong> ${books.length} books</p>
+                                ${html}
+                            </div>
+                        `;
+                    } else {
+                        resultDiv.innerHTML = `
+                            <div class="result warning">
+                                <h4><i class="fas fa-exclamation-triangle"></i> No Books Found</h4>
+                                <p>There are no books in the database.</p>
+                            </div>
+                        `;
+                    }
+                } else {
+                    resultDiv.innerHTML = `
+                        <div class="result error">
+                            <h4><i class="fas fa-times-circle"></i> Failed to Load Books</h4>
+                            <p><strong>Status:</strong> ${response.status}</p>
+                        </div>
+                    `;
+                }
+            } catch (error) {
+                resultDiv.innerHTML = `
+                    <div class="result error">
+                        <h4><i class="fas fa-times-circle"></i> Error Loading Books</h4>
+                        <p><strong>Error:</strong> ${error.message}</p>
+                    </div>
+                `;
+            }
+        }
+
+        // Step 5: Bill Generation Test
+        function selectTestCustomer(accountNumber) {
+            const customer = debugData.customers.find(c => c.accountNumber === accountNumber);
+            if (customer) {
+                debugData.selectedCustomer = customer;
+                document.getElementById('test-account').value = customer.accountNumber;
+                document.getElementById('test-customer-name').value = customer.name;
+                
+                // Update visual selection
+                document.querySelectorAll('.customer-item').forEach(item => {
+                    item.classList.remove('selected');
+                });
+                event.target.closest('.customer-item').classList.add('selected');
+                
+                alert(`Customer selected: ${customer.name} (${customer.accountNumber})`);
+            }
+        }
+
+        async function testCustomerFetch() {
+            const accountNumber = document.getElementById('test-account').value;
+            if (!accountNumber) {
+                alert('Please enter an account number');
+                return;
+            }
+            
+            try {
+                const response = await fetch(`http://localhost:8080/api/billing/customer/${accountNumber}`);
+                if (response.ok) {
+                    const data = await response.json();
+                    if (data.success) {
+                        debugData.selectedCustomer = data.customer;
+                        document.getElementById('test-customer-name').value = data.customer.name;
+                        alert(`Customer found: ${data.customer.name}`);
+                    } else {
+                        alert('Customer not found');
+                    }
+                } else {
+                    alert('Error fetching customer');
+                }
+            } catch (error) {
+                alert(`Error: ${error.message}`);
+            }
+        }
+
+        function addTestItem() {
+            const bookSelect = document.getElementById('test-book-select');
+            const quantity = document.getElementById('test-quantity').value;
+            
+            if (!bookSelect.value) {
+                alert('Please select a book');
+                return;
+            }
+            
+            const books = [
+                { id: '1', title: 'The Great Gatsby', price: 1500 },
+                { id: '2', title: 'To Kill a Mockingbird', price: 1200 },
+                { id: '3', title: '1984', price: 1800 },
+                { id: '4', title: 'Pride and Prejudice', price: 1000 },
+                { id: '5', title: 'The Hobbit', price: 1600 }
+            ];
+            
+            const selectedBook = books.find(b => b.id === bookSelect.value);
+            const item = {
+                id: selectedBook.id,
+                title: selectedBook.title,
+                quantity: parseInt(quantity),
+                price: selectedBook.price
+            };
+            
+            debugData.testItems.push(item);
+            updateTestItemsDisplay();
+        }
+
+        function updateTestItemsDisplay() {
+            const container = document.getElementById('test-items');
+            if (debugData.testItems.length === 0) {
+                container.innerHTML = '<p>No items added</p>';
+                return;
+            }
+            
+            let html = '<div class="bill-items">';
+            debugData.testItems.forEach((item, index) => {
+                html += `
+                    <div class="bill-item">
+                        <span>${item.title} x ${item.quantity} = Rs. ${item.price * item.quantity}</span>
+                        <button onclick="removeTestItem(${index})">Remove</button>
+                    </div>
+                `;
+            });
+            html += '</div>';
+            container.innerHTML = html;
+        }
+
+        function removeTestItem(index) {
+            debugData.testItems.splice(index, 1);
+            updateTestItemsDisplay();
+        }
+
+        async function testBillGeneration() {
+            if (!debugData.selectedCustomer) {
+                alert('Please select a customer first');
+                return;
+            }
+            
+            if (debugData.testItems.length === 0) {
+                alert('Please add at least one item');
+                return;
+            }
+            
+            const resultDiv = document.getElementById('bill-test-result');
+            resultDiv.innerHTML = '<div class="loading"><i class="fas fa-spinner fa-spin"></i> Generating bill...</div>';
+            
+            // Calculate totals
+            const subtotal = debugData.testItems.reduce((sum, item) => sum + (item.price * item.quantity), 0);
+            const discount = 0;
+            const tax = 0;
+            const total = subtotal + tax - discount;
+            
+            const billData = {
+                customerAccountNumber: debugData.selectedCustomer.accountNumber,
+                items: debugData.testItems.map(item => ({
+                    bookId: item.id,
+                    title: item.title,
+                    quantity: item.quantity,
+                    price: item.price
+                })),
+                subtotal: subtotal,
+                discount: discount,
+                tax: tax,
+                total: total,
+                paymentMethod: 'cash',
+                transactionId: '',
+                adminNotes: 'Test bill from debug tool'
+            };
+            
+            try {
+                const response = await fetch('http://localhost:8080/api/billing/generate', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(billData)
+                });
+                
+                if (response.ok) {
+                    const result = await response.json();
+                    if (result.success) {
+                        resultDiv.innerHTML = `
+                            <div class="result success">
+                                <h4><i class="fas fa-check-circle"></i> Bill Generated Successfully!</h4>
+                                <p><strong>Bill Number:</strong> ${result.bill.billNumber}</p>
+                                <p><strong>Customer:</strong> ${result.bill.customerName}</p>
+                                <p><strong>Total:</strong> Rs. ${result.bill.total}</p>
+                                <p><strong>Message:</strong> ${result.message}</p>
+                            </div>
+                        `;
+                    } else {
+                        resultDiv.innerHTML = `
+                            <div class="result error">
+                                <h4><i class="fas fa-times-circle"></i> Bill Generation Failed</h4>
+                                <p><strong>Error:</strong> ${result.message}</p>
+                            </div>
+                        `;
+                    }
+                } else {
+                    const errorText = await response.text();
+                    resultDiv.innerHTML = `
+                        <div class="result error">
+                            <h4><i class="fas fa-times-circle"></i> Bill Generation Failed</h4>
+                            <p><strong>Status:</strong> ${response.status}</p>
+                            <p><strong>Response:</strong> ${errorText}</p>
+                        </div>
+                    `;
+                }
+            } catch (error) {
+                resultDiv.innerHTML = `
+                    <div class="result error">
+                        <h4><i class="fas fa-times-circle"></i> Bill Generation Error</h4>
+                        <p><strong>Error:</strong> ${error.message}</p>
+                    </div>
+                `;
+            }
+        }
+
+        // Step 6: Debug Data
+        function showDebugData() {
+            const debugDiv = document.getElementById('debug-data');
+            debugDiv.innerHTML = `
+                <h4>Debug Information</h4>
+                <pre>${JSON.stringify(debugData, null, 2)}</pre>
+            `;
+        }
+
+        // Add test customer function
+        async function addTestCustomer() {
+            const testCustomer = {
+                accountNumber: 'ACC' + Date.now(),
+                name: 'Test Customer',
+                email: 'test@example.com',
+                phone: '1234567890',
+                address: 'Test Address'
+            };
+            
+            try {
+                const response = await fetch('http://localhost:8080/api/admin/customers', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(testCustomer)
+                });
+                
+                if (response.ok) {
+                    alert('Test customer added successfully!');
+                    checkCustomers(); // Refresh the customer list
+                } else {
+                    alert('Failed to add test customer');
+                }
+            } catch (error) {
+                alert(`Error: ${error.message}`);
+            }
+        }
+
+        // Initialize
+        document.addEventListener('DOMContentLoaded', function() {
+            checkBackendStatus();
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,437 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Pahana Edu Bookshop</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="landingpage.css">
+  <style>
+        /* Custom Scrollbar for better UI */
+    ::-webkit-scrollbar {
+      width: 8px;
+      height: 8px;
+    }
+    ::-webkit-scrollbar-thumb {
+      background: #9ca3af;
+      border-radius: 4px;
+    }
+    ::-webkit-scrollbar-track {
+      background: #f3f4f6;
+    }
+    /* Custom badge styles */
+
+    .badge-services {
+      
+      font-size: 25px;
+      font-family: Cambria, Cochin, Georgia, Times, 'Times New Roman', serif;
+      color: #0a1afd;
+      font-weight: bold;
+      letter-spacing: 0.08em;
+      box-shadow: 0 1.5px 8px rgba(45, 41, 245, 0.74);
+    }
+    /* Icon backgrounds with gradient and slight shadow */
+    .icon-bg {
+      background: linear-gradient(135deg, #3b82f6, #60a5fa);
+      filter: drop-shadow(0 1px 1px rgba(0,0,0,0.1));
+    }
+    .icon-bg.billing {
+      background: linear-gradient(135deg, #10b981, #34d399);
+    }
+    .icon-bg.books {
+      background: linear-gradient(135deg, #8b5cf6, #a78bfa);
+    }
+    .icon-bg.delivery {
+      background: linear-gradient(135deg, #f97316, #fb923c);
+    }
+
+
+
+
+    /* Custom Gradient Background Animations */
+    @keyframes gradientShift {
+      0% {
+        background-position: 0% 50%;
+      }
+
+      50% {
+        background-position: 100% 50%;
+      }
+
+      100% {
+        background-position: 0% 50%;
+      }
+    }
+
+    .animated-gradient {
+      background: linear-gradient(-45deg, #020474, #6257ff, #3498db, #1abc9c);
+      background-size: 400% 400%;
+      animation: gradientShift 15s ease infinite;
+    }
+
+    /* Icon style for feature boxes */
+    .feature-icon {
+      background: linear-gradient(135deg, #6ee7b7, #3b82f6);
+      color: white;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 0.75rem;
+      width: 3.5rem;
+      height: 3.5rem;
+      font-size: 1.75rem;
+      box-shadow: 0 4px 15px rgb(59 130 246 / 0.4);
+      transition: background 0.35s ease;
+    }
+
+    .feature-icon:hover {
+      background: linear-gradient(135deg, #3b82f6, #6ee7b7);
+    }
+
+    /* Smooth shadow and scale on cards on hover */
+    .card-hover:hover {
+      box-shadow: 0 15px 35px rgba(59, 130, 246, 0.3);
+      transform: translateY(-8px);
+      transition: all 0.3s ease;
+    }
+
+    /* Button gradient styles */
+    .btn-gradient {
+      background-image: linear-gradient(90deg, #667eea 0%, #764ba2 100%);
+      color: white;
+    }
+
+    .btn-gradient:hover {
+      background-image: linear-gradient(90deg, #764ba2 0%, #667eea 100%);
+      color: white;
+    }
+
+    /* Accessibility focus ring for buttons */
+    button:focus-visible {
+      outline-offset: 4px;
+      outline: 3px solid #2563eb;
+    }
+  </style>
+  
+</head>
+<body class="bg-gray-50 text-gray-800 antialiased font-sans">
+  <header>
+    <h1>Pahana Edu Bookshop</h1>
+    <p>Colombo’s most trusted educational partner — premium books, seamless billing, and exceptional service!</p>
+    <nav>
+      <a href="login.html">Get Started</a>
+      <a href="register.html">Create Account</a>
+      <a href="booklist.html">Browse Books</a>
+    </nav>
+  </header>
+
+    <!--navbar-->
+  <section class="first-section">
+
+    <div class="containerrrrr">
+    <div class="nav-bar">
+        <ul class="menu">
+          <li><a href="#Home">Home</a></li>
+          <li><a href="#Serices">Services</a></li>
+          <li><a href="#About">About</a></li>
+          <li><a href="#Blog">Blog</a></li>
+          <li><a href="#Fetures">Fetures</a></li>
+          <li><a href="contact.html">Contact</a></li>
+
+        </ul>
+      </div>
+
+    <div class="backq">
+        <h1 class="title"><span class="highlight2">Pahana</span>Edu</h1>
+        <p class="title2">The Book Shop</p>
+    </div>
+
+    <div class="home">
+        <h1 class="title-1">
+          Discover new horizons with <span class="highlight1"> Pahana Edu Publications</span>  <br/>Your gateway knowledge. 
+    </h1>
+    <p>Signup To Be The First To Hear About Exclusive Deals, <br/>Special Offers And Upcoming Collections</p>
+    <a href="#" class="log-btn">Login Now</a>
+    
+    </div>
+  
+  </section>
+ 
+  <!-- Services Section -->
+  <section class="py-16 px-6 max-w-6xl mx-auto">
+    <div class="mb-6">
+      <span class="badge-services">OUR SERVICES</span>
+    </div>
+    <h2 class="text-3xl sm:text-4xl font-extrabold text-gray-900 max-w-4xl mx-auto text-center">
+      Everything You Need to Succeed
+    </h2>
+    <p class="mt-2 mb-12 text-gray-600 max-w-3xl mx-auto text-center">
+      Comprehensive educational solutions designed to empower your learning journey
+    </p>
+    <div class="grid grid-cols-1 sm:grid-cols-2 gap-8 max-w-5xl mx-auto">
+      <!-- Account Management -->
+      <article class="p-6 bg-indigo-100 rounded-lg shadow-md hover:shadow-lg transition-shadow cursor-default select-none">
+        <div class="flex items-center mb-4">
+          <div class="icon-bg p-3 rounded-lg mr-4">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-7 w-7 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" aria-hidden="true">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M12 11c-1.657 0-3 1.343-3 3v3h6v-3c0-1.657-1.343-3-3-3z" />
+              <path stroke-linecap="round" stroke-linejoin="round" d="M12 5a4 4 0 00-4 4v1a4 4 0 008 0V9a4 4 0 00-4-4z" />
+            </svg>
+          </div>
+          <h3 class="text-indigo-900 font-semibold text-lg leading-tight">Account Management</h3>
+        </div>
+        <p class="text-indigo-900 text-sm leading-relaxed">
+          Effortless creation and management of your personalized bookshop account on our trusted platform.
+        </p>
+      </article>
+
+      <!-- Smart Billing -->
+      <article class="p-6 bg-green-50 rounded-lg shadow-md hover:shadow-lg transition-shadow cursor-default select-none">
+        <div class="flex items-center mb-4">
+          <div class="icon-bg billing p-3 rounded-lg mr-4">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-7 w-7 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" aria-hidden="true">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M12 8V4m0 0a4 4 0 014 4v4a4 4 0 11-8 0V8a4 4 0 014-4z" />
+              <path stroke-linecap="round" stroke-linejoin="round" d="M12 20v-4" />
+            </svg>
+          </div>
+          <h3 class="text-green-900 font-semibold text-lg leading-tight">Smart Billing</h3>
+        </div>
+        <p class="text-green-900 text-sm leading-relaxed">
+          Lightning-fast custom billing and invoicing tailored for your purchases and subscriptions.
+        </p>
+      </article>
+
+      <!-- Premium Books -->
+      <article class="p-6 bg-purple-50 rounded-lg shadow-md hover:shadow-lg transition-shadow cursor-default select-none">
+        <div class="flex items-center mb-4">
+          <div class="icon-bg books p-3 rounded-lg mr-4">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-7 w-7 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" aria-hidden="true">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M4 19h16M4 19a2 2 0 012-2h12a2 2 0 012 2" />
+              <path stroke-linecap="round" stroke-linejoin="round" d="M4 15a4 4 0 014-4h8a4 4 0 014 4" />
+            </svg>
+          </div>
+          <h3 class="text-purple-900 font-semibold text-lg leading-tight">Premium Books</h3>
+        </div>
+        <p class="text-purple-900 text-sm leading-relaxed">
+          Extensive collection of authentic and premium academic textbooks and resources.
+        </p>
+      </article>
+
+      <!-- Fast Delivery -->
+      <article class="p-6 bg-orange-50 rounded-lg shadow-md hover:shadow-lg transition-shadow cursor-default select-none">
+        <div class="flex items-center mb-4">
+          <div class="icon-bg delivery p-3 rounded-lg mr-4">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-7 w-7 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" aria-hidden="true">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M3 16v-1a4 4 0 014-4h10a4 4 0 014 4v1" />
+              <path stroke-linecap="round" stroke-linejoin="round" d="M5 20h14l1-4H4l1 4z" />
+              <circle cx="6" cy="20" r="2" />
+              <circle cx="18" cy="20" r="2" />
+              <path stroke-linecap="round" stroke-linejoin="round" d="M16 16v-4a4 4 0 00-8 0v4" />
+            </svg>
+          </div>
+          <h3 class="text-orange-900 font-semibold text-lg leading-tight">Fast Delivery</h3>
+        </div>
+        <p class="text-orange-900 text-sm leading-relaxed">
+          Quick and reliable shipment of your learning materials, straight to your doorstep.
+        </p>
+      </article>
+    </div>
+  </section>
+
+  <section class="features">
+    <div class="feature-box">
+      <h3 class="box1">24/7</h3>
+      <p class="p1">Customer Support</p>
+    </div>
+    <div class="feature-box">
+      <h3 class="box1">FREE</h3>
+      <p class="p1">Incredible Delivery</p>
+    </div>
+    <div class="feature-box">
+      <h3 class="box1">15+</h3>
+      <p class="p1">Years Experience</p>
+    </div>
+    <div class="feature-box">
+      <h3 class="box1">100%</h3>
+      <p class="p1">Secure Payments</p>
+    </div>
+  </section>
+
+  <section class="about-modern">
+    <div class="about-modern-container">
+      <div class="about-modern-left">
+        <div class="about-modern-title-bar">
+          <span class="about-modern-accent"></span>
+          <h1 class="mainabouttitle">About Us</h1>
+        </div>
+        <h2 class="about-modern-headline">Your Educational <span class="highlight3">Success Partner</span></h2>
+        <p class="about-modern-text">
+          "At Pahana Edu, we've been transforming educational experiences in Colombo for over a decade. As a trusted name in the academic retail sector, we specialize in providing a wide array of school, university, and professional books tailored to the needs of every learner.<br><br>
+          Our cutting-edge online platform seamlessly integrates premium educational resources with intelligent customer account management, enabling efficient, paperless billing and personalized service. Whether you’re a student, parent, or educator, we make learning accessible, affordable, and student-friendly.<br><br>
+          From smart billing to curated book collections, we are committed to delivering excellence with every order. Discover the difference with Pahana Edu — where knowledge meets innovation."
+        </p>
+      </div>
+    </div>
+    <div class="about-slider-legacy-container">
+      <div class="container3">
+        <div class="slide">
+          <div class="item" style="background-image: url(image/bookstore.webp);">
+            <div class="content">
+              <div class="name">Free or membership-based access to books</div>
+              <div class="des">we believe knowledge should be within everyone’s reach. That’s why our indoor library offers flexible access options whether you’re a casual visitor or a regular reader.</div>
+            </div>
+          </div>
+          <div class="item" style="background-image: url(image/service4.jpg);">
+            <div class="content">
+              <div class="name">Quiet study-friendly environment</div>
+              <div class="des">we’ve crafted a calm and welcoming space where students, readers, and professionals can fully immerse themselves in their work or reading — free from distractions.</div>
+            </div>
+          </div>
+          <div class="item" style="background-image: url(image/service8.avif);">
+            <div class="content">
+              <div class="name">Stationery and educational materials</div>
+              <div class="des"> we go beyond books! Our shop is fully stocked with a wide range of educational supplies to support students.</div>
+            </div>
+          </div>
+          <div class="item" style="background-image: url(image/service5.png);">
+            <div class="content">
+              <div class="name">Quiet study zones</div>
+              <div class="des">Our Quiet Study Zones are specially designed for students and readers who crave a calm and distraction-free environment to concentrate on their work.</div>
+            </div>
+          </div>
+          <div class="item" style="background-image: url(image/service6.jpg);">
+            <div class="content">
+              <div class="name">Enjoyable Rest Room Experience</div>
+              <div class="des">we provide a clean, modern, and enjoyable rest room facility to make your time with us even more relaxing.</div>
+            </div>
+          </div>
+          <div class="item" style="background-image: url(image/service7.webp);">
+            <div class="content">
+              <div class="name">Comfortable indoor seating</div>
+              <div class="des">we’ve created a cozy, quiet indoor reading space right inside our bookshop — a peaceful corner where knowledge meets comfort..</div>
+            </div>
+          </div>
+        </div>
+        <div class="Arrow">
+          <button class="wasu"><</button>
+          <button class="pasan1">></button>
+        </div>
+      </div>
+    </div>
+  </section>
+
+<!-- Advantage Section -->
+  <section id="advantages" class="animated-gradient text-white py-20 px-6 select-none">
+    <div class="max-w-5xl mx-auto">
+      <div class="inline-block bg-white/30 text-white py-1 px-4 rounded-full font-semibold text-sm uppercase mb-6">
+        Why Choose Us
+      </div>
+      <h3 class="text-4xl font-extrabold mb-6 tracking-tight max-w-3xl">
+        The Pahana Edu Advantage
+      </h3>
+      <p class="max-w-4xl mb-14 text-lg font-medium drop-shadow-md">
+        Experience the difference with our premium features and exceptional service.
+      </p>
+
+      <ul class="space-y-8 max-w-3xl">
+        <li class="flex items-start gap-5 drop-shadow-lg">
+          <span aria-hidden="true" class="inline-flex mt-1 h-10 w-10 items-center justify-center rounded-full bg-green-500 text-white shadow-lg">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"
+              stroke-width="2" aria-hidden="true" focusable="false">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4" />
+            </svg>
+          </span>
+          <div>
+            <h4 class="text-xl font-semibold mb-1">Intuitive Platform</h4>
+            <p class="font-medium text-white/90 max-w-xl leading-relaxed">
+              User-friendly interface designed for seamless navigation and effortless book discovery.
+            </p>
+          </div>
+        </li>
+        <li class="flex items-start gap-5 drop-shadow-lg">
+          <span aria-hidden="true" class="inline-flex mt-1 h-10 w-10 items-center justify-center rounded-full bg-green-500 text-white shadow-lg">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"
+              stroke-width="2" aria-hidden="true" focusable="false">
+              <path stroke-linecap="round" stroke-linejoin="round"
+                d="M12 11c0-1.105.672-2 1.5-2a1.5 1.5 0 010 3c-.828 0-1.5-.895-1.5-2zM12 6v-2m0 12v-2m0 6a9 9 0 100-18 9 9 0 000 18z" />
+            </svg>
+          </span>
+          <div>
+            <h4 class="text-xl font-semibold mb-1">Bank-Level Security</h4>
+            <p class="font-medium text-white/90 max-w-xl leading-relaxed">
+              Advanced encryption and secure authentication protecting your personal information.
+            </p>
+          </div>
+        </li>
+        <li class="flex items-start gap-5 drop-shadow-lg">
+          <span aria-hidden="true" class="inline-flex mt-1 h-10 w-10 items-center justify-center rounded-full bg-green-500 text-white shadow-lg">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"
+              stroke-width="2" aria-hidden="true" focusable="false">
+              <path stroke-linecap="round" stroke-linejoin="round"
+                d="M5 13l4 4L19 7" />
+            </svg>
+          </span>
+          <div>
+            <h4 class="text-xl font-semibold mb-1">Smart Automation</h4>
+            <p class="font-medium text-white/90 max-w-xl leading-relaxed">
+              Simplify tasks, optimize your educational journey, and empower productivity.
+            </p>
+          </div>
+        </li>
+      </ul>
+    </div>
+  </section>
+
+  <!-- Contact Section -->
+  <footer id="contact" class="bg-gray-900 text-white py-16 px-6 select-none">
+    <div class="max-w-6xl mx-auto text-center">
+      <h3 class="text-3xl font-bold mb-4">Get in Touch</h3>
+      <p class="max-w-xl mx-auto mb-12 font-medium text-gray-300 text-lg">Ready to start your educational journey with us?</p>
+      <div class="grid grid-cols-1 sm:grid-cols-3 gap-12 max-w-4xl mx-auto text-left">
+        <address class="flex flex-col items-center">
+          <span
+            class="bg-blue-600 w-14 h-14 rounded-full flex items-center justify-center mb-3 shadow-lg text-white font-bold text-xl select-text">
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.8"
+              class="w-8 h-8" aria-hidden="true" focusable="false">
+              <path stroke-linecap="round" stroke-linejoin="round"
+                d="M17.657 16.657L13.414 12.414a2 2 0 00-2.828 0L6.343 16.657m11.314-11.314a8 8 0 11-11.314 11.314 8 8 0 0111.314-11.314z" />
+            </svg>
+          </span>
+          <a href="https://goo.gl/maps/KnSkBimbvJ8vXyzY6" target="_blank" rel="noopener noreferrer"
+            class="font-semibold hover:text-blue-400">120, Main Street, Colombo, Sri Lanka</a>
+        </address>
+        <div class="flex flex-col items-center">
+          <span
+            class="bg-green-600 w-14 h-14 rounded-full flex items-center justify-center mb-3 shadow-lg text-white font-bold text-xl select-text">
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.8"
+              class="w-8 h-8" aria-hidden="true" focusable="false">
+              <path stroke-linecap="round" stroke-linejoin="round"
+                d="M2 8.5V19a2 2 0 002 2h16a2 2 0 002-2v-7.5a3.5 3.5 0 00-7 0v.5H9a1 1 0 01-1-1v-1.5a3.5 3.5 0 007 0V8.5M7.5 10h-2a2.5 2.5 0 000 5h.927" />
+            </svg>
+          </span>
+          <a href="tel:+94112345678" class="font-semibold hover:text-green-400 select-text">+94 11 2345678</a>
+          <span class="mt-1 text-sm text-gray-300">Available 8 AM - 6 PM</span>
+        </div>
+        <div class="flex flex-col items-center">
+          <span
+            class="bg-purple-600 w-14 h-14 rounded-full flex items-center justify-center mb-3 shadow-lg text-white font-bold text-xl select-text">
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.8"
+              class="w-8 h-8" aria-hidden="true" focusable="false">
+              <path stroke-linecap="round" stroke-linejoin="round"
+                d="M16 12h.01M8 12h.01M12 12h.01M21 12c0 4.418-3.582 8-8 8s-8-3.582-8-8 3.582-8 8-8 8 3.582 8 8z" />
+            </svg>
+          </span>
+          <a href="mailto:info@pahanaedu.lk" class="font-semibold hover:text-purple-400 select-text">pahanaedu327@gmail.com</a>
+          <span class="mt-1 text-sm text-gray-300">Quick responses guaranteed</span>
+        </div>
+      </div>
+
+      <div class="mt-12 text-gray-400 text-sm select-none">
+        &copy; 2024 Pahana Edu Bookshop. All rights reserved. Empowering education, one book at a time.
+      </div>
+    </div>
+  </footer>
+  <script src="script.js"></script>
+</body>
+</html>

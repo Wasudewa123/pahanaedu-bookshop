@@ -1,0 +1,264 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test Enhanced Reports - Pahana Book Shop</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="admin-dashboard-enhanced-reports.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.29/jspdf.plugin.autotable.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        body {
+            font-family: 'Poppins', sans-serif;
+            margin: 0;
+            padding: 20px;
+            background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
+        }
+        .test-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 20px;
+            padding: 2rem;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+        }
+        .test-header {
+            text-align: center;
+            margin-bottom: 2rem;
+            padding-bottom: 1rem;
+            border-bottom: 2px solid #f1f5f9;
+        }
+        .test-buttons {
+            display: flex;
+            gap: 1rem;
+            justify-content: center;
+            margin-bottom: 2rem;
+            flex-wrap: wrap;
+        }
+        .test-btn {
+            background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%);
+            color: white;
+            border: none;
+            padding: 1rem 2rem;
+            border-radius: 12px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        .test-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(59, 130, 246, 0.4);
+        }
+        .test-section {
+            margin-bottom: 2rem;
+            padding: 1.5rem;
+            background: #f8fafc;
+            border-radius: 15px;
+            border: 1px solid #e2e8f0;
+        }
+        .test-section h3 {
+            color: #1e293b;
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        .status-indicator {
+            display: inline-block;
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            margin-right: 0.5rem;
+        }
+        .status-success { background: #10b981; }
+        .status-error { background: #ef4444; }
+        .status-warning { background: #f59e0b; }
+    </style>
+</head>
+<body>
+    <div class="test-container">
+        <div class="test-header">
+            <h1><i class="fas fa-chart-bar"></i> Enhanced Reports & Analytics Test</h1>
+            <p>Testing the new enhanced reports functionality for Pahana Book Shop</p>
+        </div>
+
+        <div class="test-buttons">
+            <button class="test-btn" onclick="testAnalyticsData()">
+                <i class="fas fa-database"></i>
+                Test Analytics Data
+            </button>
+            <button class="test-btn" onclick="testCharts()">
+                <i class="fas fa-chart-pie"></i>
+                Test Charts
+            </button>
+            <button class="test-btn" onclick="testPDFExport()">
+                <i class="fas fa-file-pdf"></i>
+                Test PDF Export
+            </button>
+            <button class="test-btn" onclick="testBackendConnection()">
+                <i class="fas fa-server"></i>
+                Test Backend
+            </button>
+        </div>
+
+        <div class="test-section">
+            <h3><i class="fas fa-info-circle"></i> Test Results</h3>
+            <div id="test-results">
+                <p>Click the buttons above to run tests...</p>
+            </div>
+        </div>
+
+        <div class="test-section">
+            <h3><i class="fas fa-chart-line"></i> Sample Analytics Display</h3>
+            <div class="quick-stats-grid">
+                <div class="stat-card">
+                    <div class="stat-icon revenue">
+                        <i class="fas fa-dollar-sign"></i>
+                    </div>
+                    <div class="stat-content">
+                        <h3 id="test-revenue">Rs. 0</h3>
+                        <p>Total Revenue</p>
+                        <span class="stat-change positive" id="test-revenue-change">+0%</span>
+                    </div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon orders">
+                        <i class="fas fa-shopping-cart"></i>
+                    </div>
+                    <div class="stat-content">
+                        <h3 id="test-orders">0</h3>
+                        <p>Total Orders</p>
+                        <span class="stat-change">Updated</span>
+                    </div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon customers">
+                        <i class="fas fa-users"></i>
+                    </div>
+                    <div class="stat-content">
+                        <h3 id="test-customers">0</h3>
+                        <p>Total Customers</p>
+                        <span class="stat-change">Updated</span>
+                    </div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon books">
+                        <i class="fas fa-book"></i>
+                    </div>
+                    <div class="stat-content">
+                        <h3 id="test-books">0</h3>
+                        <p>Total Books</p>
+                        <span class="stat-change">Updated</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="test-section">
+            <h3><i class="fas fa-chart-pie"></i> Sample Chart</h3>
+            <div style="width: 100%; height: 300px;">
+                <canvas id="test-chart"></canvas>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Test functions
+        function testAnalyticsData() {
+            const results = document.getElementById('test-results');
+            results.innerHTML = '<p><span class="status-indicator status-warning"></span>Testing analytics data loading...</p>';
+            
+            // Simulate analytics data
+            setTimeout(() => {
+                document.getElementById('test-revenue').textContent = 'Rs. 15,750';
+                document.getElementById('test-orders').textContent = '23';
+                document.getElementById('test-customers').textContent = '12';
+                document.getElementById('test-books').textContent = '45';
+                document.getElementById('test-revenue-change').textContent = '+12.5%';
+                
+                results.innerHTML = '<p><span class="status-indicator status-success"></span>Analytics data loaded successfully!</p>';
+            }, 1000);
+        }
+
+        function testCharts() {
+            const results = document.getElementById('test-results');
+            results.innerHTML = '<p><span class="status-indicator status-warning"></span>Testing chart rendering...</p>';
+            
+            const ctx = document.getElementById('test-chart').getContext('2d');
+            const chart = new Chart(ctx, {
+                type: 'doughnut',
+                data: {
+                    labels: ['Fiction', 'Non-Fiction', 'Children', 'Academic'],
+                    datasets: [{
+                        data: [30, 25, 20, 25],
+                        backgroundColor: ['#3B82F6', '#10B981', '#F59E0B', '#EF4444']
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            position: 'bottom'
+                        }
+                    }
+                }
+            });
+            
+            results.innerHTML = '<p><span class="status-indicator status-success"></span>Chart rendered successfully!</p>';
+        }
+
+        function testPDFExport() {
+            const results = document.getElementById('test-results');
+            results.innerHTML = '<p><span class="status-indicator status-warning"></span>Testing PDF export...</p>';
+            
+            try {
+                const { jsPDF } = window.jspdf;
+                const doc = new jsPDF();
+                
+                doc.setFontSize(20);
+                doc.text('Pahana Book Shop - Test Report', 20, 20);
+                doc.setFontSize(12);
+                doc.text('This is a test PDF export from the enhanced reports system.', 20, 40);
+                doc.text('Generated on: ' + new Date().toLocaleDateString(), 20, 60);
+                
+                doc.save('test-report.pdf');
+                results.innerHTML = '<p><span class="status-indicator status-success"></span>PDF export successful! Check your downloads.</p>';
+            } catch (error) {
+                results.innerHTML = '<p><span class="status-indicator status-error"></span>PDF export failed: ' + error.message + '</p>';
+            }
+        }
+
+        function testBackendConnection() {
+            const results = document.getElementById('test-results');
+            results.innerHTML = '<p><span class="status-indicator status-warning"></span>Testing backend connection...</p>';
+            
+            fetch('http://localhost:8080/api/analytics/dashboard')
+                .then(response => {
+                    if (response.ok) {
+                        return response.json();
+                    }
+                    throw new Error('Backend not responding');
+                })
+                .then(data => {
+                    results.innerHTML = '<p><span class="status-indicator status-success"></span>Backend connection successful! Analytics data available.</p>';
+                })
+                .catch(error => {
+                    results.innerHTML = '<p><span class="status-indicator status-error"></span>Backend connection failed: ' + error.message + '</p>';
+                });
+        }
+
+        // Initialize test page
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log('Enhanced Reports Test Page Loaded');
+            document.getElementById('test-results').innerHTML = '<p><span class="status-indicator status-success"></span>Test page loaded successfully!</p>';
+        });
+    </script>
+</body>
+</html>

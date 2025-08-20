@@ -1,0 +1,487 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bill Generation Debug - Pahana Book Shop</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: #f8fafc;
+            color: #1e293b;
+            line-height: 1.6;
+            padding: 2rem;
+        }
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: white;
+            padding: 2rem;
+            border-radius: 1rem;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+        }
+        .header {
+            text-align: center;
+            margin-bottom: 2rem;
+            padding-bottom: 1rem;
+            border-bottom: 2px solid #e2e8f0;
+        }
+        .debug-section {
+            margin-bottom: 2rem;
+            padding: 1.5rem;
+            border: 1px solid #e2e8f0;
+            border-radius: 0.5rem;
+            background: #f8fafc;
+        }
+        .debug-section h3 {
+            color: #1e40af;
+            margin-bottom: 1rem;
+        }
+        .test-button {
+            background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%);
+            color: white;
+            border: none;
+            padding: 0.75rem 1.5rem;
+            border-radius: 0.5rem;
+            cursor: pointer;
+            font-weight: 500;
+            margin: 0.5rem;
+            transition: all 0.3s ease;
+        }
+        .test-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);
+        }
+        .result {
+            margin-top: 1rem;
+            padding: 1rem;
+            border-radius: 0.5rem;
+            background: white;
+            border-left: 4px solid #3b82f6;
+        }
+        .result.success {
+            border-left-color: #10b981;
+            background: #f0fdf4;
+        }
+        .result.error {
+            border-left-color: #ef4444;
+            background: #fef2f2;
+        }
+        .result pre {
+            background: #1e293b;
+            color: #e2e8f0;
+            padding: 1rem;
+            border-radius: 0.5rem;
+            overflow-x: auto;
+            font-size: 0.875rem;
+        }
+        .form-group {
+            margin-bottom: 1rem;
+        }
+        .form-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 500;
+        }
+        .form-group input, .form-group select {
+            width: 100%;
+            padding: 0.5rem;
+            border: 1px solid #d1d5db;
+            border-radius: 0.25rem;
+            font-size: 0.875rem;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1><i class="fas fa-bug"></i> Bill Generation Debug</h1>
+            <p>Debugging the bill generation error</p>
+        </div>
+
+        <div class="debug-section">
+            <h3><i class="fas fa-database"></i> Check Database Status</h3>
+            <button class="test-button" onclick="checkDatabaseStatus()">
+                <i class="fas fa-server"></i> Check Database
+            </button>
+            <div id="database-result"></div>
+        </div>
+
+        <div class="debug-section">
+            <h3><i class="fas fa-users"></i> Check Customers</h3>
+            <button class="test-button" onclick="checkCustomers()">
+                <i class="fas fa-list"></i> List All Customers
+            </button>
+            <div id="customers-result"></div>
+        </div>
+
+        <div class="debug-section">
+            <h3><i class="fas fa-book"></i> Check Books</h3>
+            <button class="test-button" onclick="checkBooks()">
+                <i class="fas fa-list"></i> List All Books
+            </button>
+            <div id="books-result"></div>
+        </div>
+
+        <div class="debug-section">
+            <h3><i class="fas fa-file-invoice"></i> Test Bill Generation</h3>
+            <div class="form-group">
+                <label>Account Number:</label>
+                <input type="text" id="test-account" placeholder="Enter account number" value="ACC71751">
+            </div>
+            <div class="form-group">
+                <label>Payment Method:</label>
+                <select id="test-payment">
+                    <option value="Cash">Cash</option>
+                    <option value="Card">Card</option>
+                    <option value="UPI">UPI</option>
+                    <option value="Bank Transfer">Bank Transfer</option>
+                </select>
+            </div>
+            <button class="test-button" onclick="testBillGeneration()">
+                <i class="fas fa-calculator"></i> Generate Test Bill
+            </button>
+            <div id="bill-generation-result"></div>
+        </div>
+
+        <div class="debug-section">
+            <h3><i class="fas fa-code"></i> Raw API Test</h3>
+            <button class="test-button" onclick="testRawAPI()">
+                <i class="fas fa-code"></i> Test Raw API Call
+            </button>
+            <div id="raw-api-result"></div>
+        </div>
+    </div>
+
+    <script>
+        // Check database status
+        async function checkDatabaseStatus() {
+            const resultDiv = document.getElementById('database-result');
+            resultDiv.innerHTML = '<div class="loading"><i class="fas fa-spinner fa-spin"></i><p>Checking database...</p></div>';
+            
+            try {
+                const response = await fetch('http://localhost:8080/api/admin/customers');
+                const customers = await response.json();
+                
+                if (response.ok) {
+                    resultDiv.innerHTML = `
+                        <div class="result success">
+                            <h4><i class="fas fa-check-circle"></i> Database Connection Successful</h4>
+                            <p><strong>Total Customers:</strong> ${customers.length}</p>
+                            <p><strong>Status:</strong> Database is accessible</p>
+                        </div>
+                    `;
+                } else {
+                    resultDiv.innerHTML = `
+                        <div class="result error">
+                            <h4><i class="fas fa-times-circle"></i> Database Connection Failed</h4>
+                            <p><strong>Status:</strong> ${response.status} ${response.statusText}</p>
+                        </div>
+                    `;
+                }
+            } catch (error) {
+                resultDiv.innerHTML = `
+                    <div class="result error">
+                        <h4><i class="fas fa-times-circle"></i> Connection Error</h4>
+                        <p><strong>Error:</strong> ${error.message}</p>
+                        <p>Make sure your Spring Boot application is running on port 8080</p>
+                    </div>
+                `;
+            }
+        }
+
+        // Check customers
+        async function checkCustomers() {
+            const resultDiv = document.getElementById('customers-result');
+            resultDiv.innerHTML = '<div class="loading"><i class="fas fa-spinner fa-spin"></i><p>Loading customers...</p></div>';
+            
+            try {
+                const response = await fetch('http://localhost:8080/api/admin/customers');
+                const customers = await response.json();
+                
+                if (response.ok && customers.length > 0) {
+                    let tableHTML = `
+                        <div class="result success">
+                            <h4><i class="fas fa-check-circle"></i> Customers Found</h4>
+                            <p><strong>Total Customers:</strong> ${customers.length}</p>
+                            <table style="width: 100%; border-collapse: collapse; margin-top: 1rem;">
+                                <thead>
+                                    <tr style="background: #f8fafc;">
+                                        <th style="padding: 0.5rem; text-align: left; border-bottom: 1px solid #e2e8f0;">Account #</th>
+                                        <th style="padding: 0.5rem; text-align: left; border-bottom: 1px solid #e2e8f0;">Name</th>
+                                        <th style="padding: 0.5rem; text-align: left; border-bottom: 1px solid #e2e8f0;">Email</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                    `;
+                    
+                    customers.slice(0, 10).forEach(customer => {
+                        tableHTML += `
+                            <tr>
+                                <td style="padding: 0.5rem; border-bottom: 1px solid #e2e8f0;">${customer.accountNumber || 'N/A'}</td>
+                                <td style="padding: 0.5rem; border-bottom: 1px solid #e2e8f0;">${customer.name || 'N/A'}</td>
+                                <td style="padding: 0.5rem; border-bottom: 1px solid #e2e8f0;">${customer.email || 'N/A'}</td>
+                            </tr>
+                        `;
+                    });
+                    
+                    tableHTML += `
+                                </tbody>
+                            </table>
+                            ${customers.length > 10 ? `<p><em>Showing first 10 customers of ${customers.length} total</em></p>` : ''}
+                        </div>
+                    `;
+                    
+                    resultDiv.innerHTML = tableHTML;
+                } else {
+                    resultDiv.innerHTML = `
+                        <div class="result error">
+                            <h4><i class="fas fa-exclamation-triangle"></i> No Customers Found</h4>
+                            <p>There are no customers in the database. You need to add customers first.</p>
+                            <p><strong>Solution:</strong> Add some customers to your MongoDB database with account numbers.</p>
+                        </div>
+                    `;
+                }
+            } catch (error) {
+                resultDiv.innerHTML = `
+                    <div class="result error">
+                        <h4><i class="fas fa-times-circle"></i> Error Loading Customers</h4>
+                        <p><strong>Error:</strong> ${error.message}</p>
+                    </div>
+                `;
+            }
+        }
+
+        // Check books
+        async function checkBooks() {
+            const resultDiv = document.getElementById('books-result');
+            resultDiv.innerHTML = '<div class="loading"><i class="fas fa-spinner fa-spin"></i><p>Loading books...</p></div>';
+            
+            try {
+                const response = await fetch('http://localhost:8080/api/admin/books');
+                const books = await response.json();
+                
+                if (response.ok && books.length > 0) {
+                    let tableHTML = `
+                        <div class="result success">
+                            <h4><i class="fas fa-check-circle"></i> Books Found</h4>
+                            <p><strong>Total Books:</strong> ${books.length}</p>
+                            <table style="width: 100%; border-collapse: collapse; margin-top: 1rem;">
+                                <thead>
+                                    <tr style="background: #f8fafc;">
+                                        <th style="padding: 0.5rem; text-align: left; border-bottom: 1px solid #e2e8f0;">Title</th>
+                                        <th style="padding: 0.5rem; text-align: left; border-bottom: 1px solid #e2e8f0;">Author</th>
+                                        <th style="padding: 0.5rem; text-align: left; border-bottom: 1px solid #e2e8f0;">Price</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                    `;
+                    
+                    books.slice(0, 10).forEach(book => {
+                        tableHTML += `
+                            <tr>
+                                <td style="padding: 0.5rem; border-bottom: 1px solid #e2e8f0;">${book.title || 'N/A'}</td>
+                                <td style="padding: 0.5rem; border-bottom: 1px solid #e2e8f0;">${book.author || 'N/A'}</td>
+                                <td style="padding: 0.5rem; border-bottom: 1px solid #e2e8f0;">Rs. ${book.price || 0}</td>
+                            </tr>
+                        `;
+                    });
+                    
+                    tableHTML += `
+                                </tbody>
+                            </table>
+                            ${books.length > 10 ? `<p><em>Showing first 10 books of ${books.length} total</em></p>` : ''}
+                        </div>
+                    `;
+                    
+                    resultDiv.innerHTML = tableHTML;
+                } else {
+                    resultDiv.innerHTML = `
+                        <div class="result error">
+                            <h4><i class="fas fa-exclamation-triangle"></i> No Books Found</h4>
+                            <p>There are no books in the database. You need to add books first.</p>
+                            <p><strong>Solution:</strong> Add some books to your MongoDB database.</p>
+                        </div>
+                    `;
+                }
+            } catch (error) {
+                resultDiv.innerHTML = `
+                    <div class="result error">
+                        <h4><i class="fas fa-times-circle"></i> Error Loading Books</h4>
+                        <p><strong>Error:</strong> ${error.message}</p>
+                    </div>
+                `;
+            }
+        }
+
+        // Test bill generation
+        async function testBillGeneration() {
+            const accountNumber = document.getElementById('test-account').value;
+            const paymentMethod = document.getElementById('test-payment').value;
+            const resultDiv = document.getElementById('bill-generation-result');
+            
+            if (!accountNumber) {
+                resultDiv.innerHTML = `
+                    <div class="result error">
+                        <h4><i class="fas fa-exclamation-triangle"></i> No Account Number</h4>
+                        <p>Please enter an account number to test bill generation.</p>
+                    </div>
+                `;
+                return;
+            }
+            
+            resultDiv.innerHTML = '<div class="loading"><i class="fas fa-spinner fa-spin"></i><p>Generating test bill...</p></div>';
+            
+            try {
+                // First check if customer exists
+                const customerResponse = await fetch(`http://localhost:8080/api/billing/customer/${accountNumber}`);
+                const customerData = await customerResponse.json();
+                
+                if (!customerResponse.ok || !customerData.success) {
+                    resultDiv.innerHTML = `
+                        <div class="result error">
+                            <h4><i class="fas fa-times-circle"></i> Customer Not Found</h4>
+                            <p><strong>Account Number:</strong> ${accountNumber}</p>
+                            <p><strong>Error:</strong> ${customerData.message || 'Customer not found'}</p>
+                            <p><strong>Solution:</strong> Add a customer with account number "${accountNumber}" to your database.</p>
+                        </div>
+                    `;
+                    return;
+                }
+                
+                // Create test bill data
+                const testBillData = {
+                    customerAccountNumber: accountNumber,
+                    items: [
+                        {
+                            bookId: 'test-book-1',
+                            title: 'Test Book 1',
+                            quantity: 2,
+                            price: 1500
+                        },
+                        {
+                            bookId: 'test-book-2',
+                            title: 'Test Book 2',
+                            quantity: 1,
+                            price: 2000
+                        }
+                    ],
+                    subtotal: 5000,
+                    discount: 250,
+                    tax: 475,
+                    total: 5225,
+                    paymentMethod: paymentMethod,
+                    transactionId: 'TEST' + Date.now(),
+                    adminNotes: 'Test bill generated from debug tool'
+                };
+                
+                const response = await fetch('http://localhost:8080/api/billing/generate', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(testBillData)
+                });
+                
+                const data = await response.json();
+                
+                if (response.ok && data.success) {
+                    const bill = data.bill;
+                    resultDiv.innerHTML = `
+                        <div class="result success">
+                            <h4><i class="fas fa-check-circle"></i> Test Bill Generated Successfully</h4>
+                            <p><strong>Bill Number:</strong> ${bill.billNumber}</p>
+                            <p><strong>Customer:</strong> ${bill.customerName}</p>
+                            <p><strong>Total:</strong> Rs. ${bill.total}</p>
+                            <p><strong>Status:</strong> ${bill.status}</p>
+                            <p><strong>Items:</strong> ${bill.items ? bill.items.length : 0} books</p>
+                        </div>
+                    `;
+                } else {
+                    resultDiv.innerHTML = `
+                        <div class="result error">
+                            <h4><i class="fas fa-times-circle"></i> Failed to Generate Bill</h4>
+                            <p><strong>Error:</strong> ${data.message || 'Unknown error'}</p>
+                            <p><strong>Response Status:</strong> ${response.status}</p>
+                        </div>
+                    `;
+                }
+            } catch (error) {
+                resultDiv.innerHTML = `
+                    <div class="result error">
+                        <h4><i class="fas fa-times-circle"></i> Connection Error</h4>
+                        <p><strong>Error:</strong> ${error.message}</p>
+                        <p>Make sure your Spring Boot application is running on port 8080</p>
+                    </div>
+                `;
+            }
+        }
+
+        // Test raw API call
+        async function testRawAPI() {
+            const resultDiv = document.getElementById('raw-api-result');
+            resultDiv.innerHTML = '<div class="loading"><i class="fas fa-spinner fa-spin"></i><p>Testing raw API...</p></div>';
+            
+            try {
+                const testData = {
+                    customerAccountNumber: 'ACC71751',
+                    items: [
+                        {
+                            bookId: 'book1',
+                            title: 'Test Book',
+                            quantity: 1,
+                            price: 1000
+                        }
+                    ],
+                    subtotal: 1000,
+                    discount: 0,
+                    tax: 0,
+                    total: 1000,
+                    paymentMethod: 'Cash',
+                    transactionId: 'TEST' + Date.now(),
+                    adminNotes: 'Raw API test'
+                };
+                
+                const response = await fetch('http://localhost:8080/api/billing/generate', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(testData)
+                });
+                
+                const responseText = await response.text();
+                let data;
+                try {
+                    data = JSON.parse(responseText);
+                } catch (e) {
+                    data = { message: 'Invalid JSON response', raw: responseText };
+                }
+                
+                resultDiv.innerHTML = `
+                    <div class="result ${response.ok ? 'success' : 'error'}">
+                        <h4><i class="fas fa-${response.ok ? 'check-circle' : 'times-circle'}"></i> Raw API Test</h4>
+                        <p><strong>Status:</strong> ${response.status} ${response.statusText}</p>
+                        <p><strong>Response:</strong></p>
+                        <pre>${JSON.stringify(data, null, 2)}</pre>
+                    </div>
+                `;
+            } catch (error) {
+                resultDiv.innerHTML = `
+                    <div class="result error">
+                        <h4><i class="fas fa-times-circle"></i> Raw API Error</h4>
+                        <p><strong>Error:</strong> ${error.message}</p>
+                    </div>
+                `;
+            }
+        }
+
+        // Initialize page
+        document.addEventListener('DOMContentLoaded', function() {
+            checkDatabaseStatus();
+        });
+    </script>
+</body>
+</html>

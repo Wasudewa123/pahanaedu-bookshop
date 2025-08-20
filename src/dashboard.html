@@ -1,0 +1,247 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Dashboard - Pahana Book Shop</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="dashboard.css">
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+  
+
+  <!-- Header -->
+  <header class="main-header">
+    <div class="header-container">
+      <div class="logo-section">
+        <div class="logo">
+          <span class="logo-icon">📚</span>
+          <span class="logo-text">Pahana Edu</span>
+        </div>
+        <span class="tagline">The Book Shop</span>
+      </div>
+      
+      <!-- Navigation Bar -->
+      <nav class="main-navigation">
+        <a href="landingpage.html" class="nav-item">
+          <i class="fas fa-home"></i>
+          <span>Home</span>
+        </a>
+        <a href="booklist.html" class="nav-item">
+          <i class="fas fa-book"></i>
+          <span>Browse Books</span>
+        </a>
+        <a href="contact.html" class="nav-item">
+          <i class="fas fa-envelope"></i>
+          <span>Contact</span>
+        </a>
+        <a href="blog-new.html" class="nav-item">
+          <i class="fas fa-blog"></i>
+          <span>Blog</span>
+        </a>
+        <a href="order.html" class="nav-item">
+          <i class="fas fa-shopping-cart"></i>
+          <span>Order</span>
+        </a>
+      </nav>
+    </div>
+  </header>
+
+  <div class="dashboard-main">
+    <div class="dashboard-left">
+      <div id="profile-bar"></div>
+      <div id="profile"></div>
+      
+      <!-- Customer Details Section -->
+      <div class="customer-details">
+        <h3><i class="fas fa-user-circle"></i> Customer Information</h3>
+        <div id="customer-info"></div>
+      </div>
+
+      <!-- Quick Actions -->
+      <div class="quick-actions">
+        <h3><i class="fas fa-bolt"></i> Quick Actions</h3>
+        <button class="action-btn" onclick="window.location.href='booklist.html'">
+          <i class="fas fa-search"></i>
+          Browse Books
+        </button>
+        <button class="action-btn" onclick="window.location.href='profile-edit.html'">
+          <i class="fas fa-edit"></i>
+          Edit Profile
+        </button>
+        <button class="action-btn" onclick="logout()">
+          <i class="fas fa-sign-out-alt"></i>
+          Logout
+        </button>
+      </div>
+    </div>
+
+    <div class="dashboard-right" id="dashboard-right">
+      <h2><i class="fas fa-shopping-bag"></i> Your Orders</h2>
+      <div id="order-list"></div>
+
+      <!-- Book Shop Information Section -->
+      <section class="bookshop-info">
+        <h3><i class="fas fa-store"></i> About Pahana Book Shop</h3>
+        <div class="info-content">
+          <div class="info-text">
+            <p>Welcome to Pahana Book Shop, your premier destination for quality literature in Sri Lanka. We offer a curated collection of books ranging from local authors to international bestsellers.</p>
+            <div class="features">
+              <div class="feature">
+                <i class="fas fa-shipping-fast"></i>
+                <span>Fast Islandwide Delivery</span>
+              </div>
+              <div class="feature">
+                <i class="fas fa-shield-alt"></i>
+                <span>Secure Payment Options</span>
+              </div>
+              <div class="feature">
+                <i class="fas fa-headset"></i>
+                <span>24/7 Customer Support</span>
+              </div>
+            </div>
+          </div>
+          <div class="info-image">
+            <img src="image/Book Shop.jpg" alt="Pahana Book Shop">
+          </div>
+        </div>
+      </section>
+
+      <!-- Blog Post Section -->
+      <section class="blog-section">
+        <h3><i class="fas fa-newspaper"></i> Latest from Our Blog</h3>
+        <article class="blog-post">
+          <div class="blog-image">
+            <img src="image/TTT-NatureCovers.jpg" alt="Kata Katha Book">
+          </div>
+          <div class="blog-content">
+            <h4>The 32nd Gratiaen Prize Winner 2024</h4>
+            <p class="blog-meta">By Savin Edirisinghe • December 15, 2024</p>
+            <p class="blog-excerpt">Discover the compelling story behind "Kata Kathā", the winner of the prestigious Gratiaen Prize 2024. This masterpiece explores the depths of human emotion and cultural heritage...</p>
+            <button id="#blog-new.html" class="read-more-btn">Read More</button>
+          </div>
+        </article>
+      </section>
+
+      <!-- Recommended Books Section -->
+      <section class="recommended-section">
+        <h3><i class="fas fa-star"></i> Recommended for You</h3>
+        <div class="recommended-carousel" id="recommendedCarousel">
+          <button class="carousel-btn prev-btn" onclick="scrollRecommended(-1)">
+            <i class="fas fa-chevron-left"></i>
+          </button>
+          <div class="recommended-container" id="recommendedContainer">
+            <!-- Recommended books will be loaded here -->
+          </div>
+          <button class="carousel-btn next-btn" onclick="scrollRecommended(1)">
+            <i class="fas fa-chevron-right"></i>
+          </button>
+        </div>
+      </section>
+    </div>
+  </div>
+
+  <!-- Footer -->
+  <footer class="dashboard-footer">
+    <div class="footer-waves">
+      <div class="wave wave1"></div>
+      <div class="wave wave2"></div>
+      <div class="wave wave3"></div>
+    </div>
+    
+    <div class="footer-content">
+      <div class="footer-section">
+        <div class="section-icon">
+          <i class="fas fa-book-open"></i>
+        </div>
+        <h4>Categories</h4>
+        <ul class="footer-links">
+          <li><a href="booklist.html" class="hover-effect">Featured Books</a></li>
+          <li><a href="booklist.html" class="hover-effect">New Arrivals</a></li>
+          <li><a href="booklist.html" class="hover-effect">Children's Books</a></li>
+          <li><a href="booklist.html" class="hover-effect">Novels</a></li>
+        </ul>
+      </div>
+      
+      <div class="footer-section">
+        <div class="section-icon">
+          <i class="fas fa-link"></i>
+        </div>
+        <h4>Quick Links</h4>
+        <ul class="footer-links">
+          <li><a href="landingpage.html" class="hover-effect">Home</a></li>
+          <li><a href="#" class="hover-effect">About Us</a></li>
+          <li><a href="contact.html" class="hover-effect">Contact Us</a></li>
+          <li><a href="login.html" class="hover-effect">Sign Up/ Login</a></li>
+        </ul>
+      </div>
+      
+      <div class="footer-section">
+        <div class="section-icon">
+          <i class="fas fa-info-circle"></i>
+        </div>
+        <h4>Information</h4>
+        <ul class="footer-links">
+          <li><a href="#" class="hover-effect">Shipping & Return Policy</a></li>
+          <li><a href="#" class="hover-effect">Privacy Policy</a></li>
+          <li><a href="#" class="hover-effect">Terms & Conditions</a></li>
+          <li><a href="#" class="hover-effect">Payment Policy</a></li>
+        </ul>
+      </div>
+      
+      <div class="footer-section contact-section">
+        <div class="section-icon">
+          <i class="fas fa-address-card"></i>
+        </div>
+        <h4>Contact Details</h4>
+        <div class="contact-info">
+          <div class="contact-item">
+            <div class="contact-icon">
+              <i class="fas fa-map-marker-alt"></i>
+            </div>
+            <span>No.30, Stanley Thilakarathne Mawatha, Nugegoda, Sri Lanka</span>
+          </div>
+          <div class="contact-item">
+            <div class="contact-icon">
+              <i class="fas fa-phone"></i>
+            </div>
+            <span>+94 711304050 / 0112820820</span>
+          </div>
+          <div class="contact-item">
+            <div class="contact-icon">
+              <i class="fas fa-envelope"></i>
+            </div>
+            <span>pahanaedu@gmail.com</span>
+          </div>
+        </div>
+      </div>
+    </div>
+    
+    <div class="footer-bottom">
+      <div class="footer-bottom-content">
+        <div class="footer-logo">
+          <div class="logo-container">
+            <span class="logo-icon">📚</span>
+            <div class="logo-text-container">
+              <span class="logo-text">Pahana Edu</span>
+              <span class="tagline">The Book Shop</span>
+            </div>
+          </div>
+        </div>
+        <div class="social-links">
+          <a href="#" class="social-link facebook"><i class="fab fa-facebook"></i></a>
+          <a href="#" class="social-link twitter"><i class="fab fa-twitter"></i></a>
+          <a href="#" class="social-link instagram"><i class="fab fa-instagram"></i></a>
+          <a href="#" class="social-link linkedin"><i class="fab fa-linkedin"></i></a>
+        </div>
+        <div class="copyright">
+          <p>&copy; 2024 Pahana Edu Book Shop. All rights reserved.</p>
+        </div>
+      </div>
+    </div>
+  </footer>
+
+  <script src="dashboard.js"></script>
+</body>
+</html>

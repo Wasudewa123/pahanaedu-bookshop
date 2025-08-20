@@ -1,0 +1,249 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bill Status Fixes Test</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; }
+        .test-section { margin: 20px 0; padding: 15px; border: 1px solid #ddd; }
+        button { padding: 10px 15px; margin: 5px; background: #007bff; color: white; border: none; cursor: pointer; }
+        button:hover { background: #0056b3; }
+        .success { background: #d4edda; border-color: #c3e6cb; padding: 10px; margin: 10px 0; }
+        .error { background: #f8d7da; border-color: #f5c6cb; padding: 10px; margin: 10px 0; }
+        
+        /* Bill status styles */
+        .bill-status {
+            padding: 4px 8px;
+            border-radius: 12px;
+            font-size: 0.75rem;
+            font-weight: 500;
+            text-transform: uppercase;
+        }
+        
+        .bill-status.pending {
+            background-color: #3b82f6;
+            color: white;
+        }
+        
+        .bill-status.saved {
+            background-color: #10b981;
+            color: white;
+        }
+        
+        .bill-status.paid {
+            background-color: #059669;
+            color: white;
+        }
+        
+        .bill-status.failed {
+            background-color: #ef4444;
+            color: white;
+        }
+        
+        table { width: 100%; border-collapse: collapse; margin: 10px 0; }
+        th, td { padding: 8px; text-align: left; border-bottom: 1px solid #ddd; }
+        th { background-color: #f8f9fa; }
+    </style>
+</head>
+<body>
+    <h1>🔧 Bill Status Fixes Test</h1>
+    
+    <div class="test-section">
+        <h3>📋 Test Bill Data</h3>
+        <p>Testing bill status display and view functionality:</p>
+        
+        <button onclick="createTestBills()">Create Test Bills</button>
+        <button onclick="testViewBill()">Test View Bill</button>
+        <button onclick="testSaveBill()">Test Save Bill</button>
+        <button onclick="clearTestBills()">Clear Test Bills</button>
+        
+        <div id="test-result"></div>
+    </div>
+    
+    <div class="test-section">
+        <h3>📊 Bill Status Colors</h3>
+        <p>Status display should show:</p>
+        <ul>
+            <li><span class="bill-status pending">PENDING</span> - Blue for new bills</li>
+            <li><span class="bill-status saved">SAVED</span> - Green for saved bills</li>
+            <li><span class="bill-status paid">PAID</span> - Dark green for paid bills</li>
+            <li><span class="bill-status failed">FAILED</span> - Red for failed bills</li>
+        </ul>
+    </div>
+    
+    <div class="test-section">
+        <h3>📋 Current Bills in localStorage</h3>
+        <div id="bills-display"></div>
+    </div>
+
+    <script>
+        // Test bill data
+        const testBills = [
+            {
+                billNumber: 'BILL20241201001',
+                customerAccountNumber: 'ACC74773',
+                customerName: 'pasindi',
+                items: [{ title: 'The Great Gatsby', quantity: 2, price: 1500, subtotal: 3000 }],
+                paymentMethod: 'Cash',
+                billDate: new Date('2024-12-01').toISOString(),
+                status: 'PENDING',
+                subtotal: 3000,
+                discount: 0,
+                tax: 450,
+                total: 3450
+            },
+            {
+                billNumber: 'BILL20241202001',
+                customerAccountNumber: 'ACC74824',
+                customerName: 'Neethumi',
+                items: [{ title: 'Mistborn: The Final Empire', quantity: 1, price: 1350, subtotal: 1350 }],
+                paymentMethod: 'Card',
+                billDate: new Date('2024-12-02').toISOString(),
+                status: 'SAVED',
+                subtotal: 1350,
+                discount: 135,
+                tax: 182.25,
+                total: 1397.25
+            }
+        ];
+
+        // Create test bills
+        function createTestBills() {
+            try {
+                localStorage.setItem('savedBills', JSON.stringify(testBills));
+                document.getElementById('test-result').innerHTML = 
+                    '<div class="success">✅ Test bills created successfully!</div>';
+                displayBills();
+            } catch (error) {
+                document.getElementById('test-result').innerHTML = 
+                    `<div class="error">❌ Error creating test bills: ${error.message}</div>`;
+            }
+        }
+
+        // Test view bill functionality
+        function testViewBill() {
+            try {
+                const savedBills = JSON.parse(localStorage.getItem('savedBills') || '[]');
+                if (savedBills.length > 0) {
+                    const firstBill = savedBills[0];
+                    const customer = { name: firstBill.customerName, accountNumber: firstBill.customerAccountNumber };
+                    
+                    // Simulate viewBill function
+                    console.log('Viewing bill:', firstBill.billNumber);
+                    console.log('Bill data:', firstBill);
+                    console.log('Customer data:', customer);
+                    
+                    document.getElementById('test-result').innerHTML = 
+                        `<div class="success">✅ View bill test successful!<br>
+                        Bill Number: ${firstBill.billNumber}<br>
+                        Customer: ${firstBill.customerName}<br>
+                        Status: ${firstBill.status}</div>`;
+                } else {
+                    document.getElementById('test-result').innerHTML = 
+                        '<div class="error">❌ No bills found to view</div>';
+                }
+            } catch (error) {
+                document.getElementById('test-result').innerHTML = 
+                    `<div class="error">❌ Error viewing bill: ${error.message}</div>`;
+            }
+        }
+
+        // Test save bill functionality
+        function testSaveBill() {
+            try {
+                const savedBills = JSON.parse(localStorage.getItem('savedBills') || '[]');
+                if (savedBills.length > 0) {
+                    // Find a pending bill and save it
+                    const pendingBill = savedBills.find(bill => bill.status === 'PENDING');
+                    if (pendingBill) {
+                        pendingBill.status = 'SAVED';
+                        localStorage.setItem('savedBills', JSON.stringify(savedBills));
+                        
+                        document.getElementById('test-result').innerHTML = 
+                            `<div class="success">✅ Bill saved successfully!<br>
+                            Bill Number: ${pendingBill.billNumber}<br>
+                            New Status: ${pendingBill.status}</div>`;
+                        
+                        displayBills();
+                    } else {
+                        document.getElementById('test-result').innerHTML = 
+                            '<div class="error">❌ No pending bills found to save</div>';
+                    }
+                } else {
+                    document.getElementById('test-result').innerHTML = 
+                        '<div class="error">❌ No bills found to save</div>';
+                }
+            } catch (error) {
+                document.getElementById('test-result').innerHTML = 
+                    `<div class="error">❌ Error saving bill: ${error.message}</div>`;
+            }
+        }
+
+        // Clear test bills
+        function clearTestBills() {
+            try {
+                localStorage.removeItem('savedBills');
+                document.getElementById('test-result').innerHTML = 
+                    '<div class="success">✅ Test bills cleared!</div>';
+                displayBills();
+            } catch (error) {
+                document.getElementById('test-result').innerHTML = 
+                    `<div class="error">❌ Error clearing bills: ${error.message}</div>`;
+            }
+        }
+
+        // Display bills in table
+        function displayBills() {
+            try {
+                const savedBills = JSON.parse(localStorage.getItem('savedBills') || '[]');
+                const displayDiv = document.getElementById('bills-display');
+                
+                if (savedBills.length === 0) {
+                    displayDiv.innerHTML = '<p>No bills found in localStorage.</p>';
+                    return;
+                }
+                
+                let tableHTML = `
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Bill Number</th>
+                                <th>Customer</th>
+                                <th>Date</th>
+                                <th>Total</th>
+                                <th>Status</th>
+                                <th>Payment Method</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                `;
+                
+                savedBills.forEach(bill => {
+                    const statusClass = bill.status.toLowerCase();
+                    tableHTML += `
+                        <tr>
+                            <td>${bill.billNumber}</td>
+                            <td>${bill.customerName}</td>
+                            <td>${new Date(bill.billDate).toLocaleDateString()}</td>
+                            <td>Rs. ${bill.total.toFixed(2)}</td>
+                            <td><span class="bill-status ${statusClass}">${bill.status}</span></td>
+                            <td>${bill.paymentMethod}</td>
+                        </tr>
+                    `;
+                });
+                
+                tableHTML += '</tbody></table>';
+                displayDiv.innerHTML = tableHTML;
+                
+            } catch (error) {
+                document.getElementById('bills-display').innerHTML = 
+                    `<div class="error">❌ Error displaying bills: ${error.message}</div>`;
+            }
+        }
+
+        // Initialize display
+        displayBills();
+    </script>
+</body>
+</html> 

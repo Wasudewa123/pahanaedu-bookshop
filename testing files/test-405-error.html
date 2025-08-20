@@ -1,0 +1,245 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>405 Error Test</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; }
+        .test-section { margin: 20px 0; padding: 15px; border: 1px solid #ddd; }
+        button { padding: 10px 15px; margin: 5px; background: #007bff; color: white; border: none; cursor: pointer; }
+        button:hover { background: #0056b3; }
+        .success { background: #d4edda; border-color: #c3e6cb; padding: 10px; margin: 10px 0; }
+        .error { background: #f8d7da; border-color: #f5c6cb; padding: 10px; margin: 10px 0; }
+        .info { background: #d1ecf1; border-color: #bee5eb; padding: 10px; margin: 10px 0; }
+        pre { background: #f8f9fa; padding: 10px; border-radius: 5px; overflow-x: auto; }
+    </style>
+</head>
+<body>
+    <h1>🔍 405 Error Test</h1>
+    
+    <div class="test-section">
+        <h3>🌐 Test All Billing Endpoints</h3>
+        <p>This will test all billing endpoints to identify the 405 error:</p>
+        
+        <button onclick="testAllEndpoints()">Test All Endpoints</button>
+        <button onclick="testGenerateBill()">Test Generate Bill</button>
+        <button onclick="testGetAllBills()">Test Get All Bills</button>
+        <button onclick="testCustomerFetch()">Test Customer Fetch</button>
+        
+        <div id="test-result"></div>
+    </div>
+
+    <script>
+        async function testAllEndpoints() {
+            const resultDiv = document.getElementById('test-result');
+            resultDiv.innerHTML = '<div class="info">Testing all endpoints...</div>';
+            
+            const endpoints = [
+                { name: 'GET /api/billing/all', method: 'GET', url: '/api/billing/all' },
+                { name: 'POST /api/billing/generate', method: 'POST', url: '/api/billing/generate', body: { test: true } },
+                { name: 'GET /api/billing/customer/ACC74773', method: 'GET', url: '/api/billing/customer/ACC74773' },
+                { name: 'GET /api/billing/bill/BILL123', method: 'GET', url: '/api/billing/bill/BILL123' },
+                { name: 'PUT /api/billing/status/BILL123', method: 'PUT', url: '/api/billing/status/BILL123', body: { status: 'SAVED' } },
+                { name: 'DELETE /api/billing/bill/BILL123', method: 'DELETE', url: '/api/billing/bill/BILL123' },
+                { name: 'GET /api/billing/search?searchTerm=test', method: 'GET', url: '/api/billing/search?searchTerm=test' },
+                { name: 'GET /api/billing/status/PENDING', method: 'GET', url: '/api/billing/status/PENDING' }
+            ];
+            
+            let results = '<h4>Endpoint Test Results:</h4>';
+            
+            for (const endpoint of endpoints) {
+                try {
+                    const options = {
+                        method: endpoint.method,
+                        headers: {
+                            'Content-Type': 'application/json',
+                        }
+                    };
+                    
+                    if (endpoint.body) {
+                        options.body = JSON.stringify(endpoint.body);
+                    }
+                    
+                    const response = await fetch(endpoint.url, options);
+                    const status = response.status;
+                    const statusText = response.statusText;
+                    
+                    let resultClass = 'success';
+                    let resultIcon = '✅';
+                    
+                    if (status === 405) {
+                        resultClass = 'error';
+                        resultIcon = '❌ 405';
+                    } else if (status >= 400) {
+                        resultClass = 'error';
+                        resultIcon = '❌ ' + status;
+                    } else if (status >= 200 && status < 300) {
+                        resultClass = 'success';
+                        resultIcon = '✅ ' + status;
+                    }
+                    
+                    results += `<div class="${resultClass}">${resultIcon} ${endpoint.name} - ${status} ${statusText}</div>`;
+                    
+                } catch (error) {
+                    results += `<div class="error">❌ ${endpoint.name} - Error: ${error.message}</div>`;
+                }
+            }
+            
+            resultDiv.innerHTML = results;
+        }
+
+        async function testGenerateBill() {
+            const resultDiv = document.getElementById('test-result');
+            resultDiv.innerHTML = '<div class="info">Testing bill generation...</div>';
+            
+            const billData = {
+                customerAccountNumber: 'ACC74773',
+                customerName: 'Test Customer',
+                items: [
+                    {
+                        bookId: '1',
+                        title: 'Test Book',
+                        quantity: 2,
+                        price: 100
+                    }
+                ],
+                paymentMethod: 'CASH',
+                transactionId: '',
+                adminNotes: 'Test bill',
+                subtotal: 200,
+                discount: 0,
+                tax: 30,
+                total: 230
+            };
+            
+            try {
+                const response = await fetch('/api/billing/generate', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(billData)
+                });
+                
+                const status = response.status;
+                const statusText = response.statusText;
+                
+                if (status === 405) {
+                    resultDiv.innerHTML = `
+                        <div class="error">
+                            ❌ 405 Method Not Allowed<br>
+                            URL: /api/billing/generate<br>
+                            Method: POST<br>
+                            Status: ${status} ${statusText}<br>
+                            <br>
+                            <strong>Possible Issues:</strong><br>
+                            1. Endpoint doesn't exist<br>
+                            2. Wrong HTTP method<br>
+                            3. CORS issue<br>
+                            4. Controller not loaded
+                        </div>
+                    `;
+                } else if (response.ok) {
+                    const result = await response.json();
+                    resultDiv.innerHTML = `
+                        <div class="success">
+                            ✅ Bill generated successfully!<br>
+                            Status: ${status}<br>
+                            Bill Number: ${result.bill ? result.bill.billNumber : 'N/A'}
+                        </div>
+                    `;
+                } else {
+                    const errorText = await response.text();
+                    resultDiv.innerHTML = `
+                        <div class="error">
+                            ❌ Error: ${status} ${statusText}<br>
+                            Response: ${errorText}
+                        </div>
+                    `;
+                }
+            } catch (error) {
+                resultDiv.innerHTML = `
+                    <div class="error">
+                        ❌ Network Error: ${error.message}<br>
+                        <br>
+                        <strong>Check:</strong><br>
+                        1. Is backend running? (mvn spring-boot:run)<br>
+                        2. Is it on port 8080?<br>
+                        3. Check browser console for CORS errors
+                    </div>
+                `;
+            }
+        }
+
+        async function testGetAllBills() {
+            const resultDiv = document.getElementById('test-result');
+            resultDiv.innerHTML = '<div class="info">Testing get all bills...</div>';
+            
+            try {
+                const response = await fetch('/api/billing/all');
+                
+                if (response.ok) {
+                    const result = await response.json();
+                    resultDiv.innerHTML = `
+                        <div class="success">
+                            ✅ Get all bills successful!<br>
+                            Status: ${response.status}<br>
+                            Bills found: ${result.bills ? result.bills.length : 'N/A'}
+                        </div>
+                    `;
+                } else {
+                    const errorText = await response.text();
+                    resultDiv.innerHTML = `
+                        <div class="error">
+                            ❌ Error: ${response.status} ${response.statusText}<br>
+                            Response: ${errorText}
+                        </div>
+                    `;
+                }
+            } catch (error) {
+                resultDiv.innerHTML = `
+                    <div class="error">
+                        ❌ Network Error: ${error.message}
+                    </div>
+                `;
+            }
+        }
+
+        async function testCustomerFetch() {
+            const resultDiv = document.getElementById('test-result');
+            resultDiv.innerHTML = '<div class="info">Testing customer fetch...</div>';
+            
+            try {
+                const response = await fetch('/api/billing/customer/ACC74773');
+                
+                if (response.ok) {
+                    const result = await response.json();
+                    resultDiv.innerHTML = `
+                        <div class="success">
+                            ✅ Customer fetch successful!<br>
+                            Status: ${response.status}<br>
+                            Customer found: ${result.success ? 'Yes' : 'No'}<br>
+                            Customer name: ${result.customer ? result.customer.name : 'N/A'}
+                        </div>
+                    `;
+                } else {
+                    const errorText = await response.text();
+                    resultDiv.innerHTML = `
+                        <div class="error">
+                            ❌ Error: ${response.status} ${response.statusText}<br>
+                            Response: ${errorText}
+                        </div>
+                    `;
+                }
+            } catch (error) {
+                resultDiv.innerHTML = `
+                    <div class="error">
+                        ❌ Network Error: ${error.message}
+                    </div>
+                `;
+            }
+        }
+    </script>
+</body>
+</html> 

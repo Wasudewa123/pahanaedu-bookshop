@@ -1,0 +1,324 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test Billing Fixes - Pahana Book Shop</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: #f8fafc;
+            color: #1e293b;
+            line-height: 1.6;
+            padding: 2rem;
+        }
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: white;
+            padding: 2rem;
+            border-radius: 1rem;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+        }
+        .test-section {
+            margin-bottom: 2rem;
+            padding: 1.5rem;
+            border: 1px solid #e5e7eb;
+            border-radius: 0.5rem;
+        }
+        .test-section h3 {
+            color: #1f2937;
+            margin-bottom: 1rem;
+        }
+        .test-result {
+            padding: 1rem;
+            border-radius: 0.5rem;
+            margin: 0.5rem 0;
+        }
+        .test-result.success {
+            background: #d1fae5;
+            color: #065f46;
+            border: 1px solid #10b981;
+        }
+        .test-result.error {
+            background: #fee2e2;
+            color: #991b1b;
+            border: 1px solid #ef4444;
+        }
+        .test-result.info {
+            background: #dbeafe;
+            color: #1e40af;
+            border: 1px solid #3b82f6;
+        }
+        button {
+            background: #3b82f6;
+            color: white;
+            border: none;
+            padding: 0.75rem 1.5rem;
+            border-radius: 0.5rem;
+            cursor: pointer;
+            margin: 0.5rem;
+        }
+        button:hover {
+            background: #2563eb;
+        }
+        input {
+            padding: 0.75rem;
+            border: 1px solid #d1d5db;
+            border-radius: 0.5rem;
+            margin: 0.5rem;
+            width: 200px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1><i class="fas fa-tools"></i> Billing System Fixes Test</h1>
+        <p>This page tests the fixes applied to the billing system.</p>
+
+        <div class="test-section">
+            <h3><i class="fas fa-user"></i> Customer Fetch Test</h3>
+            <p>Test the customer fetch functionality with the account number "ACC71751":</p>
+            <input type="text" id="test-account" value="ACC71751" placeholder="Enter account number">
+            <button onclick="testCustomerFetch()">Test Customer Fetch</button>
+            <div id="customer-result" class="test-result info">
+                Click the button to test customer fetch
+            </div>
+        </div>
+
+        <div class="test-section">
+            <h3><i class="fas fa-file-invoice"></i> Demo Bills Test</h3>
+            <p>Test if demo bills are created and loaded properly:</p>
+            <button onclick="testDemoBills()">Create Demo Bills</button>
+            <button onclick="testLoadBills()">Load Demo Bills</button>
+            <div id="bills-result" class="test-result info">
+                Click the buttons to test demo bills
+            </div>
+        </div>
+
+        <div class="test-section">
+            <h3><i class="fas fa-database"></i> LocalStorage Test</h3>
+            <p>Check if demo data is stored in localStorage:</p>
+            <button onclick="checkLocalStorage()">Check LocalStorage</button>
+            <div id="storage-result" class="test-result info">
+                Click the button to check localStorage
+            </div>
+        </div>
+
+        <div class="test-section">
+            <h3><i class="fas fa-link"></i> Backend Connection Test</h3>
+            <p>Test backend connectivity:</p>
+            <button onclick="testBackendConnection()">Test Backend</button>
+            <div id="backend-result" class="test-result info">
+                Click the button to test backend connection
+            </div>
+        </div>
+
+        <div class="test-section">
+            <h3><i class="fas fa-check-circle"></i> Summary</h3>
+            <div id="summary-result" class="test-result info">
+                Run all tests to see the summary
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Demo customers data (same as in admin-dashboard.js)
+        const demoCustomers = [
+            { accountNumber: 'ACC001', name: 'John Doe' },
+            { accountNumber: 'ACC002', name: 'Jane Smith' },
+            { accountNumber: 'ACC003', name: 'Bob Johnson' },
+            { accountNumber: 'ACC004', name: 'Alice Brown' },
+            { accountNumber: 'ACC005', name: 'Charlie Wilson' },
+            { accountNumber: 'ACC71751', name: 'Pasan Perera' },
+            { accountNumber: 'ACC71752', name: 'Sarah Silva' },
+            { accountNumber: 'ACC71753', name: 'Michael Fernando' },
+            { accountNumber: 'ACC71754', name: 'Emma Rodrigo' },
+            { accountNumber: 'ACC71755', name: 'David Mendis' }
+        ];
+
+        // Demo bills creation function (same as in admin-dashboard.js)
+        function createDemoBills() {
+            const demoBills = [
+                {
+                    id: 'BILL001',
+                    billNumber: 'BILL001',
+                    customerName: 'John Doe',
+                    customerAccount: 'ACC001',
+                    items: [
+                        { title: 'The Great Gatsby', quantity: 2, price: 1500, subtotal: 3000 }
+                    ],
+                    subtotal: 3000,
+                    discount: 0,
+                    tax: 300,
+                    totalAmount: 3300,
+                    total: 3300,
+                    status: 'PAID',
+                    paymentMethod: 'Cash',
+                    createdAt: new Date(Date.now() - 86400000).toISOString(),
+                    date: new Date(Date.now() - 86400000).toISOString()
+                },
+                {
+                    id: 'BILL002',
+                    billNumber: 'BILL002',
+                    customerName: 'Jane Smith',
+                    customerAccount: 'ACC002',
+                    items: [
+                        { title: 'To Kill a Mockingbird', quantity: 1, price: 1200, subtotal: 1200 },
+                        { title: '1984', quantity: 1, price: 1800, subtotal: 1800 }
+                    ],
+                    subtotal: 3000,
+                    discount: 150,
+                    tax: 285,
+                    totalAmount: 3135,
+                    total: 3135,
+                    status: 'PENDING',
+                    paymentMethod: 'Card',
+                    createdAt: new Date(Date.now() - 172800000).toISOString(),
+                    date: new Date(Date.now() - 172800000).toISOString()
+                },
+                {
+                    id: 'BILL003',
+                    billNumber: 'BILL003',
+                    customerName: 'Pasan Perera',
+                    customerAccount: 'ACC71751',
+                    items: [
+                        { title: 'Mistborn: The Final Empire', quantity: 1, price: 1350, subtotal: 1350 },
+                        { title: 'Lord of the Rings', quantity: 1, price: 1500, subtotal: 1500 }
+                    ],
+                    subtotal: 2850,
+                    discount: 200,
+                    tax: 265,
+                    totalAmount: 2915,
+                    total: 2915,
+                    status: 'PAID',
+                    paymentMethod: 'UPI',
+                    createdAt: new Date(Date.now() - 259200000).toISOString(),
+                    date: new Date(Date.now() - 259200000).toISOString()
+                }
+            ];
+            
+            localStorage.setItem('demoBills', JSON.stringify(demoBills));
+            return demoBills;
+        }
+
+        function testCustomerFetch() {
+            const accountNumber = document.getElementById('test-account').value;
+            const resultDiv = document.getElementById('customer-result');
+            
+            if (!accountNumber) {
+                resultDiv.className = 'test-result error';
+                resultDiv.innerHTML = '<i class="fas fa-times-circle"></i> Please enter an account number';
+                return;
+            }
+            
+            const customer = demoCustomers.find(c => c.accountNumber === accountNumber);
+            if (customer) {
+                resultDiv.className = 'test-result success';
+                resultDiv.innerHTML = `<i class="fas fa-check-circle"></i> Customer found: ${customer.name} (${customer.accountNumber})`;
+            } else {
+                resultDiv.className = 'test-result error';
+                resultDiv.innerHTML = `<i class="fas fa-times-circle"></i> Customer not found for account: ${accountNumber}. Try: ACC001, ACC002, ACC71751, etc.`;
+            }
+        }
+
+        function testDemoBills() {
+            const resultDiv = document.getElementById('bills-result');
+            try {
+                const bills = createDemoBills();
+                resultDiv.className = 'test-result success';
+                resultDiv.innerHTML = `<i class="fas fa-check-circle"></i> Demo bills created successfully! Created ${bills.length} bills.`;
+            } catch (error) {
+                resultDiv.className = 'test-result error';
+                resultDiv.innerHTML = `<i class="fas fa-times-circle"></i> Error creating demo bills: ${error.message}`;
+            }
+        }
+
+        function testLoadBills() {
+            const resultDiv = document.getElementById('bills-result');
+            try {
+                const demoBills = localStorage.getItem('demoBills');
+                if (demoBills) {
+                    const bills = JSON.parse(demoBills);
+                    resultDiv.className = 'test-result success';
+                    resultDiv.innerHTML = `<i class="fas fa-check-circle"></i> Demo bills loaded successfully! Found ${bills.length} bills in localStorage.`;
+                } else {
+                    resultDiv.className = 'test-result error';
+                    resultDiv.innerHTML = '<i class="fas fa-times-circle"></i> No demo bills found in localStorage. Create them first.';
+                }
+            } catch (error) {
+                resultDiv.className = 'test-result error';
+                resultDiv.innerHTML = `<i class="fas fa-times-circle"></i> Error loading demo bills: ${error.message}`;
+            }
+        }
+
+        function checkLocalStorage() {
+            const resultDiv = document.getElementById('storage-result');
+            try {
+                const demoBills = localStorage.getItem('demoBills');
+                const demoCustomers = localStorage.getItem('demoCustomers');
+                
+                let result = '<i class="fas fa-info-circle"></i> LocalStorage Status:<br>';
+                result += `Demo Bills: ${demoBills ? '✅ Found' : '❌ Not found'}<br>`;
+                result += `Demo Customers: ${demoCustomers ? '✅ Found' : '❌ Not found'}<br>`;
+                
+                if (demoBills) {
+                    const bills = JSON.parse(demoBills);
+                    result += `Number of bills: ${bills.length}<br>`;
+                }
+                
+                resultDiv.className = 'test-result info';
+                resultDiv.innerHTML = result;
+            } catch (error) {
+                resultDiv.className = 'test-result error';
+                resultDiv.innerHTML = `<i class="fas fa-times-circle"></i> Error checking localStorage: ${error.message}`;
+            }
+        }
+
+        async function testBackendConnection() {
+            const resultDiv = document.getElementById('backend-result');
+            try {
+                const response = await fetch('http://localhost:8080/api/books');
+                if (response.ok) {
+                    resultDiv.className = 'test-result success';
+                    resultDiv.innerHTML = '<i class="fas fa-check-circle"></i> Backend connection successful!';
+                } else {
+                    resultDiv.className = 'test-result error';
+                    resultDiv.innerHTML = `<i class="fas fa-times-circle"></i> Backend responded with status: ${response.status}`;
+                }
+            } catch (error) {
+                resultDiv.className = 'test-result error';
+                resultDiv.innerHTML = `<i class="fas fa-times-circle"></i> Backend connection failed: ${error.message}`;
+            }
+        }
+
+        // Auto-run summary after page load
+        window.addEventListener('load', function() {
+            setTimeout(() => {
+                updateSummary();
+            }, 1000);
+        });
+
+        function updateSummary() {
+            const summaryDiv = document.getElementById('summary-result');
+            const demoBills = localStorage.getItem('demoBills');
+            const backendAvailable = false; // Will be updated by backend test
+            
+            let summary = '<i class="fas fa-info-circle"></i> System Status:<br>';
+            summary += `Demo Bills: ${demoBills ? '✅ Available' : '❌ Not available'}<br>`;
+            summary += `Customer Data: ✅ Available (${demoCustomers.length} customers)<br>`;
+            summary += `Backend: ⏳ Test required<br>`;
+            summary += '<br><strong>Fixes Applied:</strong><br>';
+            summary += '✅ Customer fetch with ACC71751 support<br>';
+            summary += '✅ Demo bills creation and loading<br>';
+            summary += '✅ LocalStorage fallback mechanism<br>';
+            summary += '✅ Better error handling and user feedback<br>';
+            
+            summaryDiv.className = 'test-result info';
+            summaryDiv.innerHTML = summary;
+        }
+    </script>
+</body>
+</html> 

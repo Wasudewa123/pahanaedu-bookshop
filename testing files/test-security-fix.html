@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Security Fix Test - Pahana Book Shop</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 20px;
+            background: #f5f5f5;
+        }
+        .container {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        .button {
+            background: #007bff;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            margin: 5px;
+        }
+        .button:hover {
+            background: #0056b3;
+        }
+        .result {
+            margin: 10px 0;
+            padding: 10px;
+            border-radius: 5px;
+        }
+        .success {
+            background: #d4edda;
+            border: 1px solid #c3e6cb;
+            color: #155724;
+        }
+        .error {
+            background: #f8d7da;
+            border: 1px solid #f5c6cb;
+            color: #721c24;
+        }
+        .loading {
+            color: #007bff;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🔧 Security Fix Test</h1>
+        <p>Testing if the 403 error is fixed...</p>
+        
+        <button class="button" onclick="testSecurityFix()">Test Security Fix</button>
+        <div id="result"></div>
+    </div>
+
+    <script>
+        async function testSecurityFix() {
+            const resultDiv = document.getElementById('result');
+            resultDiv.innerHTML = '<div class="loading">Testing security fix...</div>';
+            
+            try {
+                // Test 1: Check if backend is running
+                console.log('Testing backend connection...');
+                const response = await fetch('http://localhost:8080/api/admin/customers');
+                
+                console.log('Response status:', response.status);
+                
+                if (response.status === 403) {
+                    resultDiv.innerHTML = `
+                        <div class="result error">
+                            ❌ Still getting 403 Forbidden<br>
+                            Security configuration not applied yet
+                        </div>
+                    `;
+                    return;
+                }
+                
+                if (response.ok) {
+                    const customers = await response.json();
+                    resultDiv.innerHTML = `
+                        <div class="result success">
+                            ✅ Security fix working!<br>
+                            Backend responding with status: ${response.status}<br>
+                            Found ${customers.length} customers
+                        </div>
+                    `;
+                } else {
+                    resultDiv.innerHTML = `
+                        <div class="result error">
+                            ❌ Different error: ${response.status}<br>
+                            Backend might not be running
+                        </div>
+                    `;
+                }
+                
+            } catch (error) {
+                console.error('Error:', error);
+                resultDiv.innerHTML = `
+                    <div class="result error">
+                        ❌ Connection error: ${error.message}<br>
+                        Backend might not be running
+                    </div>
+                `;
+            }
+        }
+        
+        // Auto-test on page load
+        document.addEventListener('DOMContentLoaded', function() {
+            setTimeout(testSecurityFix, 2000);
+        });
+    </script>
+</body>
+</html>

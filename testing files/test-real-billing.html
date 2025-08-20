@@ -1,0 +1,505 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test Real Billing System - Pahana Book Shop</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: #f8fafc;
+            color: #1e293b;
+            line-height: 1.6;
+            padding: 2rem;
+        }
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+            background: white;
+            padding: 2rem;
+            border-radius: 1rem;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+        }
+        .header {
+            text-align: center;
+            margin-bottom: 2rem;
+            padding-bottom: 1rem;
+            border-bottom: 2px solid #e2e8f0;
+        }
+        .header h1 {
+            color: #1e40af;
+            margin-bottom: 0.5rem;
+        }
+        .test-section {
+            margin-bottom: 2rem;
+            padding: 1.5rem;
+            border: 1px solid #e2e8f0;
+            border-radius: 0.5rem;
+            background: #f8fafc;
+        }
+        .test-section h3 {
+            color: #1e40af;
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        .test-button {
+            background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%);
+            color: white;
+            border: none;
+            padding: 0.75rem 1.5rem;
+            border-radius: 0.5rem;
+            cursor: pointer;
+            font-weight: 500;
+            margin: 0.5rem;
+            transition: all 0.3s ease;
+        }
+        .test-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);
+        }
+        .test-button.success {
+            background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+        }
+        .test-button.error {
+            background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
+        }
+        .result {
+            margin-top: 1rem;
+            padding: 1rem;
+            border-radius: 0.5rem;
+            background: white;
+            border-left: 4px solid #3b82f6;
+        }
+        .result.success {
+            border-left-color: #10b981;
+            background: #f0fdf4;
+        }
+        .result.error {
+            border-left-color: #ef4444;
+            background: #fef2f2;
+        }
+        .result pre {
+            background: #1e293b;
+            color: #e2e8f0;
+            padding: 1rem;
+            border-radius: 0.5rem;
+            overflow-x: auto;
+            font-size: 0.875rem;
+        }
+        .status {
+            display: inline-block;
+            padding: 0.25rem 0.75rem;
+            border-radius: 1rem;
+            font-size: 0.875rem;
+            font-weight: 500;
+        }
+        .status.online {
+            background: #dcfce7;
+            color: #166534;
+        }
+        .status.offline {
+            background: #fef2f2;
+            color: #dc2626;
+        }
+        .bills-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 1rem;
+        }
+        .bills-table th,
+        .bills-table td {
+            padding: 0.75rem;
+            text-align: left;
+            border-bottom: 1px solid #e2e8f0;
+        }
+        .bills-table th {
+            background: #f8fafc;
+            font-weight: 600;
+        }
+        .loading {
+            text-align: center;
+            padding: 2rem;
+            color: #64748b;
+        }
+        .loading i {
+            font-size: 2rem;
+            margin-bottom: 1rem;
+            animation: spin 1s linear infinite;
+        }
+        @keyframes spin {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1><i class="fas fa-file-invoice-dollar"></i> Real Billing System Test</h1>
+            <p>Testing integration with MongoDB "bills" collection</p>
+        </div>
+
+        <div class="test-section">
+            <h3><i class="fas fa-server"></i> Backend Connectivity Test</h3>
+            <button class="test-button" onclick="testBackendConnection()">
+                <i class="fas fa-plug"></i> Test Backend Connection
+            </button>
+            <div id="backend-result"></div>
+        </div>
+
+        <div class="test-section">
+            <h3><i class="fas fa-database"></i> MongoDB Bills Collection Test</h3>
+            <button class="test-button" onclick="testBillsCollection()">
+                <i class="fas fa-list"></i> Load All Bills
+            </button>
+            <div id="bills-result"></div>
+        </div>
+
+        <div class="test-section">
+            <h3><i class="fas fa-users"></i> Customer Fetch Test</h3>
+            <input type="text" id="test-account" placeholder="Enter account number (e.g., ACC71751)" style="padding: 0.5rem; margin-right: 0.5rem; border: 1px solid #d1d5db; border-radius: 0.25rem;">
+            <button class="test-button" onclick="testCustomerFetch()">
+                <i class="fas fa-search"></i> Test Customer Fetch
+            </button>
+            <div id="customer-result"></div>
+        </div>
+
+        <div class="test-section">
+            <h3><i class="fas fa-plus"></i> Bill Generation Test</h3>
+            <button class="test-button" onclick="testBillGeneration()">
+                <i class="fas fa-calculator"></i> Generate Test Bill
+            </button>
+            <div id="bill-generation-result"></div>
+        </div>
+
+        <div class="test-section">
+            <h3><i class="fas fa-chart-bar"></i> System Summary</h3>
+            <div id="system-summary">
+                <div class="loading">
+                    <i class="fas fa-spinner fa-spin"></i>
+                    <p>Loading system summary...</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Test backend connection
+        async function testBackendConnection() {
+            const resultDiv = document.getElementById('backend-result');
+            resultDiv.innerHTML = '<div class="loading"><i class="fas fa-spinner fa-spin"></i><p>Testing connection...</p></div>';
+            
+            try {
+                const response = await fetch('http://localhost:8080/api/admin/bills');
+                const data = await response.json();
+                
+                if (response.ok) {
+                    resultDiv.innerHTML = `
+                        <div class="result success">
+                            <h4><i class="fas fa-check-circle"></i> Backend Connection Successful</h4>
+                            <p><span class="status online">Online</span> - Backend is responding correctly</p>
+                            <p><strong>Response:</strong> ${data.success ? 'Success' : 'Failed'}</p>
+                            <p><strong>Bills Count:</strong> ${data.bills ? data.bills.length : 'Unknown'}</p>
+                        </div>
+                    `;
+                } else {
+                    resultDiv.innerHTML = `
+                        <div class="result error">
+                            <h4><i class="fas fa-times-circle"></i> Backend Connection Failed</h4>
+                            <p><span class="status offline">Offline</span> - Backend is not responding</p>
+                            <p><strong>Status:</strong> ${response.status} ${response.statusText}</p>
+                            <p><strong>Error:</strong> ${data.message || 'Unknown error'}</p>
+                        </div>
+                    `;
+                }
+            } catch (error) {
+                resultDiv.innerHTML = `
+                    <div class="result error">
+                        <h4><i class="fas fa-times-circle"></i> Connection Error</h4>
+                        <p><span class="status offline">Offline</span> - Cannot connect to backend</p>
+                        <p><strong>Error:</strong> ${error.message}</p>
+                        <p>Make sure the Spring Boot application is running on port 8080</p>
+                    </div>
+                `;
+            }
+        }
+
+        // Test bills collection
+        async function testBillsCollection() {
+            const resultDiv = document.getElementById('bills-result');
+            resultDiv.innerHTML = '<div class="loading"><i class="fas fa-spinner fa-spin"></i><p>Loading bills...</p></div>';
+            
+            try {
+                const response = await fetch('http://localhost:8080/api/admin/bills');
+                const data = await response.json();
+                
+                if (response.ok && data.success) {
+                    const bills = data.bills || [];
+                    
+                    if (bills.length > 0) {
+                        let tableHTML = `
+                            <div class="result success">
+                                <h4><i class="fas fa-check-circle"></i> Bills Loaded Successfully</h4>
+                                <p><strong>Total Bills:</strong> ${bills.length}</p>
+                                <table class="bills-table">
+                                    <thead>
+                                        <tr>
+                                            <th>Bill Number</th>
+                                            <th>Customer</th>
+                                            <th>Date</th>
+                                            <th>Total</th>
+                                            <th>Status</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                        `;
+                        
+                        bills.slice(0, 10).forEach(bill => {
+                            const billDate = bill.billDate ? new Date(bill.billDate).toLocaleDateString() : 'N/A';
+                            const total = bill.total || bill.totalAmount || 0;
+                            
+                            tableHTML += `
+                                <tr>
+                                    <td>${bill.billNumber || 'N/A'}</td>
+                                    <td>${bill.customerName || 'N/A'}</td>
+                                    <td>${billDate}</td>
+                                    <td>Rs. ${total.toFixed(2)}</td>
+                                    <td><span class="status ${bill.status?.toLowerCase()}">${bill.status || 'PENDING'}</span></td>
+                                </tr>
+                            `;
+                        });
+                        
+                        tableHTML += `
+                                    </tbody>
+                                </table>
+                                ${bills.length > 10 ? `<p><em>Showing first 10 bills of ${bills.length} total</em></p>` : ''}
+                            </div>
+                        `;
+                        
+                        resultDiv.innerHTML = tableHTML;
+                    } else {
+                        resultDiv.innerHTML = `
+                            <div class="result">
+                                <h4><i class="fas fa-info-circle"></i> No Bills Found</h4>
+                                <p>The bills collection is empty. Generate some bills to see them here.</p>
+                            </div>
+                        `;
+                    }
+                } else {
+                    resultDiv.innerHTML = `
+                        <div class="result error">
+                            <h4><i class="fas fa-times-circle"></i> Failed to Load Bills</h4>
+                            <p><strong>Error:</strong> ${data.message || 'Unknown error'}</p>
+                        </div>
+                    `;
+                }
+            } catch (error) {
+                resultDiv.innerHTML = `
+                    <div class="result error">
+                        <h4><i class="fas fa-times-circle"></i> Connection Error</h4>
+                        <p><strong>Error:</strong> ${error.message}</p>
+                    </div>
+                `;
+            }
+        }
+
+        // Test customer fetch
+        async function testCustomerFetch() {
+            const accountNumber = document.getElementById('test-account').value;
+            const resultDiv = document.getElementById('customer-result');
+            
+            if (!accountNumber) {
+                resultDiv.innerHTML = `
+                    <div class="result error">
+                        <h4><i class="fas fa-exclamation-triangle"></i> No Account Number</h4>
+                        <p>Please enter an account number to test customer fetch.</p>
+                    </div>
+                `;
+                return;
+            }
+            
+            resultDiv.innerHTML = '<div class="loading"><i class="fas fa-spinner fa-spin"></i><p>Fetching customer...</p></div>';
+            
+            try {
+                const response = await fetch(`http://localhost:8080/api/billing/customer/${accountNumber}`);
+                const data = await response.json();
+                
+                if (response.ok && data.success) {
+                    const customer = data.customer;
+                    resultDiv.innerHTML = `
+                        <div class="result success">
+                            <h4><i class="fas fa-check-circle"></i> Customer Found</h4>
+                            <p><strong>Account Number:</strong> ${customer.accountNumber}</p>
+                            <p><strong>Name:</strong> ${customer.name}</p>
+                            <p><strong>Email:</strong> ${customer.email || 'N/A'}</p>
+                            <p><strong>Phone:</strong> ${customer.phone || 'N/A'}</p>
+                        </div>
+                    `;
+                } else {
+                    resultDiv.innerHTML = `
+                        <div class="result error">
+                            <h4><i class="fas fa-times-circle"></i> Customer Not Found</h4>
+                            <p><strong>Account Number:</strong> ${accountNumber}</p>
+                            <p><strong>Error:</strong> ${data.message || 'Customer not found'}</p>
+                        </div>
+                    `;
+                }
+            } catch (error) {
+                resultDiv.innerHTML = `
+                    <div class="result error">
+                        <h4><i class="fas fa-times-circle"></i> Connection Error</h4>
+                        <p><strong>Error:</strong> ${error.message}</p>
+                    </div>
+                `;
+            }
+        }
+
+        // Test bill generation
+        async function testBillGeneration() {
+            const resultDiv = document.getElementById('bill-generation-result');
+            resultDiv.innerHTML = '<div class="loading"><i class="fas fa-spinner fa-spin"></i><p>Generating test bill...</p></div>';
+            
+            try {
+                // Create a test bill
+                const testBillData = {
+                    customerAccountNumber: 'ACC71751',
+                    items: [
+                        {
+                            bookId: 'book1',
+                            title: 'Test Book 1',
+                            quantity: 2,
+                            price: 1500
+                        },
+                        {
+                            bookId: 'book2',
+                            title: 'Test Book 2',
+                            quantity: 1,
+                            price: 2000
+                        }
+                    ],
+                    subtotal: 5000,
+                    discount: 250,
+                    tax: 475,
+                    total: 5225,
+                    paymentMethod: 'Cash',
+                    transactionId: 'TEST' + Date.now(),
+                    adminNotes: 'Test bill generated from admin dashboard'
+                };
+                
+                const response = await fetch('http://localhost:8080/api/billing/generate', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(testBillData)
+                });
+                
+                const data = await response.json();
+                
+                if (response.ok && data.success) {
+                    const bill = data.bill;
+                    resultDiv.innerHTML = `
+                        <div class="result success">
+                            <h4><i class="fas fa-check-circle"></i> Test Bill Generated Successfully</h4>
+                            <p><strong>Bill Number:</strong> ${bill.billNumber}</p>
+                            <p><strong>Customer:</strong> ${bill.customerName}</p>
+                            <p><strong>Total:</strong> Rs. ${bill.total}</p>
+                            <p><strong>Status:</strong> ${bill.status}</p>
+                            <p><strong>Items:</strong> ${bill.items ? bill.items.length : 0} books</p>
+                        </div>
+                    `;
+                } else {
+                    resultDiv.innerHTML = `
+                        <div class="result error">
+                            <h4><i class="fas fa-times-circle"></i> Failed to Generate Bill</h4>
+                            <p><strong>Error:</strong> ${data.message || 'Unknown error'}</p>
+                        </div>
+                    `;
+                }
+            } catch (error) {
+                resultDiv.innerHTML = `
+                    <div class="result error">
+                        <h4><i class="fas fa-times-circle"></i> Connection Error</h4>
+                        <p><strong>Error:</strong> ${error.message}</p>
+                    </div>
+                `;
+            }
+        }
+
+        // Load system summary
+        async function loadSystemSummary() {
+            const summaryDiv = document.getElementById('system-summary');
+            
+            try {
+                // Test backend connection
+                const billsResponse = await fetch('http://localhost:8080/api/admin/bills');
+                const billsData = await billsResponse.json();
+                
+                // Test customer API
+                const customersResponse = await fetch('http://localhost:8080/api/admin/customers');
+                const customers = await customersResponse.json();
+                
+                // Test books API
+                const booksResponse = await fetch('http://localhost:8080/api/admin/books');
+                const booksData = await booksResponse.json();
+                
+                const bills = billsData.success ? billsData.bills : [];
+                const totalBills = bills.length;
+                const totalCustomers = customers.length;
+                const totalBooks = booksData.length;
+                
+                const paidBills = bills.filter(bill => bill.status === 'PAID').length;
+                const pendingBills = bills.filter(bill => bill.status === 'PENDING').length;
+                
+                summaryDiv.innerHTML = `
+                    <div class="result success">
+                        <h4><i class="fas fa-chart-bar"></i> System Summary</h4>
+                        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem; margin-top: 1rem;">
+                            <div style="text-align: center; padding: 1rem; background: #f0fdf4; border-radius: 0.5rem;">
+                                <h3 style="color: #10b981; margin: 0;">${totalBills}</h3>
+                                <p style="margin: 0.5rem 0 0 0; color: #64748b;">Total Bills</p>
+                            </div>
+                            <div style="text-align: center; padding: 1rem; background: #f0fdf4; border-radius: 0.5rem;">
+                                <h3 style="color: #10b981; margin: 0;">${totalCustomers}</h3>
+                                <p style="margin: 0.5rem 0 0 0; color: #64748b;">Total Customers</p>
+                            </div>
+                            <div style="text-align: center; padding: 1rem; background: #f0fdf4; border-radius: 0.5rem;">
+                                <h3 style="color: #10b981; margin: 0;">${totalBooks}</h3>
+                                <p style="margin: 0.5rem 0 0 0; color: #64748b;">Total Books</p>
+                            </div>
+                            <div style="text-align: center; padding: 1rem; background: #f0fdf4; border-radius: 0.5rem;">
+                                <h3 style="color: #10b981; margin: 0;">${paidBills}</h3>
+                                <p style="margin: 0.5rem 0 0 0; color: #64748b;">Paid Bills</p>
+                            </div>
+                            <div style="text-align: center; padding: 1rem; background: #f0fdf4; border-radius: 0.5rem;">
+                                <h3 style="color: #f59e0b; margin: 0;">${pendingBills}</h3>
+                                <p style="margin: 0.5rem 0 0 0; color: #64748b;">Pending Bills</p>
+                            </div>
+                        </div>
+                        <p style="margin-top: 1rem; color: #64748b;">
+                            <i class="fas fa-check-circle"></i> All systems operational - Real data from MongoDB
+                        </p>
+                    </div>
+                `;
+            } catch (error) {
+                summaryDiv.innerHTML = `
+                    <div class="result error">
+                        <h4><i class="fas fa-times-circle"></i> System Summary Error</h4>
+                        <p><strong>Error:</strong> ${error.message}</p>
+                        <p>Backend may not be running or there's a connection issue.</p>
+                    </div>
+                `;
+            }
+        }
+
+        // Initialize page
+        document.addEventListener('DOMContentLoaded', function() {
+            loadSystemSummary();
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,427 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Book List - Pahana Book Shop</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="booklist.css">
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body>
+  <!-- Dashboard Popup Modal -->
+  <div class="dashboard-modal" id="dashboardModal">
+    <div class="dashboard-modal-content">
+      <div class="dashboard-modal-header">
+        <div class="dashboard-modal-logo">
+          <i class="fas fa-book-open"></i>
+          <span>Pahana Edu</span>
+        </div>
+        <button class="dashboard-modal-close" id="dashboardModalClose">
+          <i class="fas fa-times"></i>
+        </button>
+      </div>
+      <div class="dashboard-modal-body">
+        <div class="dashboard-user-info">
+          <div class="dashboard-user-avatar" id="dashboardUserAvatar">
+            <i class="fas fa-user"></i>
+          </div>
+          <div class="dashboard-user-details">
+            <h3 id="dashboardUserName">Welcome</h3>
+            <p id="dashboardUserEmail">user@example.com</p>
+          </div>
+        </div>
+        <div class="dashboard-menu">
+          <a href="dashboard.html" class="dashboard-menu-item">
+            <i class="fas fa-tachometer-alt"></i>
+            <span>Dashboard</span>
+          </a>
+          <a href="profile-edit.html" class="dashboard-menu-item">
+            <i class="fas fa-user-edit"></i>
+            <span>Edit Profile</span>
+          </a>
+          <a href="order.html" class="dashboard-menu-item">
+            <i class="fas fa-shopping-cart"></i>
+            <span>My Orders</span>
+          </a>
+          <a href="#" class="dashboard-menu-item" id="logoutBtn">
+            <i class="fas fa-sign-out-alt"></i>
+            <span>Logout</span>
+          </a>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Header -->
+  <header class="main-header">
+    <div class="header-container">
+      <div class="logo-section">
+        <div class="logo">
+          <span class="logo-icon">📚</span>
+          <span class="logo-text">Pahana Edu</span>
+        </div>
+        <span class="tagline">The Book Shop</span>
+      </div>
+      
+      <!-- Navigation Bar -->
+      <nav class="main-navigation">
+        <a href="landingpage.html" class="nav-item">
+          <i class="fas fa-home"></i>
+          <span>Home</span>
+        </a>
+        <a href="booklist.html" class="nav-item active">
+          <i class="fas fa-book"></i>
+          <span>Browse Books</span>
+        </a>
+        <a href="contact.html" class="nav-item">
+          <i class="fas fa-envelope"></i>
+          <span>Contact</span>
+        </a>
+        
+        <a href="blog-new.html" class="nav-item">
+          <i class="fas fa-blog"></i>
+          <span>Blog</span>
+        </a>
+        <a href="order.html" class="nav-item">
+          <i class="fas fa-shopping-cart"></i>
+          <span>Order</span>
+        </a>
+      </nav>
+      
+      <div class="search-section">
+        <div class="search-bar">
+          <input type="text" id="searchInput" placeholder="Search for books, authors, or categories...">
+          <button class="search-btn">
+            <i class="fas fa-search"></i>
+          </button>
+        </div>
+      </div>
+      
+      <div class="header-actions">
+        <div id="profile-bar" class="profile-bar">
+          <!-- User profile info will be injected here by JS -->
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- Main Content -->
+  <main class="main-content">
+    <!-- Featured Books Section -->
+    <section class="book-section">
+      <div class="section-header">
+        <h2>Featured Books</h2>
+        <p>Discover our most popular titles</p>
+      </div>
+      <div class="book-carousel" id="featuredCarousel">
+        <button class="carousel-btn prev-btn" onclick="scrollCarousel('featuredCarousel', -1)">
+          <i class="fas fa-chevron-left"></i>
+        </button>
+        <div class="book-container" id="featuredContainer">
+          <!-- Featured books will be loaded here -->
+        </div>
+        <button class="carousel-btn next-btn" onclick="scrollCarousel('featuredCarousel', 1)">
+          <i class="fas fa-chevron-right"></i>
+        </button>
+      </div>
+    </section>
+
+    <!-- New Arrivals Section -->
+    <section class="book-section">
+      <div class="section-header">
+        <h2>New Arrivals</h2>
+        <p>Fresh books just arrived</p>
+      </div>
+      <div class="book-carousel" id="newArrivalsCarousel">
+        <button class="carousel-btn prev-btn" onclick="scrollCarousel('newArrivalsCarousel', -1)">
+          <i class="fas fa-chevron-left"></i>
+        </button>
+        <div class="book-container" id="newArrivalsContainer">
+          <!-- New arrivals will be loaded here -->
+        </div>
+        <button class="carousel-btn next-btn" onclick="scrollCarousel('newArrivalsCarousel', 1)">
+          <i class="fas fa-chevron-right"></i>
+        </button>
+      </div>
+    </section>
+
+    <!-- Children's Books Section -->
+    <section class="book-section">
+      <div class="section-header">
+        <h2>Children's Books</h2>
+        <p>Stories that spark imagination</p>
+      </div>
+      <div class="book-carousel" id="childrenCarousel">
+        <button class="carousel-btn prev-btn" onclick="scrollCarousel('childrenCarousel', -1)">
+          <i class="fas fa-chevron-left"></i>
+        </button>
+        <div class="book-container" id="childrenContainer">
+          <!-- Children's books will be loaded here -->
+        </div>
+        <button class="carousel-btn next-btn" onclick="scrollCarousel('childrenCarousel', 1)">
+          <i class="fas fa-chevron-right"></i>
+        </button>
+      </div>
+    </section>
+
+    <!-- Novels Section -->
+    <section class="book-section">
+      <div class="section-header">
+        <h2>Novels</h2>
+        <p>Compelling stories for adults</p>
+      </div>
+      <div class="book-carousel" id="novelsCarousel">
+        <button class="carousel-btn prev-btn" onclick="scrollCarousel('novelsCarousel', -1)">
+          <i class="fas fa-chevron-left"></i>
+        </button>
+        <div class="book-container" id="novelsContainer">
+          <!-- Novels will be loaded here -->
+        </div>
+        <button class="carousel-btn next-btn" onclick="scrollCarousel('novelsCarousel', 1)">
+          <i class="fas fa-chevron-right"></i>
+        </button>
+      </div>
+    </section>
+
+    <!-- Enhanced Novels Section with Side Images -->
+    <section class="book-section">
+      <div class="section-header">
+        <h2>Visit Our Book Store</h2>
+        <p>Experience the magic of reading</p>
+      </div>
+      
+      <!-- Book Shop Photos Section -->
+      <div class="bookshop-photos-section">
+        <!-- Left Book Shop Photo -->
+        <div class="bookshop-photo left-photo">
+          <div class="photo-container">
+            <img src="image/Book Shop.jpg" alt="Pahana Book Store Exterior" class="bookshop-image">
+            <div class="photo-overlay">
+              <div class="overlay-content">
+                <h3 class="visit-title">Visit Our Book Store</h3>
+                <p class="visit-subtitle">Discover your next favorite book</p>
+                <div class="pulse-dot"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+        
+        <!-- Center Book Shop Photo -->
+        <div class="bookshop-photo center-photo">
+          <div class="photo-container">
+            <img src="image/bookstore.webp" alt="Pahana Book Store Interior" class="bookshop-image">
+            <div class="photo-overlay">
+              <div class="overlay-content">
+                <h3 class="visit-title">Visit Our Book Store</h3>
+                <p class="visit-subtitle">Where stories come to life</p>
+                <div class="pulse-dot"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+        
+        <!-- Right Book Shop Photo -->
+        <div class="bookshop-photo right-photo">
+          <div class="photo-container">
+            <img src="image/Bookshop2.png" alt="Pahana Book Store Reading Area" class="bookshop-image">
+            <div class="photo-overlay">
+              <div class="overlay-content">
+                <h3 class="visit-title">Visit Our Book Store</h3>
+                <p class="visit-subtitle">Your literary sanctuary</p>
+                <div class="pulse-dot"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      
+      <!-- Service Features Section -->
+      <div class="service-features">
+        <div class="service-item" data-aos="fade-up" data-aos-delay="100">
+          <div class="service-icon">
+            <i class="fas fa-truck"></i>
+          </div>
+          <h4>Islandwide Delivery</h4>
+          <p>Ensuring convenience</p>
+        </div>
+        
+        <div class="service-item" data-aos="fade-up" data-aos-delay="200">
+          <div class="service-icon">
+            <i class="fas fa-tags"></i>
+          </div>
+          <h4>Best Price</h4>
+          <p>Ultimate affordability</p>
+        </div>
+        
+        <div class="service-item" data-aos="fade-up" data-aos-delay="300">
+          <div class="service-icon">
+            <i class="fas fa-shipping-fast"></i>
+          </div>
+          <h4>Fast Delivery</h4>
+          <p>Customer focused</p>
+        </div>
+        
+        <div class="service-item" data-aos="fade-up" data-aos-delay="400">
+          <div class="service-icon">
+            <i class="fas fa-shield-alt"></i>
+          </div>
+          <h4>Secure Payment</h4>
+          <p>Safe and efficient</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- All Books Section -->
+    <section class="book-section">
+      <div class="section-header">
+        <h2><i class="fas fa-books"></i> All Books</h2>
+        <p>Browse our complete collection</p>
+      </div>
+      <div class="book-carousel" id="allBooksCarousel">
+        <button class="carousel-btn prev-btn" onclick="scrollCarousel('allBooksCarousel', -1)">
+          <i class="fas fa-chevron-left"></i>
+        </button>
+        <div class="book-container" id="allBooksContainer">
+          <!-- All books will be loaded here -->
+        </div>
+        <button class="carousel-btn next-btn" onclick="scrollCarousel('allBooksCarousel', 1)">
+          <i class="fas fa-chevron-right"></i>
+        </button>
+      </div>
+    </section>
+
+    <!-- Recommended Books Section -->
+    <section class="book-section">
+      <div class="section-header">
+        <h2><i class="fas fa-star"></i> Recommended for You</h2>
+        <p>Discover books tailored to your interests</p>
+      </div>
+      <div class="book-carousel" id="recommendedCarousel">
+        <button class="carousel-btn prev-btn" onclick="scrollCarousel('recommendedCarousel', -1)">
+          <i class="fas fa-chevron-left"></i>
+        </button>
+        <div class="book-container" id="recommendedContainer">
+          <!-- Recommended books will be loaded here -->
+        </div>
+        <button class="carousel-btn next-btn" onclick="scrollCarousel('recommendedCarousel', 1)">
+          <i class="fas fa-chevron-right"></i>
+        </button>
+      </div>
+    </section>
+  </main>
+
+  <!-- Beautiful Animated Footer -->
+  <footer class="pahana-footer">
+    <div class="footer-waves">
+      <div class="wave wave1"></div>
+      <div class="wave wave2"></div>
+      <div class="wave wave3"></div>
+    </div>
+    
+    <div class="footer-content">
+      <!-- Categories Section -->
+      <div class="footer-section animate-on-scroll">
+        <div class="section-icon">
+          <i class="fas fa-book-open"></i>
+        </div>
+        <h4>Categories</h4>
+        <ul class="footer-links">
+          <li><a href="#featuredCarousel" class="hover-effect">Featured Books</a></li>
+          <li><a href="#newArrivalsCarousel" class="hover-effect">New Arrivals</a></li>
+          <li><a href="#childrenCarousel" class="hover-effect">Children's Books</a></li>
+          <li><a href="#novelsCarousel" class="hover-effect">Novels</a></li>
+          <li><a href="#" class="hover-effect">Galle Literary</a></li>
+        </ul>
+      </div>
+      
+      <!-- Quick Links Section -->
+      <div class="footer-section animate-on-scroll">
+        <div class="section-icon">
+          <i class="fas fa-link"></i>
+        </div>
+        <h4>Quick Links</h4>
+        <ul class="footer-links">
+          <li><a href="landingpage.html" class="hover-effect">Home</a></li>
+          <li><a href="#" class="hover-effect">About Us</a></li>
+          <li><a href="contact.html" class="hover-effect">Contact Us</a></li>
+          <li><a href="login.html" class="hover-effect">Sign Up/ Login</a></li>
+          <li><a href="#" class="hover-effect" id="dashboardLink">My Account</a></li>
+        </ul>
+      </div>
+      
+      <!-- Information Section -->
+      <div class="footer-section animate-on-scroll">
+        <div class="section-icon">
+          <i class="fas fa-info-circle"></i>
+        </div>
+        <h4>Information</h4>
+        <ul class="footer-links">
+          <li><a href="#" class="hover-effect">Shipping & Return Policy</a></li>
+          <li><a href="#" class="hover-effect">Privacy And Cookies Policy</a></li>
+          <li><a href="#" class="hover-effect">Terms & Conditions</a></li>
+          <li><a href="#" class="hover-effect">Payment Policy</a></li>
+          <li><a href="#" class="hover-effect">Coupon T&C</a></li>
+          <li><a href="#" class="hover-effect">FAQ</a></li>
+        </ul>
+      </div>
+      
+      <!-- Contact Details Section -->
+      <div class="footer-section contact-section animate-on-scroll">
+        <div class="section-icon">
+          <i class="fas fa-address-card"></i>
+        </div>
+        <h4>Contact Details</h4>
+        <div class="contact-info">
+          <div class="contact-item">
+            <div class="contact-icon">
+              <i class="fas fa-map-marker-alt"></i>
+            </div>
+            <span>No.30, Stanley Thilakarathne Mawatha, Nugegoda, Sri Lanka, 10250</span>
+          </div>
+          <div class="contact-item">
+            <div class="contact-icon">
+              <i class="fas fa-phone"></i>
+            </div>
+            <span>+94 711304050 / 0112820820</span>
+          </div>
+          <div class="contact-item">
+            <div class="contact-icon">
+              <i class="fas fa-envelope"></i>
+            </div>
+            <span>pahanaedu
+              @gmail.com</span>
+          </div>
+        </div>
+      </div>
+    </div>
+    
+    <!-- Footer Bottom -->
+    <div class="footer-bottom">
+      <div class="footer-bottom-content">
+        <div class="footer-logo">
+          <div class="logo-container">
+            <span class="logo-icon">📚</span>
+            <div class="logo-text-container">
+              <span class="logo-text">Pahana Edu</span>
+              <span class="tagline">The Book Shop</span>
+            </div>
+          </div>
+        </div>
+        <div class="social-links">
+          <a href="#" class="social-link facebook"><i class="fab fa-facebook"></i></a>
+          <a href="#" class="social-link twitter"><i class="fab fa-twitter"></i></a>
+          <a href="#" class="social-link instagram"><i class="fab fa-instagram"></i></a>
+          <a href="#" class="social-link linkedin"><i class="fab fa-linkedin"></i></a>
+        </div>
+        <div class="copyright">
+          <p>&copy; 2024 Pahana Edu Book Shop. All rights reserved.</p>
+        </div>
+      </div>
+    </div>
+  </footer>
+
+  <script src="booklist.js"></script>
+</body>
+</html>

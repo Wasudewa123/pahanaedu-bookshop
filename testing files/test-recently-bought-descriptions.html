@@ -1,0 +1,297 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test Recently Bought Descriptions</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; }
+        .test-section { margin: 20px 0; padding: 15px; border: 1px solid #ddd; border-radius: 5px; }
+        .recently-bought-section {
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 8px;
+            margin: 20px 0;
+        }
+        .book-carousel {
+            position: relative;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .book-container {
+            display: flex;
+            gap: 15px;
+            overflow-x: auto;
+            scroll-behavior: smooth;
+            padding: 10px 0;
+        }
+        .book-card {
+            min-width: 200px;
+            background: white;
+            border-radius: 8px;
+            padding: 15px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            cursor: pointer;
+            transition: transform 0.3s ease;
+        }
+        .book-card:hover {
+            transform: translateY(-2px);
+        }
+        .book-card img {
+            width: 100%;
+            height: 120px;
+            object-fit: cover;
+            border-radius: 4px;
+            margin-bottom: 10px;
+        }
+        .book-card h4 {
+            margin: 0 0 5px 0;
+            font-size: 14px;
+            font-weight: bold;
+        }
+        .book-card p {
+            margin: 0 0 8px 0;
+            font-size: 12px;
+            color: #666;
+        }
+        .book-card .book-description {
+            font-size: 0.85rem;
+            color: #666;
+            line-height: 1.3;
+            margin: 8px 0;
+            font-style: italic;
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+        .book-card .price {
+            font-weight: bold;
+            color: #007bff;
+            font-size: 14px;
+        }
+        .book-badges {
+            display: flex;
+            gap: 5px;
+            margin-top: 8px;
+        }
+        .badge {
+            padding: 2px 6px;
+            border-radius: 10px;
+            font-size: 0.7rem;
+            font-weight: 600;
+        }
+        .badge.new {
+            background: #17a2b8;
+            color: white;
+        }
+        .badge.discount {
+            background: #dc3545;
+            color: white;
+        }
+        .test-instructions {
+            background: #e7f3ff;
+            padding: 15px;
+            border-radius: 8px;
+            margin: 20px 0;
+        }
+        .carousel-btn {
+            background: #007bff;
+            color: white;
+            border: none;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 18px;
+        }
+        .carousel-btn:hover {
+            background: #0056b3;
+        }
+    </style>
+</head>
+<body>
+    <h1>Test Recently Bought Descriptions</h1>
+    
+    <div class="test-instructions">
+        <h3>Test Instructions:</h3>
+        <ol>
+            <li>Check if all books in "Recently Bought Together" have descriptions</li>
+            <li>Verify descriptions are meaningful and not placeholder text</li>
+            <li>Click on any book to see if it navigates to order page with correct description</li>
+        </ol>
+    </div>
+    
+    <div class="test-section">
+        <h2>Recently Bought Together Section</h2>
+        <div class="recently-bought-section">
+            <div class="section-header">
+                <h3>Recently Bought Together</h3>
+                <p>Customers also purchased these books</p>
+            </div>
+            <div class="book-carousel">
+                <button class="carousel-btn prev-btn" onclick="scrollCarousel('recentlyBoughtCarousel', -1)">
+                    ‹
+                </button>
+                <div class="book-container" id="recentlyBoughtContainer">
+                    <!-- Books will be loaded here -->
+                </div>
+                <button class="carousel-btn next-btn" onclick="scrollCarousel('recentlyBoughtCarousel', 1)">
+                    ›
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Sample books with real descriptions (same as from database)
+        const recentlyBoughtBooks = [
+            {
+                id: '1',
+                title: 'HOT CHOCOLATE',
+                author: 'RUVINI SILVA',
+                price: 1000,
+                imageUrl: 'image/Book Shop.jpg',
+                description: 'A delightful story about friendship and adventure.'
+            },
+            {
+                id: '2',
+                title: 'The Farthest Shore',
+                author: 'Ursula K. Le Guin',
+                price: 1200,
+                imageUrl: 'image/Bookshop2.png',
+                description: 'A fantasy novel about a young wizard\'s journey.'
+            },
+            {
+                id: '3',
+                title: 'Lord of the ring',
+                author: 'J.R.R. Tolkien',
+                price: 1500,
+                imageUrl: 'image/bookstore.webp',
+                description: 'An epic fantasy novel about a quest to destroy a powerful ring.'
+            },
+            {
+                id: '4',
+                title: 'WISH',
+                author: 'Sameera Ekanayake',
+                price: 850,
+                imageUrl: 'image/Book Shop.jpg',
+                description: 'A heartwarming children\'s story about making wishes come true.'
+            },
+            {
+                id: '5',
+                title: 'The Little Prince',
+                author: 'Antoine de Saint-Exupéry',
+                price: 950,
+                imageUrl: 'image/Bookshop2.png',
+                description: 'A timeless classic about love, friendship, and the meaning of life.'
+            },
+            {
+                id: '6',
+                title: 'THE LEGEND OF RAVANA',
+                author: 'Nalin Goonewardene',
+                price: 1900,
+                imageUrl: 'image/bookstore.webp',
+                description: 'Nalin Goonewardene\'s book masterfully humanizes King Ravana and relates his struggles to protect his family and values.'
+            }
+        ];
+        
+        // Initialize the page
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log("Test page loaded");
+            displayRecentlyBoughtBooks(recentlyBoughtBooks);
+        });
+        
+        // Display recently bought books (same logic as order.js)
+        function displayRecentlyBoughtBooks(books) {
+            const container = document.getElementById('recentlyBoughtContainer');
+            if (!container) return;
+            
+            console.log("Displaying recently bought books:", books);
+            
+            container.innerHTML = books.map(book => `
+                <div class="book-card" onclick="selectBook('${book.id}', '${book.title}')">
+                    <img src="${book.imageUrl || 'image/bookstore.webp'}" alt="${book.title}" onerror="this.src='image/bookstore.webp'">
+                    <h4>${book.title || 'Unknown Title'}</h4>
+                    <p>by ${book.author || 'Unknown Author'}</p>
+                    <p class="book-description">${book.description || 'A fascinating book that will captivate your imagination and expand your knowledge.'}</p>
+                    <div class="price">Rs. ${(book.price || 0).toFixed(2)}</div>
+                    <div class="book-badges">
+                        <span class="badge new">NEW</span>
+                        <span class="badge discount">10%</span>
+                    </div>
+                </div>
+            `).join('');
+            
+            console.log("Successfully displayed recently bought books with descriptions");
+        }
+        
+        // Select book from recently bought (same logic as order.js)
+        function selectBook(bookId, bookTitle) {
+            console.log("Selected book:", bookId, bookTitle);
+            
+            // Get the book details from the recently bought books
+            const recentlyBoughtContainer = document.getElementById('recentlyBoughtContainer');
+            if (recentlyBoughtContainer) {
+                const bookCards = recentlyBoughtContainer.querySelectorAll('.book-card');
+                let selectedBook = null;
+                
+                // Find the clicked book's details
+                bookCards.forEach(card => {
+                    const cardTitle = card.querySelector('h4')?.textContent;
+                    if (cardTitle === bookTitle) {
+                        const author = card.querySelector('p')?.textContent.replace('by ', '') || 'Unknown Author';
+                        const priceText = card.querySelector('.price')?.textContent || 'Rs. 0.00';
+                        const price = parseFloat(priceText.replace('Rs. ', '')) || 0;
+                        const imageUrl = card.querySelector('img')?.src || 'image/bookstore.webp';
+                        const description = card.querySelector('.book-description')?.textContent || 'A fascinating book that will captivate your imagination and expand your knowledge.';
+                        
+                        selectedBook = {
+                            id: bookId,
+                            title: bookTitle,
+                            author: author,
+                            price: price,
+                            description: description,
+                            imageUrl: imageUrl
+                        };
+                    }
+                });
+                
+                if (selectedBook) {
+                    // Store complete book details
+                    localStorage.setItem('selectedBook', JSON.stringify(selectedBook));
+                    localStorage.setItem('selectedBookId', bookId);
+                    localStorage.setItem('selectedBookTitle', bookTitle);
+                    
+                    console.log("Selected book details:", selectedBook);
+                    alert(`Selected: ${selectedBook.title}\nDescription: ${selectedBook.description}`);
+                }
+            }
+        }
+        
+        // Carousel scrolling functionality
+        function scrollCarousel(carouselId, direction) {
+            const carousel = document.getElementById(carouselId);
+            const container = carousel.querySelector('.book-container');
+            const scrollAmount = 300;
+            
+            if (container) {
+                const currentScroll = container.scrollLeft;
+                const newScroll = currentScroll + (direction * scrollAmount);
+                container.scrollTo({
+                    left: newScroll,
+                    behavior: 'smooth'
+                });
+            }
+        }
+        
+        // Make scrollCarousel globally available
+        window.scrollCarousel = scrollCarousel;
+    </script>
+</body>
+</html> 

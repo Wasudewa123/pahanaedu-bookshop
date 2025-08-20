@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Debug Form Data Collection</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; }
+        .form-group { margin: 10px 0; }
+        label { display: block; margin-bottom: 5px; }
+        input, select { width: 100%; padding: 8px; margin-bottom: 10px; }
+        button { padding: 10px 20px; background: #007bff; color: white; border: none; cursor: pointer; }
+        .result { background: #f5f5f5; padding: 15px; margin: 10px 0; border-radius: 5px; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <h1>Debug Form Data Collection</h1>
+    
+    <form id="testForm">
+        <h3>Personal Information</h3>
+        <div class="form-group">
+            <label for="firstName">First Name *</label>
+            <input type="text" id="firstName" name="firstName" required>
+        </div>
+        <div class="form-group">
+            <label for="lastName">Last Name *</label>
+            <input type="text" id="lastName" name="lastName" required>
+        </div>
+        <div class="form-group">
+            <label for="email">Email Address *</label>
+            <input type="email" id="email" name="email" required>
+        </div>
+        <div class="form-group">
+            <label for="phone">Phone Number *</label>
+            <input type="tel" id="phone" name="phone" required>
+        </div>
+        
+        <h3>Shipping Address</h3>
+        <div class="form-group">
+            <label for="company">Company</label>
+            <input type="text" id="company" name="company">
+        </div>
+        <div class="form-group">
+            <label for="streetAddress">Street Address *</label>
+            <input type="text" id="streetAddress" name="streetAddress" required>
+        </div>
+        <div class="form-group">
+            <label for="city">City *</label>
+            <input type="text" id="city" name="city" required>
+        </div>
+        <div class="form-group">
+            <label for="postalCode">Zip/Postal Code</label>
+            <input type="text" id="postalCode" name="postalCode">
+        </div>
+        <div class="form-group">
+            <label for="country">Country *</label>
+            <select id="country" name="country" required>
+                <option value="Sri Lanka" selected>Sri Lanka</option>
+                <option value="Other">Other</option>
+            </select>
+        </div>
+        <div class="form-group">
+            <label for="state">State/Province *</label>
+            <select id="state" name="state" required>
+                <option value="">Please select a region, state or province.</option>
+                <option value="Western Province">Western Province</option>
+                <option value="Central Province">Central Province</option>
+                <option value="Southern Province">Southern Province</option>
+                <option value="Northern Province">Northern Province</option>
+                <option value="Eastern Province">Eastern Province</option>
+                <option value="North Western Province">North Western Province</option>
+                <option value="North Central Province">North Central Province</option>
+                <option value="Uva Province">Uva Province</option>
+                <option value="Sabaragamuwa Province">Sabaragamuwa Province</option>
+            </select>
+        </div>
+        
+        <h3>Order Details</h3>
+        <div class="form-group">
+            <label for="quantity">Quantity *</label>
+            <input type="number" id="quantity" name="quantity" min="1" value="1" required>
+        </div>
+        <div class="form-group">
+            <label for="paymentMethod">Payment Method *</label>
+            <select id="paymentMethod" name="paymentMethod" required>
+                <option value="">Select Payment Method</option>
+                <option value="CASH_ON_DELIVERY">Cash on Delivery</option>
+                <option value="CARD">Credit/Debit Card</option>
+                <option value="BANK_TRANSFER">Bank Transfer</option>
+            </select>
+        </div>
+        
+        <button type="submit">Test Form Data Collection</button>
+    </form>
+    
+    <div id="result"></div>
+
+    <script>
+        document.getElementById('testForm').addEventListener('submit', function(event) {
+            event.preventDefault();
+            
+            // Collect form data
+            const formData = new FormData(event.target);
+            
+            // Debug: Log all form data
+            console.log("Form data being collected:");
+            const formDataObj = {};
+            for (let [key, value] of formData.entries()) {
+                console.log(`${key}: ${value}`);
+                formDataObj[key] = value;
+            }
+            
+            // Create order data object
+            const orderData = {
+                // Book information
+                bookId: "test-book-123",
+                bookTitle: "Test Book",
+                
+                // Customer information
+                firstName: formData.get('firstName'),
+                lastName: formData.get('lastName'),
+                customerName: formData.get('firstName') + ' ' + formData.get('lastName'),
+                email: formData.get('email'),
+                phone: formData.get('phone'),
+                
+                // Order details
+                quantity: parseInt(formData.get('quantity')),
+                paymentMethod: formData.get('paymentMethod'),
+                totalPrice: 1500 * parseInt(formData.get('quantity')),
+                
+                // Shipping address
+                company: formData.get('company'),
+                streetAddress: formData.get('streetAddress'),
+                city: formData.get('city'),
+                postalCode: formData.get('postalCode'),
+                country: formData.get('country'),
+                state: formData.get('state')
+            };
+            
+            console.log("Final order data being sent:", orderData);
+            
+            // Display results
+            document.getElementById('result').innerHTML = `
+                <div class="result">
+                    <h3>Form Data Collection Results:</h3>
+                    <h4>Raw Form Data:</h4>
+                    <pre>${JSON.stringify(formDataObj, null, 2)}</pre>
+                    <h4>Processed Order Data:</h4>
+                    <pre>${JSON.stringify(orderData, null, 2)}</pre>
+                    <h4>Missing Fields Check:</h4>
+                    <ul>
+                        <li>firstName: ${orderData.firstName ? '✅ Present' : '❌ Missing'}</li>
+                        <li>lastName: ${orderData.lastName ? '✅ Present' : '❌ Missing'}</li>
+                        <li>email: ${orderData.email ? '✅ Present' : '❌ Missing'}</li>
+                        <li>phone: ${orderData.phone ? '✅ Present' : '❌ Missing'}</li>
+                        <li>company: ${orderData.company ? '✅ Present' : '❌ Missing'}</li>
+                        <li>streetAddress: ${orderData.streetAddress ? '✅ Present' : '❌ Missing'}</li>
+                        <li>city: ${orderData.city ? '✅ Present' : '❌ Missing'}</li>
+                        <li>postalCode: ${orderData.postalCode ? '✅ Present' : '❌ Missing'}</li>
+                        <li>country: ${orderData.country ? '✅ Present' : '❌ Missing'}</li>
+                        <li>state: ${orderData.state ? '✅ Present' : '❌ Missing'}</li>
+                        <li>quantity: ${orderData.quantity ? '✅ Present' : '❌ Missing'}</li>
+                        <li>paymentMethod: ${orderData.paymentMethod ? '✅ Present' : '❌ Missing'}</li>
+                    </ul>
+                </div>
+            `;
+        });
+    </script>
+</body>
+</html> 

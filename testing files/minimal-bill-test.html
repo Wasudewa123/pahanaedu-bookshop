@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Minimal Bill Test - Pahana Book Shop</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 20px;
+            background: #f5f5f5;
+        }
+        .container {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        .button {
+            background: #007bff;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            margin: 5px;
+        }
+        .button:hover {
+            background: #0056b3;
+        }
+        .result {
+            margin: 10px 0;
+            padding: 10px;
+            border-radius: 5px;
+        }
+        .success {
+            background: #d4edda;
+            border: 1px solid #c3e6cb;
+            color: #155724;
+        }
+        .error {
+            background: #f8d7da;
+            border: 1px solid #f5c6cb;
+            color: #721c24;
+        }
+        .loading {
+            color: #007bff;
+        }
+        .debug {
+            background: #f8f9fa;
+            border: 1px solid #dee2e6;
+            border-radius: 5px;
+            padding: 10px;
+            margin: 10px 0;
+            font-family: monospace;
+            font-size: 12px;
+            max-height: 200px;
+            overflow-y: auto;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🔧 Minimal Bill Generation Test</h1>
+        <p>This will test bill generation with the simplest possible data.</p>
+        
+        <button class="button" onclick="testMinimalBill()">Test Minimal Bill Generation</button>
+        <div id="result"></div>
+        <div id="debug" class="debug"></div>
+    </div>
+
+    <script>
+        async function testMinimalBill() {
+            const resultDiv = document.getElementById('result');
+            const debugDiv = document.getElementById('debug');
+            
+            resultDiv.innerHTML = '<div class="loading">Testing minimal bill generation...</div>';
+            debugDiv.innerHTML = '';
+            
+            try {
+                // Step 1: Get a customer
+                console.log('Step 1: Getting customers...');
+                const customersResponse = await fetch('http://localhost:8080/api/admin/customers');
+                
+                if (!customersResponse.ok) {
+                    throw new Error(`Failed to get customers: ${customersResponse.status}`);
+                }
+                
+                const customers = await customersResponse.json();
+                console.log('Customers found:', customers.length);
+                
+                if (customers.length === 0) {
+                    throw new Error('No customers found in database');
+                }
+                
+                const customer = customers[0];
+                console.log('Using customer:', customer);
+                
+                // Step 2: Create minimal bill data
+                const billData = {
+                    customerAccountNumber: customer.accountNumber,
+                    items: [
+                        {
+                            bookId: "test-book-1",
+                            title: "Test Book",
+                            quantity: 1,
+                            price: 1000
+                        }
+                    ],
+                    subtotal: 1000,
+                    discount: 0,
+                    tax: 150,
+                    total: 1150,
+                    paymentMethod: "cash",
+                    transactionId: "TXN" + Date.now(),
+                    adminNotes: "Minimal test bill"
+                };
+                
+                console.log('Sending bill data:', JSON.stringify(billData, null, 2));
+                
+                // Step 3: Send to billing API
+                console.log('Step 3: Sending to billing API...');
+                const response = await fetch('http://localhost:8080/api/billing/generate', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(billData)
+                });
+                
+                console.log('Response status:', response.status);
+                console.log('Response headers:', response.headers);
+                
+                const responseText = await response.text();
+                console.log('Response text:', responseText);
+                
+                // Step 4: Parse response
+                let result;
+                try {
+                    result = JSON.parse(responseText);
+                } catch (e) {
+                    throw new Error(`Invalid JSON response: ${responseText}`);
+                }
+                
+                console.log('Parsed result:', result);
+                
+                // Step 5: Check result
+                if (response.ok && result.success) {
+                    resultDiv.innerHTML = `
+                        <div class="result success">
+                            ✅ Bill generated successfully!<br>
+                            Bill Number: ${result.bill.billNumber}<br>
+                            Customer: ${result.bill.customerName}<br>
+                            Total: Rs. ${result.bill.total}<br>
+                            Status: ${result.bill.status}
+                        </div>
+                    `;
+                } else {
+                    resultDiv.innerHTML = `
+                        <div class="result error">
+                            ❌ Bill generation failed:<br>
+                            Status: ${response.status}<br>
+                            Message: ${result.message || 'Unknown error'}
+                        </div>
+                    `;
+                }
+                
+                // Step 6: Show debug info
+                debugDiv.innerHTML = `
+                    <h4>Debug Information:</h4>
+                    <strong>Request Data:</strong><br>
+                    <pre>${JSON.stringify(billData, null, 2)}</pre>
+                    <br>
+                    <strong>Response Status:</strong> ${response.status}<br>
+                    <strong>Response Text:</strong><br>
+                    <pre>${responseText}</pre>
+                `;
+                
+            } catch (error) {
+                console.error('Error:', error);
+                resultDiv.innerHTML = `
+                    <div class="result error">
+                        ❌ Error: ${error.message}
+                    </div>
+                `;
+                debugDiv.innerHTML = `
+                    <h4>Error Details:</h4>
+                    <pre>${error.stack}</pre>
+                `;
+            }
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Real-Time Price Test</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; }
+        .order-summary { 
+            border: 1px solid #ddd; 
+            padding: 20px; 
+            margin: 20px 0; 
+            border-radius: 8px;
+            background: white;
+        }
+        .book-details {
+            display: flex;
+            gap: 20px;
+            align-items: center;
+        }
+        .book-cover img { width: 100px; height: 100px; object-fit: cover; border-radius: 5px; }
+        .book-info h3 { margin: 0 0 10px 0; color: #333; }
+        .book-author { color: #666; margin-bottom: 10px; }
+        .price-quantity { 
+            display: flex; 
+            align-items: center; 
+            gap: 20px; 
+            margin: 15px 0;
+        }
+        .price { 
+            font-size: 1.5em; 
+            font-weight: bold; 
+            color: #28a745; 
+            border: 2px solid #28a745;
+            padding: 5px 10px;
+            border-radius: 5px;
+        }
+        .quantity-input {
+            padding: 8px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 1.1em;
+            width: 80px;
+        }
+        .test-info {
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 5px;
+            margin: 20px 0;
+        }
+        .success { color: green; font-weight: bold; }
+        .info { color: blue; }
+    </style>
+</head>
+<body>
+    <h1>Real-Time Price Update Test</h1>
+    
+    <div class="test-info">
+        <h3>Test Instructions:</h3>
+        <ol>
+            <li>Change the quantity in the input field below</li>
+            <li>Watch the price update <strong>immediately</strong> as you type</li>
+            <li>The price should change in real-time, not just when you finish editing</li>
+        </ol>
+    </div>
+    
+    <div class="order-summary">
+        <div class="book-details">
+            <div class="book-cover">
+                <img src="image/Kata Katha.jpg" alt="The Legend of Ravana" onerror="this.src='image/bookstore.webp'">
+            </div>
+            <div class="book-info">
+                <h3>THE LEGEND OF RAVANA</h3>
+                <p class="book-author">by Nalin Goonewardene</p>
+                <p>Nalin Goonewardene's book masterfully humanizes King Ravana and relates his struggles to protect his family and values. Through meticulous research and engaging storytelling, the author offers a fresh perspective on a misunderstood historical figure.</p>
+                
+                <div class="price-quantity">
+                    <div>
+                        <label>Quantity: </label>
+                        <input type="number" id="quantity" class="quantity-input" value="1" min="1" 
+                               onchange="updatePrice()" oninput="updatePrice()">
+                    </div>
+                    <div>
+                        <span class="price" id="bookPrice">Rs. 1900.00</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="test-info">
+        <h3>Expected Behavior:</h3>
+        <ul>
+            <li class="success">✅ Price updates immediately as you type</li>
+            <li class="success">✅ Price updates when you use arrow buttons</li>
+            <li class="success">✅ Price updates when you finish editing (blur)</li>
+            <li class="success">✅ Price updates when you press Enter</li>
+        </ul>
+        
+        <h3>Test Results:</h3>
+        <div id="test-results">
+            <p class="info">Change the quantity above to see real-time updates...</p>
+        </div>
+    </div>
+
+    <script>
+        // Global variable to store current book's base price (same as order.js)
+        let currentBookBasePrice = 1900;
+        
+        // Update price function (same as order.js)
+        function updatePrice() {
+            const quantityInput = document.getElementById('quantity');
+            const bookPrice = document.getElementById('bookPrice');
+            
+            if (quantityInput && bookPrice) {
+                const quantity = parseInt(quantityInput.value) || 1;
+                const totalPrice = currentBookBasePrice * quantity;
+                bookPrice.textContent = `Rs. ${totalPrice.toFixed(2)}`;
+                
+                // Log the update
+                console.log(`Real-time update: Quantity ${quantity}, Price Rs. ${totalPrice.toFixed(2)}`);
+                
+                // Update test results
+                updateTestResults(quantity, totalPrice);
+            }
+        }
+        
+        // Update test results
+        function updateTestResults(quantity, totalPrice) {
+            const resultsDiv = document.getElementById('test-results');
+            resultsDiv.innerHTML = `
+                <div class="success">
+                    <p>✅ Real-time update working!</p>
+                    <p>Quantity: ${quantity} | Base Price: Rs. ${currentBookBasePrice.toFixed(2)} | Total: Rs. ${totalPrice.toFixed(2)}</p>
+                    <p>Last updated: ${new Date().toLocaleTimeString()}</p>
+                </div>
+            `;
+        }
+        
+        // Initialize on page load
+        document.addEventListener('DOMContentLoaded', function() {
+            updatePrice();
+            console.log("Real-time price test initialized");
+        });
+    </script>
+</body>
+</html> 

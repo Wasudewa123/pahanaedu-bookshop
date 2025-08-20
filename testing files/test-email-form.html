@@ -1,0 +1,295 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Email Form Test</title>
+    <style>
+        body {
+            background: #1a1a1a;
+            color: white;
+            font-family: Arial, sans-serif;
+            padding: 20px;
+        }
+        
+        .form-container {
+            max-width: 500px;
+            margin: 0 auto;
+            background: #2a2a2a;
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+        }
+        
+        .form-group {
+            margin-bottom: 20px;
+        }
+        
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+        }
+        
+        input, textarea, select {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #444;
+            border-radius: 8px;
+            background: #333;
+            color: white;
+            font-size: 16px;
+        }
+        
+        input:focus, textarea:focus, select:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 2px rgba(102, 126, 234, 0.2);
+        }
+        
+        button {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 12px 24px;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+        }
+        
+        button:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+        }
+        
+        .message {
+            padding: 15px;
+            border-radius: 8px;
+            margin: 20px 0;
+        }
+        
+        .success {
+            background: rgba(76, 175, 80, 0.2);
+            border: 1px solid #4caf50;
+            color: #4caf50;
+        }
+        
+        .error {
+            background: rgba(244, 67, 54, 0.2);
+            border: 1px solid #f44336;
+            color: #f44336;
+        }
+        
+        .debug-info {
+            background: rgba(0, 0, 0, 0.8);
+            padding: 15px;
+            border-radius: 10px;
+            margin: 20px 0;
+            font-family: monospace;
+            font-size: 12px;
+        }
+    </style>
+</head>
+<body>
+    <h1>Email Form Test</h1>
+    
+    <div class="debug-info">
+        <div id="debugOutput">Initializing...</div>
+    </div>
+    
+    <div class="form-container">
+        <h2>Test Contact Form</h2>
+        <p>⚠️ <strong>IMPORTANT:</strong> You need to create the Gmail account first!</p>
+        <p>Current email: <span id="currentEmail" style="color: #667eea; font-weight: bold;">pahanaedu327@gmail.com</span></p>
+        <button onclick="changeEmail()" style="background: #ff9800; color: white; padding: 5px 10px; border: none; border-radius: 5px; cursor: pointer; margin-left: 10px;">
+            Change Email
+        </button>
+        
+        <form id="testForm" action="https://formspree.io/f/mdkdwkkq" method="POST">
+            <div class="form-group">
+                <label for="name">Full Name *</label>
+                <input type="text" id="name" name="name" required>
+            </div>
+            
+            <div class="form-group">
+                <label for="email">Email Address *</label>
+                <input type="email" id="email" name="email" required>
+            </div>
+            
+            <div class="form-group">
+                <label for="subject">Subject *</label>
+                <select id="subject" name="subject" required>
+                    <option value="">Select a subject</option>
+                    <option value="test">Test Message</option>
+                    <option value="general">General Inquiry</option>
+                    <option value="order">Order Status</option>
+                </select>
+            </div>
+            
+            <div class="form-group">
+                <label for="message">Message *</label>
+                <textarea id="message" name="message" rows="4" required placeholder="This is a test message from the contact form..."></textarea>
+            </div>
+            
+            <button type="submit" id="submitBtn">
+                Send Test Message
+            </button>
+        </form>
+        
+        <div id="messageContainer"></div>
+        
+        <!-- Setup Instructions -->
+        <div style="margin-top: 30px; padding: 20px; background: #333; border-radius: 10px; border-left: 4px solid #ff9800;">
+            <h3>🔧 Setup Instructions:</h3>
+            <p><strong>To fix the email sending:</strong></p>
+            <ol style="text-align: left;">
+                <li>Go to <a href="https://formspree.io/" target="_blank" style="color: #667eea;">Formspree.io</a></li>
+                <li>Create a free account</li>
+                <li>Create a new form</li>
+                <li>Set the email to: <strong>pahanaedu327@gmail.com</strong></li>
+                <li>Copy the new endpoint URL</li>
+                <li>Replace the action URL in the form</li>
+            </ol>
+        </div>
+        
+        <!-- Alternative Email Options -->
+        <div style="margin-top: 30px; padding: 20px; background: #333; border-radius: 10px;">
+            <h3>Alternative Email Options:</h3>
+            <p>If the form doesn't work, try these alternatives:</p>
+            <div style="display: flex; gap: 10px; flex-wrap: wrap;">
+                <a href="mailto:pahanaedu327@gmail.com?subject=Contact from Website&body=Hello, I would like to contact you about..." 
+                   style="background: #667eea; color: white; padding: 10px 15px; text-decoration: none; border-radius: 5px;">
+                    📧 Send Direct Email
+                </a>
+                <button onclick="copyEmail()" style="background: #4caf50; color: white; padding: 10px 15px; border: none; border-radius: 5px; cursor: pointer;">
+                    📋 Copy Email Address
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function log(message) {
+            const debugOutput = document.getElementById('debugOutput');
+            const timestamp = new Date().toLocaleTimeString();
+            debugOutput.innerHTML += `<div>[${timestamp}] ${message}</div>`;
+            console.log(message);
+        }
+
+        function showMessage(message, type) {
+            const container = document.getElementById('messageContainer');
+            container.innerHTML = `<div class="message ${type}">${message}</div>`;
+        }
+
+        document.getElementById('testForm').addEventListener('submit', function(event) {
+            event.preventDefault();
+            
+            log('📧 Starting form submission...');
+            
+            const form = event.target;
+            const formData = new FormData(form);
+            const submitBtn = document.getElementById('submitBtn');
+            const originalText = submitBtn.innerHTML;
+            
+            // Show loading state
+            submitBtn.innerHTML = 'Sending...';
+            submitBtn.disabled = true;
+            
+            // Add metadata
+            formData.append('_timestamp', new Date().toISOString());
+            formData.append('_source', 'Test Contact Form');
+            
+            // Try multiple Formspree endpoints
+            const endpoints = [
+                'https://formspree.io/f/mdkdwkkq',
+                'https://formspree.io/f/mdkdwkkq', // Keep original as backup
+                'https://formspree.io/f/mdkdwkkq'  // Third attempt
+            ];
+            
+            let currentEndpoint = 0;
+            
+            function trySubmit() {
+                if (currentEndpoint >= endpoints.length) {
+                    log('❌ All endpoints failed');
+                    showMessage('❌ Email service unavailable. Please use the direct email link below.', 'error');
+                    submitBtn.innerHTML = originalText;
+                    submitBtn.disabled = false;
+                    return;
+                }
+                
+                const endpoint = endpoints[currentEndpoint];
+                log(`📧 Trying endpoint ${currentEndpoint + 1}: ${endpoint}`);
+                
+                fetch(endpoint, {
+                    method: 'POST',
+                    body: formData,
+                    headers: {
+                        'Accept': 'application/json'
+                    }
+                })
+                .then(response => {
+                    log(`📧 Response status: ${response.status}`);
+                    if (response.ok) {
+                        showMessage('✅ Test message sent successfully! Check pahanaedu327@gmail.com for the email.', 'success');
+                        form.reset();
+                        log('✅ Form submitted successfully');
+                        submitBtn.innerHTML = originalText;
+                        submitBtn.disabled = false;
+                    } else {
+                        throw new Error(`Form submission failed with status: ${response.status}`);
+                    }
+                })
+                .catch(error => {
+                    log(`❌ Endpoint ${currentEndpoint + 1} failed: ${error.message}`);
+                    currentEndpoint++;
+                    if (currentEndpoint < endpoints.length) {
+                        log(`🔄 Retrying with endpoint ${currentEndpoint + 1}...`);
+                        setTimeout(trySubmit, 1000); // Wait 1 second before retry
+                    } else {
+                        log('❌ All endpoints failed');
+                        showMessage('❌ Formspree endpoint not configured. Please follow the setup instructions above to create a new Formspree form for pahanaedu327@gmail.com', 'error');
+                        submitBtn.innerHTML = originalText;
+                        submitBtn.disabled = false;
+                    }
+                });
+            }
+            
+            trySubmit();
+        });
+        
+        function copyEmail() {
+            const email = document.getElementById('pahanaedu327@gmail.com').textContent;
+            navigator.clipboard.writeText(email).then(() => {
+                showMessage('📋 Email address copied to clipboard!', 'success');
+            }).catch(() => {
+                showMessage(`📋 Email: ${email}`, 'success');
+            });
+        }
+        
+        function changeEmail() {
+            const newEmail = prompt('Enter your Gmail address:', 'pahanaedu@gmail.com');
+            if (newEmail && newEmail.includes('@gmail.com')) {
+                document.getElementById('currentEmail').textContent = newEmail;
+                
+                // Update the direct email link
+                const directEmailLink = document.querySelector('a[href^="mailto:"]');
+                if (directEmailLink) {
+                    directEmailLink.href = `mailto:${newEmail}?subject=Contact from Website&body=Hello, I would like to contact you about...`;
+                }
+                
+                showMessage(`✅ Email updated to: ${newEmail}`, 'success');
+            } else if (newEmail) {
+                showMessage('❌ Please enter a valid Gmail address', 'error');
+            }
+        }
+
+        log('📄 Test form loaded and ready');
+    </script>
+</body>
+</html> 

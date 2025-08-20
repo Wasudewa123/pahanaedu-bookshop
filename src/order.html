@@ -1,0 +1,364 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Order Book - Pahana Book Shop</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="order.css">
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body>
+  <!-- Header -->
+  <header class="main-header">
+    <div class="header-container">
+      <div class="logo-section">
+        <div class="logo">
+          <span class="logo-icon">📚</span>
+          <span class="logo-text">Pahana Edu</span>
+        </div>
+        <span class="tagline">The Book Shop</span>
+      </div>
+      
+      <!-- Navigation Bar -->
+      <nav class="main-navigation">
+        <a href="landingpage.html" class="nav-item">
+          <i class="fas fa-home"></i>
+          <span>Home</span>
+        </a>
+        <a href="booklist.html" class="nav-item">
+          <i class="fas fa-book"></i>
+          <span>Browse Books</span>
+        </a>
+        <a href="contact.html" class="nav-item">
+          <i class="fas fa-envelope"></i>
+          <span>Contact</span>
+        </a>
+        <a href="blog-new.html" class="nav-item">
+          <i class="fas fa-blog"></i>
+          <span>Blog</span>
+        </a>
+        <a href="order.html" class="nav-item active">
+          <i class="fas fa-shopping-cart"></i>
+          <span>Order</span>
+        </a>
+      </nav>
+      
+
+    </div>
+  </header>
+
+  <!-- Main Content -->
+  <main class="main-content">
+    <!-- Book Shop Introduction -->
+    <section class="intro-section">
+      <div class="intro-content">
+        <h2 class="intro-title">Welcome to Pahana Book Shop</h2>
+        <p class="intro-description">
+          Discover your next favorite book in our carefully curated collection. 
+          From timeless classics to contemporary bestsellers, we bring you the 
+          finest selection of literature that inspires, educates, and entertains.
+        </p>
+        <div class="intro-features">
+          <div class="feature-item">
+            <i class="fas fa-shipping-fast"></i>
+            <span>Fast Delivery</span>
+          </div>
+          <div class="feature-item">
+            <i class="fas fa-shield-alt"></i>
+            <span>Secure Payment</span>
+          </div>
+          <div class="feature-item">
+            <i class="fas fa-headset"></i>
+            <span>24/7 Support</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Order Form Section -->
+    <section class="order-section">
+      <div class="order-container">
+        <h2 class="section-title">Complete Your Order</h2>
+        
+        <!-- Order Summary with Animation -->
+        <div class="order-summary-card" id="orderSummary">
+          <div class="book-animation-container">
+            <div class="book-cover">
+              <img id="bookImage" src="image/bookstore.webp" alt="Book Cover">
+            </div>
+            <div class="book-details">
+              <h3 id="bookTitle">Book Title</h3>
+              <p id="bookAuthor">by Author Name</p>
+              <div class="price-info">
+                <span class="price" id="bookPrice">Rs. 0.00</span>
+                <span class="quantity-info">Quantity: <span id="quantityDisplay">1</span></span>
+              </div>
+              <p class="book-description" id="bookDescription">
+                Book description will be displayed here...
+              </p>
+            </div>
+          </div>
+        </div>
+
+        <!-- Order Form -->
+        <form class="order-form" id="orderForm">
+          <div class="form-grid">
+            <!-- Personal Information -->
+            <div class="form-section">
+              <h3 class="form-section-title">
+                <i class="fas fa-user"></i>
+                Personal Information
+              </h3>
+              <div class="form-row">
+                <div class="form-group">
+                  <label for="firstName">First Name *</label>
+                  <input type="text" id="firstName" name="firstName" required>
+                </div>
+                <div class="form-group">
+                  <label for="lastName">Last Name *</label>
+                  <input type="text" id="lastName" name="lastName" required>
+                </div>
+              </div>
+              <div class="form-group">
+                <label for="email">Email Address *</label>
+                <input type="email" id="email" name="email" required>
+                <small class="help-text">You can create an account after checkout.</small>
+              </div>
+              <div class="form-group">
+                <label for="phone">Phone Number *</label>
+                <input type="tel" id="phone" name="phone" required>
+              </div>
+            </div>
+
+            <!-- Shipping Address -->
+            <div class="form-section">
+              <h3 class="form-section-title">
+                <i class="fas fa-map-marker-alt"></i>
+                Shipping Address
+              </h3>
+              <div class="form-group">
+                <label for="company">Company</label>
+                <input type="text" id="company" name="company">
+              </div>
+              <div class="form-group">
+                <label for="streetAddress">Street Address *</label>
+                <input type="text" id="streetAddress" name="streetAddress" required>
+              </div>
+              <div class="form-row">
+                <div class="form-group">
+                  <label for="city">City *</label>
+                  <input type="text" id="city" name="city" required>
+                </div>
+                <div class="form-group">
+                  <label for="postalCode">Zip/Postal Code</label>
+                  <input type="text" id="postalCode" name="postalCode">
+                </div>
+              </div>
+              <div class="form-row">
+                <div class="form-group">
+                  <label for="country">Country *</label>
+                  <select id="country" name="country" required>
+                    <option value="Sri Lanka" selected>Sri Lanka</option>
+                    <option value="Other">Other</option>
+                  </select>
+                </div>
+                <div class="form-group">
+                  <label for="state">State/Province *</label>
+                  <select id="state" name="state" required>
+                    <option value="">Please select a region, state or province.</option>
+                    <option value="Western Province">Western Province</option>
+                    <option value="Central Province">Central Province</option>
+                    <option value="Southern Province">Southern Province</option>
+                    <option value="Northern Province">Northern Province</option>
+                    <option value="Eastern Province">Eastern Province</option>
+                    <option value="North Western Province">North Western Province</option>
+                    <option value="North Central Province">North Central Province</option>
+                    <option value="Uva Province">Uva Province</option>
+                    <option value="Sabaragamuwa Province">Sabaragamuwa Province</option>
+                  </select>
+                </div>
+              </div>
+            </div>
+
+            <!-- Order Details -->
+            <div class="form-section">
+              <h3 class="form-section-title">
+                <i class="fas fa-shopping-cart"></i>
+                Order Details
+              </h3>
+              <div class="form-group">
+                <label for="quantity">Quantity *</label>
+                <input type="number" id="quantity" name="quantity" min="1" value="1" required>
+              </div>
+              <div class="form-group">
+                <label for="paymentMethod">Payment Method *</label>
+                <div class="payment-methods">
+                  <div class="payment-option">
+                    <input type="radio" id="cashOnDelivery" name="paymentMethod" value="CASH_ON_DELIVERY" required checked>
+                    <label for="cashOnDelivery">
+                      <i class="fas fa-money-bill-wave"></i>
+                      <span>Cash on Delivery</span>
+                    </label>
+                  </div>
+                  <div class="payment-option">
+                    <input type="radio" id="cardPayment" name="paymentMethod" value="CARD" required>
+                    <label for="cardPayment">
+                      <i class="fas fa-credit-card"></i>
+                      <span>Credit/Debit Card</span>
+                    </label>
+                  </div>
+                  <div class="payment-option">
+                    <input type="radio" id="bankTransfer" name="paymentMethod" value="BANK_TRANSFER" required>
+                    <label for="bankTransfer">
+                      <i class="fas fa-university"></i>
+                      <span>Bank Transfer</span>
+                    </label>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="order-actions">
+            <button type="submit" class="place-order-btn">
+              <i class="fas fa-shopping-bag"></i>
+              Place Order
+            </button>
+          </div>
+        </form>
+      </div>
+    </section>
+
+    <!-- Recently Bought Together Section -->
+    <section class="recently-bought-section">
+      <div class="section-header">
+        <h2>Recently Bought Together</h2>
+        <p>Customers also purchased these books</p>
+      </div>
+      <div class="book-carousel" id="recentlyBoughtCarousel">
+        <button class="carousel-btn prev-btn" onclick="scrollCarousel('recentlyBoughtCarousel', -1)">
+          <i class="fas fa-chevron-left"></i>
+        </button>
+        <div class="book-container" id="recentlyBoughtContainer">
+          <!-- Recently bought books will be loaded here -->
+        </div>
+        <button class="carousel-btn next-btn" onclick="scrollCarousel('recentlyBoughtCarousel', 1)">
+          <i class="fas fa-chevron-right"></i>
+        </button>
+      </div>
+    </section>
+  </main>
+
+  <!-- Beautiful Animated Footer -->
+  <footer class="pahana-footer">
+    <div class="footer-waves">
+      <div class="wave wave1"></div>
+      <div class="wave wave2"></div>
+      <div class="wave wave3"></div>
+    </div>
+    
+    <div class="footer-content">
+      <!-- Categories Section -->
+      <div class="footer-section animate-on-scroll">
+        <div class="section-icon">
+          <i class="fas fa-book-open"></i>
+        </div>
+        <h4>Categories</h4>
+        <ul class="footer-links">
+          <li><a href="booklist.html#featuredCarousel" class="hover-effect">Featured Books</a></li>
+          <li><a href="booklist.html#newArrivalsCarousel" class="hover-effect">New Arrivals</a></li>
+          <li><a href="booklist.html#childrenCarousel" class="hover-effect">Children's Books</a></li>
+          <li><a href="booklist.html#novelsCarousel" class="hover-effect">Novels</a></li>
+          <li><a href="#" class="hover-effect">Galle Literary</a></li>
+        </ul>
+      </div>
+      
+      <!-- Quick Links Section -->
+      <div class="footer-section animate-on-scroll">
+        <div class="section-icon">
+          <i class="fas fa-link"></i>
+        </div>
+        <h4>Quick Links</h4>
+        <ul class="footer-links">
+          <li><a href="landingpage.html" class="hover-effect">Home</a></li>
+          <li><a href="#" class="hover-effect">About Us</a></li>
+          <li><a href="contact.html" class="hover-effect">Contact Us</a></li>
+          <li><a href="login.html" class="hover-effect">Sign Up/ Login</a></li>
+          <li><a href="dashboard.html" class="hover-effect">My Account</a></li>
+        </ul>
+      </div>
+      
+      <!-- Information Section -->
+      <div class="footer-section animate-on-scroll">
+        <div class="section-icon">
+          <i class="fas fa-info-circle"></i>
+        </div>
+        <h4>Information</h4>
+        <ul class="footer-links">
+          <li><a href="#" class="hover-effect">Shipping & Return Policy</a></li>
+          <li><a href="#" class="hover-effect">Privacy And Cookies Policy</a></li>
+          <li><a href="#" class="hover-effect">Terms & Conditions</a></li>
+          <li><a href="#" class="hover-effect">Payment Policy</a></li>
+          <li><a href="#" class="hover-effect">Coupon T&C</a></li>
+          <li><a href="#" class="hover-effect">FAQ</a></li>
+        </ul>
+      </div>
+      
+      <!-- Contact Details Section -->
+      <div class="footer-section contact-section animate-on-scroll">
+        <div class="section-icon">
+          <i class="fas fa-address-card"></i>
+        </div>
+        <h4>Contact Details</h4>
+        <div class="contact-info">
+          <div class="contact-item">
+            <div class="contact-icon">
+              <i class="fas fa-map-marker-alt"></i>
+            </div>
+            <span>No.30, Stanley Thilakarathne Mawatha, Nugegoda, Sri Lanka, 10250</span>
+          </div>
+          <div class="contact-item">
+            <div class="contact-icon">
+              <i class="fas fa-phone"></i>
+            </div>
+            <span>+94 711304050 / 0112820820</span>
+          </div>
+          <div class="contact-item">
+            <div class="contact-icon">
+              <i class="fas fa-envelope"></i>
+            </div>
+            <span>pahanaedu@gmail.com</span>
+          </div>
+        </div>
+      </div>
+    </div>
+    
+    <!-- Footer Bottom -->
+    <div class="footer-bottom">
+      <div class="footer-bottom-content">
+        <div class="footer-logo">
+          <div class="logo-container">
+            <span class="logo-icon">📚</span>
+            <div class="logo-text-container">
+              <span class="logo-text">Pahana Edu</span>
+              <span class="tagline">The Book Shop</span>
+            </div>
+          </div>
+        </div>
+        <div class="social-links">
+          <a href="#" class="social-link facebook"><i class="fab fa-facebook"></i></a>
+          <a href="#" class="social-link twitter"><i class="fab fa-twitter"></i></a>
+          <a href="#" class="social-link instagram"><i class="fab fa-instagram"></i></a>
+          <a href="#" class="social-link linkedin"><i class="fab fa-linkedin"></i></a>
+        </div>
+        <div class="copyright">
+          <p>&copy; 2024 Pahana Edu Book Shop. All rights reserved.</p>
+        </div>
+      </div>
+    </div>
+  </footer>
+
+  <script src="order.js"></script>
+</body>
+</html> 

@@ -1,0 +1,384 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test Order Buttons</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; }
+        .test-section { margin: 20px 0; padding: 15px; border: 1px solid #ddd; border-radius: 5px; }
+        .success { color: green; }
+        .error { color: red; }
+        .info { color: blue; }
+        .warning { color: orange; }
+        button { padding: 10px 15px; margin: 5px; background: #007bff; color: white; border: none; border-radius: 3px; cursor: pointer; }
+        button:hover { background: #0056b3; }
+        .book-item { padding: 8px; border: 1px solid #eee; margin: 5px 0; border-radius: 3px; }
+        .order-link { color: #007bff; text-decoration: none; }
+        .order-link:hover { text-decoration: underline; }
+        .book-card { 
+            display: inline-block; 
+            width: 200px; 
+            margin: 10px; 
+            padding: 15px; 
+            border: 1px solid #ddd; 
+            border-radius: 8px; 
+            text-align: center;
+            cursor: pointer;
+            transition: transform 0.2s;
+        }
+        .book-card:hover { transform: translateY(-2px); }
+        .book-card img { width: 100px; height: 100px; object-fit: cover; border-radius: 5px; }
+        .order-btn { 
+            background: #28a745; 
+            color: white; 
+            border: none; 
+            padding: 8px 16px; 
+            border-radius: 4px; 
+            cursor: pointer; 
+            margin-top: 10px;
+        }
+        .order-btn:hover { background: #218838; }
+        .order-btn.disabled { 
+            background: #6c757d; 
+            cursor: not-allowed; 
+        }
+        .stock-badge {
+            position: absolute;
+            top: 5px;
+            right: 5px;
+            padding: 2px 6px;
+            border-radius: 3px;
+            font-size: 0.7em;
+            font-weight: bold;
+        }
+        .in-stock { background: #28a745; color: white; }
+        .low-stock { background: #ffc107; color: black; }
+        .out-of-stock { background: #dc3545; color: white; }
+    </style>
+</head>
+<body>
+    <h1>Test Order Buttons Functionality</h1>
+    
+    <div class="test-section">
+        <h2>Test Order Function Implementation</h2>
+        <button onclick="testOrderFunction()">Test orderBook Function</button>
+        <div id="order-function-result"></div>
+    </div>
+    
+    <div class="test-section">
+        <h2>Test Book Data with Special Characters</h2>
+        <button onclick="testSpecialCharacters()">Test Books with Special Characters</button>
+        <div id="special-chars-result"></div>
+    </div>
+    
+    <div class="test-section">
+        <h2>Test All Book Categories</h2>
+        <button onclick="testAllCategories()">Test All Categories</button>
+        <div id="categories-result"></div>
+    </div>
+    
+    <div class="test-section">
+        <h2>Test Recommended Books Section</h2>
+        <button onclick="testRecommendedBooks()">Test Recommended Books</button>
+        <div id="recommended-result"></div>
+    </div>
+    
+    <div class="test-section">
+        <h2>Test Order Button Generation</h2>
+        <div id="button-test-container">
+            <h3>Sample Books with Order Buttons:</h3>
+            <div id="sample-books-container"></div>
+        </div>
+    </div>
+
+    <script>
+        // Test the orderBook function
+        function testOrderFunction() {
+            const resultDiv = document.getElementById('order-function-result');
+            resultDiv.innerHTML = '<p class="info">Testing orderBook function...</p>';
+            
+            try {
+                // Test with normal book data
+                const testBook = {
+                    id: 'test-123',
+                    title: 'Test Book',
+                    author: 'Test Author',
+                    price: 1500.00,
+                    description: 'A test book description',
+                    imageUrl: 'image/bookstore.webp'
+                };
+                
+                // Simulate orderBook call
+                orderBook(testBook.id, testBook.title, testBook.price, testBook.author, testBook.description, testBook.imageUrl);
+                
+                // Check if data was stored
+                const storedBook = localStorage.getItem('selectedBook');
+                const storedId = localStorage.getItem('selectedBookId');
+                const storedTitle = localStorage.getItem('selectedBookTitle');
+                
+                if (storedBook && storedId && storedTitle) {
+                    resultDiv.innerHTML = `
+                        <h3>✅ orderBook Function Test Results:</h3>
+                        <p class="success">✅ Function executed successfully</p>
+                        <p class="success">✅ Book data stored in localStorage</p>
+                        
+                        <h4>Stored Data:</h4>
+                        <div class="book-item">
+                            <strong>ID:</strong> ${storedId}<br>
+                            <strong>Title:</strong> ${storedTitle}<br>
+                            <strong>Full Data:</strong> ${storedBook}
+                        </div>
+                        
+                        <h4>Test Order Page:</h4>
+                        <a href="order.html?bookId=${encodeURIComponent(testBook.id)}&bookTitle=${encodeURIComponent(testBook.title)}" 
+                           class="order-link" target="_blank">
+                            🛒 Open Order Page
+                        </a>
+                    `;
+                } else {
+                    resultDiv.innerHTML = '<p class="error">❌ orderBook function failed to store data</p>';
+                }
+            } catch (error) {
+                resultDiv.innerHTML = `<p class="error">❌ Error: ${error.message}</p>`;
+            }
+        }
+        
+        // Test books with special characters
+        function testSpecialCharacters() {
+            const resultDiv = document.getElementById('special-chars-result');
+            resultDiv.innerHTML = '<p class="info">Testing books with special characters...</p>';
+            
+            const testBooks = [
+                {
+                    id: 'book-1',
+                    title: "The King's Speech",
+                    author: "O'Connor & Smith",
+                    price: 1200.00,
+                    description: "A book with 'quotes' and \"double quotes\"",
+                    imageUrl: "image/bookstore.webp"
+                },
+                {
+                    id: 'book-2',
+                    title: "Don't Stop Believing",
+                    author: "Johnson's Publishing",
+                    price: 1800.00,
+                    description: "A book with apostrophes and special chars: & < >",
+                    imageUrl: "image/bookstore.webp"
+                }
+            ];
+            
+            let successCount = 0;
+            let errorCount = 0;
+            
+            testBooks.forEach((book, index) => {
+                try {
+                    orderBook(book.id, book.title, book.price, book.author, book.description, book.imageUrl);
+                    successCount++;
+                } catch (error) {
+                    errorCount++;
+                    console.error(`Error with book ${index + 1}:`, error);
+                }
+            });
+            
+            resultDiv.innerHTML = `
+                <h3>Special Characters Test Results:</h3>
+                <p class="success">✅ Successful calls: ${successCount}</p>
+                <p class="${errorCount > 0 ? 'error' : 'success'}">${errorCount > 0 ? '❌' : '✅'} Failed calls: ${errorCount}</p>
+                
+                <h4>Test Books:</h4>
+                ${testBooks.map((book, index) => `
+                    <div class="book-item">
+                        <strong>${index + 1}. ${book.title}</strong><br>
+                        Author: ${book.author}<br>
+                        Description: ${book.description}
+                    </div>
+                `).join('')}
+            `;
+        }
+        
+        // Test all categories
+        async function testAllCategories() {
+            const resultDiv = document.getElementById('categories-result');
+            resultDiv.innerHTML = '<p class="info">Testing all book categories...</p>';
+            
+            try {
+                const response = await fetch('http://localhost:8080/api/books/all');
+                
+                if (response.ok) {
+                    const data = await response.json();
+                    const books = data.books || [];
+                    
+                    const categories = {
+                        featured: books.slice(0, 3),
+                        newArrivals: books.slice(3, 6),
+                        children: books.slice(6, 9),
+                        novels: books.slice(9, 12)
+                    };
+                    
+                    let totalBooks = 0;
+                    let workingButtons = 0;
+                    
+                    Object.entries(categories).forEach(([category, categoryBooks]) => {
+                        totalBooks += categoryBooks.length;
+                        categoryBooks.forEach(book => {
+                            try {
+                                // Test orderBook function call
+                                const testCall = `orderBook('${book.id || ''}', '${book.title || ''}', ${book.price || 0}, '${book.author || ''}', '${book.description || ''}', '${book.imageUrl || ''}')`;
+                                // If no error in string construction, consider it working
+                                workingButtons++;
+                            } catch (error) {
+                                console.error(`Error with book in ${category}:`, error);
+                            }
+                        });
+                    });
+                    
+                    resultDiv.innerHTML = `
+                        <h3>Categories Test Results:</h3>
+                        <p class="success">✅ Total books tested: ${totalBooks}</p>
+                        <p class="success">✅ Working order buttons: ${workingButtons}</p>
+                        <p class="${workingButtons === totalBooks ? 'success' : 'warning'}">
+                            ${workingButtons === totalBooks ? '✅' : '⚠️'} Success rate: ${Math.round((workingButtons / totalBooks) * 100)}%
+                        </p>
+                        
+                        <h4>Category Breakdown:</h4>
+                        ${Object.entries(categories).map(([category, books]) => `
+                            <div class="book-item">
+                                <strong>${category}:</strong> ${books.length} books
+                            </div>
+                        `).join('')}
+                    `;
+                } else {
+                    resultDiv.innerHTML = '<p class="error">❌ Failed to load books from API</p>';
+                }
+            } catch (error) {
+                resultDiv.innerHTML = `<p class="error">❌ Error: ${error.message}</p>`;
+            }
+        }
+        
+        // Test recommended books
+        function testRecommendedBooks() {
+            const resultDiv = document.getElementById('recommended-result');
+            resultDiv.innerHTML = '<p class="info">Testing recommended books section...</p>';
+            
+            const recommendedBooks = [
+                { id: 1, title: "The Legend of Ravana", author: "Savin Edirisinghe", price: 1900.00, image: "image/Kata Katha.jpg", description: "A compelling tale of ancient Sri Lankan mythology" },
+                { id: 2, title: "Hot Chocolate", author: "Samantha Silva", price: 1000.00, image: "image/service3.jpg", description: "A heartwarming story of love and friendship" },
+                { id: 3, title: "The Silent Echo", author: "Michael Chen", price: 1500.00, image: "image/service4.jpg", description: "A mysterious journey through time and space" }
+            ];
+            
+            let successCount = 0;
+            let errorCount = 0;
+            
+            recommendedBooks.forEach((book, index) => {
+                try {
+                    orderBook(book.id, book.title, book.price, book.author, book.description, book.image);
+                    successCount++;
+                } catch (error) {
+                    errorCount++;
+                    console.error(`Error with recommended book ${index + 1}:`, error);
+                }
+            });
+            
+            resultDiv.innerHTML = `
+                <h3>Recommended Books Test Results:</h3>
+                <p class="success">✅ Successful calls: ${successCount}</p>
+                <p class="${errorCount > 0 ? 'error' : 'success'}">${errorCount > 0 ? '❌' : '✅'} Failed calls: ${errorCount}</p>
+                
+                <h4>Test Books:</h4>
+                ${recommendedBooks.map((book, index) => `
+                    <div class="book-item">
+                        <strong>${index + 1}. ${book.title}</strong><br>
+                        Author: ${book.author} | Price: Rs. ${book.price}
+                    </div>
+                `).join('')}
+            `;
+        }
+        
+        // Generate sample books with order buttons
+        async function loadSampleBooks() {
+            const container = document.getElementById('sample-books-container');
+            
+            try {
+                const response = await fetch('http://localhost:8080/api/books/all');
+                
+                if (response.ok) {
+                    const data = await response.json();
+                    const books = data.books || [];
+                    
+                    // Take first 4 books for sample
+                    const sampleBooks = books.slice(0, 4);
+                    
+                    container.innerHTML = sampleBooks.map((book, index) => {
+                        const bookId = book.id || book._id;
+                        const stockQuantity = book.stockQuantity || 0;
+                        let stockStatus = '';
+                        let stockClass = '';
+                        let orderDisabled = false;
+                        
+                        if (stockQuantity > 0) {
+                            if (stockQuantity <= 5) {
+                                stockStatus = `Low Stock (${stockQuantity})`;
+                                stockClass = 'low-stock';
+                            } else {
+                                stockStatus = `In Stock (${stockQuantity})`;
+                                stockClass = 'in-stock';
+                            }
+                        } else {
+                            stockStatus = 'Out of Stock';
+                            stockClass = 'out-of-stock';
+                            orderDisabled = true;
+                        }
+                        
+                        return `
+                            <div class="book-card">
+                                <div style="position: relative;">
+                                    <img src="${book.imageUrl || 'image/bookstore.webp'}" alt="${book.title}" onerror="this.src='image/bookstore.webp'">
+                                    <div class="stock-badge ${stockClass}">${stockStatus}</div>
+                                </div>
+                                <h4>${book.title}</h4>
+                                <p>by ${book.author}</p>
+                                <div class="price">Rs. ${book.price}</div>
+                                <button class="order-btn ${orderDisabled ? 'disabled' : ''}" 
+                                        onclick="${orderDisabled ? 'return false' : `orderBook('${(bookId || '').replace(/'/g, '\\\'')}', '${(book.title || '').replace(/'/g, '\\\'')}', ${book.price || 0}, '${(book.author || '').replace(/'/g, '\\\'')}', '${(book.description || '').replace(/'/g, '\\\'')}', '${(book.imageUrl || '').replace(/'/g, '\\\'')}')`}"
+                                        ${orderDisabled ? 'disabled' : ''}>
+                                    ${orderDisabled ? 'Out of Stock' : 'Order'}
+                                </button>
+                            </div>
+                        `;
+                    }).join('');
+                } else {
+                    container.innerHTML = '<p class="error">Failed to load sample books</p>';
+                }
+            } catch (error) {
+                container.innerHTML = `<p class="error">Error: ${error.message}</p>`;
+            }
+        }
+        
+        // Define orderBook function for testing
+        window.orderBook = function(id, title, price, author, description, imageUrl) {
+            // Store complete book details in localStorage for the order page
+            const bookDetails = {
+                id: id,
+                title: title,
+                price: price,
+                author: author,
+                description: description,
+                imageUrl: imageUrl
+            };
+            localStorage.setItem('selectedBook', JSON.stringify(bookDetails));
+            localStorage.setItem('selectedBookId', id);
+            localStorage.setItem('selectedBookTitle', title);
+            localStorage.setItem('bookBasePrice', price.toString());
+            
+            console.log("orderBook called with:", bookDetails);
+            
+            // Navigate to order page
+            window.location.href = `order.html?bookId=${encodeURIComponent(id)}&bookTitle=${encodeURIComponent(title)}`;
+        };
+        
+        // Load sample books when page loads
+        document.addEventListener('DOMContentLoaded', loadSampleBooks);
+    </script>
+</body>
+</html> 

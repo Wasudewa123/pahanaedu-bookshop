@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Add Sample Books</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; }
+        .book-form { margin: 20px 0; padding: 15px; border: 1px solid #ddd; border-radius: 5px; }
+        .form-group { margin: 10px 0; }
+        .form-group label { display: block; margin-bottom: 5px; font-weight: bold; }
+        .form-group input, .form-group select, .form-group textarea { width: 100%; padding: 8px; border: 1px solid #ddd; border-radius: 3px; }
+        button { padding: 10px 15px; margin: 5px; background: #007bff; color: white; border: none; border-radius: 3px; cursor: pointer; }
+        button:hover { background: #0056b3; }
+        .success { color: green; }
+        .error { color: red; }
+        .info { color: blue; }
+        pre { background: #f8f9fa; padding: 10px; border-radius: 3px; overflow-x: auto; }
+    </style>
+</head>
+<body>
+    <h1>Add Sample Books to Database</h1>
+    
+    <div class="book-form">
+        <h2>Add Sample Books</h2>
+        <button onclick="addSampleBooks()">Add 5 Sample Books</button>
+        <div id="result"></div>
+    </div>
+    
+    <div class="book-form">
+        <h2>Check Current Books</h2>
+        <button onclick="checkCurrentBooks()">Check Books in Database</button>
+        <div id="check-result"></div>
+    </div>
+
+    <script>
+        const sampleBooks = [
+            {
+                title: "The Great Gatsby",
+                author: "F. Scott Fitzgerald",
+                description: "A classic American novel about the Jazz Age and the American Dream",
+                price: 15.99,
+                category: "Novels",
+                isbn: "978-0743273565",
+                language: "English",
+                publishedYear: 1925,
+                format: "Paperback",
+                stockQuantity: 50,
+                rating: 4.5,
+                ratingCount: 120,
+                publisher: "Scribner",
+                pages: 180,
+                imageUrl: "https://example.com/gatsby.jpg"
+            },
+            {
+                title: "Harry Potter and the Philosopher's Stone",
+                author: "J.K. Rowling",
+                description: "The first book in the magical Harry Potter series",
+                price: 12.99,
+                category: "Children",
+                isbn: "978-0747532699",
+                language: "English",
+                publishedYear: 1997,
+                format: "Hardcover",
+                stockQuantity: 75,
+                rating: 4.8,
+                ratingCount: 200,
+                publisher: "Bloomsbury",
+                pages: 223,
+                imageUrl: "https://example.com/harry-potter.jpg"
+            },
+            {
+                title: "The Hobbit",
+                author: "J.R.R. Tolkien",
+                description: "A fantasy novel about Bilbo Baggins' adventure with thirteen dwarves",
+                price: 14.99,
+                category: "Novels",
+                isbn: "978-0547928244",
+                language: "English",
+                publishedYear: 1937,
+                format: "Paperback",
+                stockQuantity: 60,
+                rating: 4.7,
+                ratingCount: 150,
+                publisher: "Houghton Mifflin",
+                pages: 366,
+                imageUrl: "https://example.com/hobbit.jpg"
+            },
+            {
+                title: "Alice's Adventures in Wonderland",
+                author: "Lewis Carroll",
+                description: "A classic children's story about Alice's journey through a magical world",
+                price: 9.99,
+                category: "Children",
+                isbn: "978-0141439761",
+                language: "English",
+                publishedYear: 1865,
+                format: "Paperback",
+                stockQuantity: 40,
+                rating: 4.3,
+                ratingCount: 80,
+                publisher: "Penguin Classics",
+                pages: 208,
+                imageUrl: "https://example.com/alice.jpg"
+            },
+            {
+                title: "Pride and Prejudice",
+                author: "Jane Austen",
+                description: "A romantic novel of manners set in early 19th century England",
+                price: 11.99,
+                category: "Novels",
+                isbn: "978-0141439518",
+                language: "English",
+                publishedYear: 1813,
+                format: "Paperback",
+                stockQuantity: 35,
+                rating: 4.6,
+                ratingCount: 95,
+                publisher: "Penguin Classics",
+                pages: 432,
+                imageUrl: "https://example.com/pride-prejudice.jpg"
+            }
+        ];
+
+        async function addSampleBooks() {
+            const resultDiv = document.getElementById('result');
+            resultDiv.innerHTML = '<p class="info">Adding sample books...</p>';
+            
+            let successCount = 0;
+            let errorCount = 0;
+            
+            for (const book of sampleBooks) {
+                try {
+                    const response = await fetch('http://localhost:8080/api/books', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify(book)
+                    });
+                    
+                    const data = await response.json();
+                    if (data.success) {
+                        successCount++;
+                        console.log(`Added book: ${book.title}`);
+                    } else {
+                        errorCount++;
+                        console.error(`Failed to add book: ${book.title} - ${data.message}`);
+                    }
+                } catch (error) {
+                    errorCount++;
+                    console.error(`Error adding book: ${book.title} - ${error.message}`);
+                }
+            }
+            
+            resultDiv.innerHTML = `
+                <p class="success">✅ Added ${successCount} books successfully!</p>
+                ${errorCount > 0 ? `<p class="error">❌ Failed to add ${errorCount} books</p>` : ''}
+                <p class="info">💡 Now you can check the book list page to see the books!</p>
+            `;
+        }
+        
+        async function checkCurrentBooks() {
+            const resultDiv = document.getElementById('check-result');
+            resultDiv.innerHTML = '<p class="info">Checking current books...</p>';
+            
+            try {
+                const response = await fetch('http://localhost:8080/api/books/all', {
+                    method: 'GET',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    }
+                });
+                
+                const data = await response.json();
+                const books = data.books || [];
+                
+                resultDiv.innerHTML = `
+                    <p class="success">✅ Found ${books.length} books in database</p>
+                    <h3>Books in Database:</h3>
+                    <ul>
+                        ${books.map(book => `<li><strong>${book.title}</strong> by ${book.author} - Rs. ${book.price}</li>`).join('')}
+                    </ul>
+                    <pre>${JSON.stringify(data, null, 2)}</pre>
+                `;
+            } catch (error) {
+                resultDiv.innerHTML = `<p class="error">❌ Error checking books: ${error.message}</p>`;
+            }
+        }
+    </script>
+</body>
+</html> 

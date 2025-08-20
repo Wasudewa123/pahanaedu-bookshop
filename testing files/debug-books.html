@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Debug Books Issue</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; }
+        .debug-section { margin: 20px 0; padding: 15px; border: 1px solid #ddd; border-radius: 5px; }
+        .success { color: green; }
+        .error { color: red; }
+        .info { color: blue; }
+        button { padding: 10px 15px; margin: 5px; background: #007bff; color: white; border: none; border-radius: 3px; cursor: pointer; }
+        button:hover { background: #0056b3; }
+        pre { background: #f8f9fa; padding: 10px; border-radius: 3px; overflow-x: auto; }
+        .book-item { padding: 8px; border: 1px solid #eee; margin: 3px 0; border-radius: 3px; font-size: 12px; }
+    </style>
+</head>
+<body>
+    <h1>Debug Books Issue</h1>
+    
+    <div class="debug-section">
+        <h2>Test Different Endpoints</h2>
+        <button onclick="testAllBooks()">Test /api/books/all</button>
+        <button onclick="testPaginatedBooks()">Test /api/books (Paginated)</button>
+        <button onclick="testBookStats()">Test Book Statistics</button>
+        <div id="debug-result"></div>
+    </div>
+    
+    <div class="debug-section">
+        <h2>Check Book Details</h2>
+        <button onclick="checkBookDetails()">Check Individual Book Details</button>
+        <div id="book-details-result"></div>
+    </div>
+
+    <script>
+        async function testAllBooks() {
+            const resultDiv = document.getElementById('debug-result');
+            resultDiv.innerHTML = '<p class="info">Testing /api/books/all...</p>';
+            
+            try {
+                const response = await fetch('http://localhost:8080/api/books/all', {
+                    method: 'GET',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    }
+                });
+                
+                const data = await response.json();
+                const books = data.books || [];
+                
+                resultDiv.innerHTML = `
+                    <h3>Results from /api/books/all:</h3>
+                    <p class="success">✅ Total books returned: ${books.length}</p>
+                    <p><strong>Response data:</strong></p>
+                    <pre>${JSON.stringify(data, null, 2)}</pre>
+                    <h4>Books List:</h4>
+                    ${books.map((book, index) => `
+                        <div class="book-item">
+                            <strong>${index + 1}. ${book.title}</strong> by ${book.author}<br>
+                            Price: Rs. ${book.price} | Category: ${book.category || 'N/A'} | Archived: ${book.archived || false}
+                        </div>
+                    `).join('')}
+                `;
+            } catch (error) {
+                resultDiv.innerHTML = `<p class="error">❌ Error: ${error.message}</p>`;
+            }
+        }
+        
+        async function testPaginatedBooks() {
+            const resultDiv = document.getElementById('debug-result');
+            resultDiv.innerHTML = '<p class="info">Testing /api/books (Paginated)...</p>';
+            
+            try {
+                const response = await fetch('http://localhost:8080/api/books', {
+                    method: 'GET',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    }
+                });
+                
+                const data = await response.json();
+                const books = data.books || [];
+                
+                resultDiv.innerHTML = `
+                    <h3>Results from /api/books (Paginated):</h3>
+                    <p class="success">✅ Books returned: ${books.length}</p>
+                    <p><strong>Total in DB:</strong> ${data.totalBooks}</p>
+                    <p><strong>Page size:</strong> ${data.pageSize}</p>
+                    <p><strong>Current page:</strong> ${data.currentPage}</p>
+                    <p><strong>Total pages:</strong> ${data.totalPages}</p>
+                    <pre>${JSON.stringify(data, null, 2)}</pre>
+                `;
+            } catch (error) {
+                resultDiv.innerHTML = `<p class="error">❌ Error: ${error.message}</p>`;
+            }
+        }
+        
+        async function testBookStats() {
+            const resultDiv = document.getElementById('debug-result');
+            resultDiv.innerHTML = '<p class="info">Testing book statistics...</p>';
+            
+            try {
+                const response = await fetch('http://localhost:8080/api/books/stats', {
+                    method: 'GET',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    }
+                });
+                
+                const data = await response.json();
+                const stats = data.stats || {};
+                
+                resultDiv.innerHTML = `
+                    <h3>Book Statistics:</h3>
+                    <p><strong>Total books:</strong> ${stats.totalBooks}</p>
+                    <p><strong>In stock books:</strong> ${stats.inStockBooks}</p>
+                    <p><strong>Out of stock books:</strong> ${stats.outOfStockBooks}</p>
+                    <p><strong>Low stock books:</strong> ${stats.lowStockBooks}</p>
+                    <pre>${JSON.stringify(data, null, 2)}</pre>
+                `;
+            } catch (error) {
+                resultDiv.innerHTML = `<p class="error">❌ Error: ${error.message}</p>`;
+            }
+        }
+        
+        async function checkBookDetails() {
+            const resultDiv = document.getElementById('book-details-result');
+            resultDiv.innerHTML = '<p class="info">Checking book details...</p>';
+            
+            try {
+                const response = await fetch('http://localhost:8080/api/books/all', {
+                    method: 'GET',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    }
+                });
+                
+                const data = await response.json();
+                const books = data.books || [];
+                
+                // Check for potential issues
+                const issues = [];
+                const archivedBooks = books.filter(book => book.archived);
+                const booksWithoutCategory = books.filter(book => !book.category);
+                const booksWithoutTitle = books.filter(book => !book.title);
+                
+                if (archivedBooks.length > 0) {
+                    issues.push(`Found ${archivedBooks.length} archived books`);
+                }
+                if (booksWithoutCategory.length > 0) {
+                    issues.push(`Found ${booksWithoutCategory.length} books without category`);
+                }
+                if (booksWithoutTitle.length > 0) {
+                    issues.push(`Found ${booksWithoutTitle.length} books without title`);
+                }
+                
+                resultDiv.innerHTML = `
+                    <h3>Book Analysis:</h3>
+                    <p><strong>Total books returned:</strong> ${books.length}</p>
+                    <p><strong>Archived books:</strong> ${archivedBooks.length}</p>
+                    <p><strong>Books without category:</strong> ${booksWithoutCategory.length}</p>
+                    <p><strong>Books without title:</strong> ${booksWithoutTitle.length}</p>
+                    ${issues.length > 0 ? `<p class="error"><strong>Potential Issues:</strong> ${issues.join(', ')}</p>` : '<p class="success">✅ No obvious issues found</p>'}
+                    <h4>All Books (showing first 10):</h4>
+                    ${books.slice(0, 10).map((book, index) => `
+                        <div class="book-item">
+                            <strong>${index + 1}. ${book.title || 'NO TITLE'}</strong> by ${book.author || 'NO AUTHOR'}<br>
+                            Price: Rs. ${book.price || 'N/A'} | Category: ${book.category || 'N/A'} | Archived: ${book.archived || false} | ID: ${book.id}
+                        </div>
+                    `).join('')}
+                    ${books.length > 10 ? `<p>... and ${books.length - 10} more books</p>` : ''}
+                `;
+            } catch (error) {
+                resultDiv.innerHTML = `<p class="error">❌ Error: ${error.message}</p>`;
+            }
+        }
+    </script>
+</body>
+</html> 

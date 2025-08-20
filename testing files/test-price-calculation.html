@@ -1,0 +1,273 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test Price Calculation</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; }
+        .test-section { margin: 20px 0; padding: 15px; border: 1px solid #ddd; border-radius: 5px; }
+        .success { color: green; }
+        .error { color: red; }
+        .info { color: blue; }
+        button { padding: 10px 15px; margin: 5px; background: #007bff; color: white; border: none; border-radius: 3px; cursor: pointer; }
+        button:hover { background: #0056b3; }
+        .book-item { padding: 8px; border: 1px solid #eee; margin: 5px 0; border-radius: 3px; }
+        .order-link { color: #007bff; text-decoration: none; }
+        .order-link:hover { text-decoration: underline; }
+        .book-card { 
+            display: inline-block; 
+            width: 200px; 
+            margin: 10px; 
+            padding: 15px; 
+            border: 1px solid #ddd; 
+            border-radius: 8px; 
+            text-align: center;
+            cursor: pointer;
+            transition: transform 0.2s;
+        }
+        .book-card:hover { transform: translateY(-2px); }
+        .book-card img { width: 100px; height: 100px; object-fit: cover; border-radius: 5px; }
+        .price-display { 
+            font-size: 1.2em; 
+            font-weight: bold; 
+            color: #28a745; 
+            margin: 10px 0;
+        }
+        .quantity-input {
+            width: 60px;
+            padding: 5px;
+            border: 1px solid #ddd;
+            border-radius: 3px;
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+    <h1>Test Price Calculation for Individual Books</h1>
+    
+    <div class="test-section">
+        <h2>Test Book-Specific Price Storage</h2>
+        <button onclick="testBookSpecificPrices()">Test Book-Specific Prices</button>
+        <div id="price-test-result"></div>
+    </div>
+    
+    <div class="test-section">
+        <h2>Test Quantity Changes for Different Books</h2>
+        <button onclick="testQuantityChanges()">Test Quantity Changes</button>
+        <div id="quantity-test-result"></div>
+    </div>
+    
+    <div class="test-section">
+        <h2>Test Order Page Price Calculation</h2>
+        <div id="order-test-container">
+            <h3>Sample Books with Price Calculation:</h3>
+            <div id="sample-books-container"></div>
+        </div>
+    </div>
+
+    <script>
+        // Test book-specific price storage
+        function testBookSpecificPrices() {
+            const resultDiv = document.getElementById('price-test-result');
+            resultDiv.innerHTML = '<p class="info">Testing book-specific price storage...</p>';
+            
+            const testBooks = [
+                { id: 'book-1', title: 'Book One', price: 1500.00 },
+                { id: 'book-2', title: 'Book Two', price: 2500.00 },
+                { id: 'book-3', title: 'Book Three', price: 3500.00 }
+            ];
+            
+            let successCount = 0;
+            let errorCount = 0;
+            
+            testBooks.forEach((book, index) => {
+                try {
+                    // Store book-specific base price
+                    localStorage.setItem(`bookBasePrice_${book.id}`, book.price.toString());
+                    localStorage.setItem('selectedBookId', book.id);
+                    
+                    // Retrieve and verify
+                    const storedPrice = parseFloat(localStorage.getItem(`bookBasePrice_${book.id}`));
+                    const currentBookId = localStorage.getItem('selectedBookId');
+                    
+                    if (storedPrice === book.price && currentBookId === book.id) {
+                        successCount++;
+                    } else {
+                        errorCount++;
+                    }
+                } catch (error) {
+                    errorCount++;
+                    console.error(`Error with book ${index + 1}:`, error);
+                }
+            });
+            
+            resultDiv.innerHTML = `
+                <h3>Book-Specific Price Storage Test Results:</h3>
+                <p class="success">✅ Successful storage: ${successCount}</p>
+                <p class="${errorCount > 0 ? 'error' : 'success'}">${errorCount > 0 ? '❌' : '✅'} Failed storage: ${errorCount}</p>
+                
+                <h4>Test Books:</h4>
+                ${testBooks.map((book, index) => `
+                    <div class="book-item">
+                        <strong>${index + 1}. ${book.title}</strong><br>
+                        Price: Rs. ${book.price}<br>
+                        Stored Key: bookBasePrice_${book.id}
+                    </div>
+                `).join('')}
+            `;
+        }
+        
+        // Test quantity changes for different books
+        function testQuantityChanges() {
+            const resultDiv = document.getElementById('quantity-test-result');
+            resultDiv.innerHTML = '<p class="info">Testing quantity changes for different books...</p>';
+            
+            const testBooks = [
+                { id: 'book-1', title: 'Book One', price: 1500.00 },
+                { id: 'book-2', title: 'Book Two', price: 2500.00 }
+            ];
+            
+            let successCount = 0;
+            let errorCount = 0;
+            
+            testBooks.forEach((book, index) => {
+                try {
+                    // Set up book-specific price
+                    localStorage.setItem(`bookBasePrice_${book.id}`, book.price.toString());
+                    localStorage.setItem('selectedBookId', book.id);
+                    
+                    // Test different quantities
+                    const quantities = [1, 2, 3, 5];
+                    let bookSuccess = true;
+                    
+                    quantities.forEach(quantity => {
+                        const basePrice = parseFloat(localStorage.getItem(`bookBasePrice_${book.id}`));
+                        const expectedTotal = basePrice * quantity;
+                        
+                        // Simulate the price calculation from order.js
+                        const currentBookId = localStorage.getItem('selectedBookId');
+                        const storedBasePrice = parseFloat(localStorage.getItem(`bookBasePrice_${currentBookId}`) || 0);
+                        const calculatedTotal = storedBasePrice * quantity;
+                        
+                        if (calculatedTotal !== expectedTotal) {
+                            bookSuccess = false;
+                        }
+                    });
+                    
+                    if (bookSuccess) {
+                        successCount++;
+                    } else {
+                        errorCount++;
+                    }
+                } catch (error) {
+                    errorCount++;
+                    console.error(`Error with book ${index + 1}:`, error);
+                }
+            });
+            
+            resultDiv.innerHTML = `
+                <h3>Quantity Change Test Results:</h3>
+                <p class="success">✅ Books with correct calculations: ${successCount}</p>
+                <p class="${errorCount > 0 ? 'error' : 'success'}">${errorCount > 0 ? '❌' : '✅'} Books with errors: ${errorCount}</p>
+                
+                <h4>Test Calculations:</h4>
+                ${testBooks.map((book, index) => `
+                    <div class="book-item">
+                        <strong>${index + 1}. ${book.title}</strong><br>
+                        Base Price: Rs. ${book.price}<br>
+                        Qty 1: Rs. ${book.price * 1}<br>
+                        Qty 2: Rs. ${book.price * 2}<br>
+                        Qty 3: Rs. ${book.price * 3}<br>
+                        Qty 5: Rs. ${book.price * 5}
+                    </div>
+                `).join('')}
+            `;
+        }
+        
+        // Generate sample books with price calculation
+        async function loadSampleBooks() {
+            const container = document.getElementById('sample-books-container');
+            
+            try {
+                const response = await fetch('http://localhost:8080/api/books/all');
+                
+                if (response.ok) {
+                    const data = await response.json();
+                    const books = data.books || [];
+                    
+                    // Take first 3 books for sample
+                    const sampleBooks = books.slice(0, 3);
+                    
+                    container.innerHTML = sampleBooks.map((book, index) => {
+                        const bookId = book.id || book._id;
+                        const basePrice = book.price || 0;
+                        
+                        return `
+                            <div class="book-card">
+                                <img src="${book.imageUrl || 'image/bookstore.webp'}" alt="${book.title}" onerror="this.src='image/bookstore.webp'">
+                                <h4>${book.title}</h4>
+                                <p>by ${book.author}</p>
+                                <div class="price-display">Rs. ${basePrice.toFixed(2)}</div>
+                                
+                                <div style="margin: 10px 0;">
+                                    <label>Quantity: </label>
+                                    <input type="number" class="quantity-input" value="1" min="1" 
+                                           onchange="calculatePrice('${bookId}', ${basePrice}, this.value)">
+                                </div>
+                                
+                                <div class="price-display" id="total-price-${bookId}">
+                                    Total: Rs. ${basePrice.toFixed(2)}
+                                </div>
+                                
+                                <button onclick="testOrderPage('${bookId}', '${book.title}', ${basePrice})">
+                                    Test Order Page
+                                </button>
+                            </div>
+                        `;
+                    }).join('');
+                } else {
+                    container.innerHTML = '<p class="error">Failed to load sample books</p>';
+                }
+            } catch (error) {
+                container.innerHTML = `<p class="error">Error: ${error.message}</p>`;
+            }
+        }
+        
+        // Calculate price for a specific book
+        function calculatePrice(bookId, basePrice, quantity) {
+            const totalPrice = basePrice * quantity;
+            const totalPriceElement = document.getElementById(`total-price-${bookId}`);
+            if (totalPriceElement) {
+                totalPriceElement.textContent = `Total: Rs. ${totalPrice.toFixed(2)}`;
+            }
+        }
+        
+        // Test order page with specific book
+        function testOrderPage(bookId, title, price) {
+            // Store book-specific data
+            const bookDetails = {
+                id: bookId,
+                title: title,
+                price: price,
+                author: 'Test Author',
+                description: 'Test book description',
+                imageUrl: 'image/bookstore.webp'
+            };
+            
+            localStorage.setItem('selectedBook', JSON.stringify(bookDetails));
+            localStorage.setItem('selectedBookId', bookId);
+            localStorage.setItem('selectedBookTitle', title);
+            localStorage.setItem(`bookBasePrice_${bookId}`, price.toString());
+            
+            console.log("Testing order page with:", bookDetails);
+            
+            // Navigate to order page
+            window.location.href = `order.html?bookId=${encodeURIComponent(bookId)}&bookTitle=${encodeURIComponent(title)}`;
+        }
+        
+        // Load sample books when page loads
+        document.addEventListener('DOMContentLoaded', loadSampleBooks);
+    </script>
+</body>
+</html> 

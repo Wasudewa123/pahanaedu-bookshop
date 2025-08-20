@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Beautiful PDF Invoice Test</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.29/jspdf.plugin.autotable.min.js"></script>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; }
+        .test-section { margin: 20px 0; padding: 15px; border: 1px solid #ddd; }
+        button { padding: 10px 15px; margin: 5px; background: #007bff; color: white; border: none; cursor: pointer; }
+        button:hover { background: #0056b3; }
+        .success { background: #d4edda; border-color: #c3e6cb; padding: 10px; margin: 10px 0; }
+        .error { background: #f8d7da; border-color: #f5c6cb; padding: 10px; margin: 10px 0; }
+    </style>
+</head>
+<body>
+    <h1>🎨 Beautiful PDF Invoice Test</h1>
+    
+    <div class="test-section">
+        <h3>📄 Generate Beautiful PDF Invoice</h3>
+        <p>Test the beautiful PDF generation with demo bill data:</p>
+        
+        <button onclick="generateDemoPDF()">Generate Beautiful PDF</button>
+        <button onclick="generateEmailPDF()">Generate PDF for Email</button>
+        
+        <div id="pdf-result"></div>
+    </div>
+    
+    <div class="test-section">
+        <h3>📋 Demo Bill Data</h3>
+        <p>The PDF will include:</p>
+        <ul>
+            <li><strong>Professional Header</strong> - Pahana Book Shop branding</li>
+            <li><strong>Invoice Details</strong> - Bill number, date, status</li>
+            <li><strong>Customer Information</strong> - Name, account, payment method</li>
+            <li><strong>Items Table</strong> - Professional table with items</li>
+            <li><strong>Summary Section</strong> - Subtotal, discount, tax, total</li>
+            <li><strong>Professional Footer</strong> - Contact information</li>
+        </ul>
+    </div>
+
+    <script>
+        // Demo bill data
+        const demoBill = {
+            billNumber: 'BILL20241201001',
+            customerAccountNumber: 'ACC74773',
+            customerName: 'pasindi',
+            items: [
+                { title: 'The Great Gatsby', quantity: 2, price: 1500, subtotal: 3000 },
+                { title: 'Mistborn: The Final Empire', quantity: 1, price: 1350, subtotal: 1350 },
+                { title: 'Lord of the Rings', quantity: 1, price: 1500, subtotal: 1500 }
+            ],
+            paymentMethod: 'Card',
+            transactionId: 'TXN123456',
+            adminNotes: 'Demo bill for testing',
+            billDate: new Date('2024-12-01').toISOString(),
+            status: 'PAID',
+            subtotal: 5850,
+            discount: 292.5,
+            tax: 833.625,
+            total: 6391.125
+        };
+
+        // Generate beautiful PDF invoice
+        function generateBeautifulPDF(bill) {
+            const { jsPDF } = window.jspdf;
+            const doc = new jsPDF();
+            
+            // Set up fonts and colors
+            doc.setFont('helvetica');
+            doc.setFontSize(12);
+            
+            // Header
+            doc.setFillColor(41, 128, 185); // Blue header
+            doc.rect(0, 0, 210, 30, 'F');
+            
+            doc.setTextColor(255, 255, 255);
+            doc.setFontSize(24);
+            doc.setFont('helvetica', 'bold');
+            doc.text('PAHANA BOOK SHOP', 105, 15, { align: 'center' });
+            
+            doc.setFontSize(12);
+            doc.text('Professional Book Retailer', 105, 25, { align: 'center' });
+            
+            // Reset text color
+            doc.setTextColor(0, 0, 0);
+            
+            // Invoice details section
+            doc.setFontSize(16);
+            doc.setFont('helvetica', 'bold');
+            doc.text('INVOICE', 20, 50);
+            
+            // Invoice number and date
+            doc.setFontSize(10);
+            doc.setFont('helvetica', 'normal');
+            doc.text(`Invoice Number: ${bill.billNumber}`, 20, 65);
+            doc.text(`Date: ${new Date(bill.billDate).toLocaleDateString()}`, 20, 72);
+            doc.text(`Status: ${bill.status}`, 20, 79);
+            
+            // Customer information
+            doc.setFont('helvetica', 'bold');
+            doc.text('CUSTOMER INFORMATION', 20, 95);
+            doc.setFont('helvetica', 'normal');
+            doc.text(`Name: ${bill.customerName}`, 20, 105);
+            doc.text(`Account: ${bill.customerAccountNumber}`, 20, 112);
+            doc.text(`Payment Method: ${bill.paymentMethod.toUpperCase()}`, 20, 119);
+            if (bill.transactionId) {
+                doc.text(`Transaction ID: ${bill.transactionId}`, 20, 126);
+            }
+            
+            // Items table
+            doc.setFont('helvetica', 'bold');
+            doc.text('ITEMS', 20, 145);
+            
+            // Table headers
+            const tableHeaders = [['Item', 'Quantity', 'Price/Unit', 'Subtotal']];
+            const tableData = bill.items.map(item => [
+                item.title,
+                item.quantity.toString(),
+                `Rs. ${item.price.toFixed(2)}`,
+                `Rs. ${item.subtotal.toFixed(2)}`
+            ]);
+            
+            // Add table
+            doc.autoTable({
+                startY: 150,
+                head: tableHeaders,
+                body: tableData,
+                theme: 'grid',
+                headStyles: {
+                    fillColor: [41, 128, 185],
+                    textColor: 255,
+                    fontStyle: 'bold'
+                },
+                styles: {
+                    fontSize: 10,
+                    cellPadding: 5
+                },
+                columnStyles: {
+                    0: { cellWidth: 80 }, // Item
+                    1: { cellWidth: 25 }, // Quantity
+                    2: { cellWidth: 35 }, // Price
+                    3: { cellWidth: 35 }  // Subtotal
+                }
+            });
+            
+            // Summary section
+            const finalY = doc.lastAutoTable.finalY + 10;
+            
+            doc.setFont('helvetica', 'bold');
+            doc.text('SUMMARY', 20, finalY);
+            
+            doc.setFont('helvetica', 'normal');
+            doc.text(`Subtotal:`, 120, finalY + 10);
+            doc.text(`Rs. ${bill.subtotal.toFixed(2)}`, 170, finalY + 10, { align: 'right' });
+            
+            doc.text(`Discount:`, 120, finalY + 20);
+            doc.text(`Rs. ${bill.discount.toFixed(2)}`, 170, finalY + 20, { align: 'right' });
+            
+            doc.text(`Tax:`, 120, finalY + 30);
+            doc.text(`Rs. ${bill.tax.toFixed(2)}`, 170, finalY + 30, { align: 'right' });
+            
+            // Total with emphasis
+            doc.setFont('helvetica', 'bold');
+            doc.setFontSize(12);
+            doc.text(`TOTAL:`, 120, finalY + 45);
+            doc.text(`Rs. ${bill.total.toFixed(2)}`, 170, finalY + 45, { align: 'right' });
+            
+            // Footer
+            doc.setFont('helvetica', 'normal');
+            doc.setFontSize(10);
+            doc.setTextColor(128, 128, 128);
+            doc.text('Thank you for your purchase!', 105, finalY + 70, { align: 'center' });
+            doc.text('For any queries, please contact us at support@pahanabookshop.com', 105, finalY + 77, { align: 'center' });
+            
+            // Add border
+            doc.setDrawColor(200, 200, 200);
+            doc.rect(10, 10, 190, finalY + 85, 'S');
+            
+            return doc;
+        }
+
+        // Generate demo PDF
+        function generateDemoPDF() {
+            try {
+                const doc = generateBeautifulPDF(demoBill);
+                doc.save(`${demoBill.billNumber}.pdf`);
+                
+                document.getElementById('pdf-result').innerHTML = 
+                    '<div class="success">✅ Beautiful PDF generated successfully! Check your downloads folder.</div>';
+            } catch (error) {
+                document.getElementById('pdf-result').innerHTML = 
+                    `<div class="error">❌ Error generating PDF: ${error.message}</div>`;
+            }
+        }
+
+        // Generate PDF for email
+        function generateEmailPDF() {
+            try {
+                const doc = generateBeautifulPDF(demoBill);
+                
+                // In a real application, you would send this PDF via email
+                // For demo purposes, we'll just show a success message
+                document.getElementById('pdf-result').innerHTML = 
+                    '<div class="success">✅ PDF generated and ready to send via email!</div>';
+                
+                // You could integrate with email service here
+                // For example: sendEmailWithPDF('customer@example.com', doc);
+            } catch (error) {
+                document.getElementById('pdf-result').innerHTML = 
+                    `<div class="error">❌ Error generating email PDF: ${error.message}</div>`;
+            }
+        }
+    </script>
+</body>
+</html> 

@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Interval Test</title>
+    <style>
+        body {
+            background: #0a0a0a;
+            color: white;
+            font-family: Arial, sans-serif;
+            padding: 20px;
+            text-align: center;
+        }
+        .test-container {
+            background: #2a2a2a;
+            padding: 20px;
+            border-radius: 10px;
+            margin: 20px auto;
+            max-width: 400px;
+        }
+        .counter {
+            font-size: 3rem;
+            color: #667eea;
+            margin: 20px 0;
+        }
+        .status {
+            color: #4CAF50;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+    <div class="test-container">
+        <h1>⏰ Interval Test</h1>
+        <p>This test verifies that setInterval is working properly.</p>
+        
+        <div class="counter" id="counter">0</div>
+        <p class="status" id="status">Interval is running...</p>
+        
+        <button onclick="toggleInterval()" id="toggleBtn">Pause</button>
+    </div>
+
+    <script>
+        let counter = 0;
+        let interval;
+        let isRunning = true;
+
+        function updateCounter() {
+            counter++;
+            document.getElementById('counter').textContent = counter;
+            console.log('Counter updated:', counter);
+        }
+
+        function startInterval() {
+            console.log('Starting interval...');
+            interval = setInterval(() => {
+                console.log('Interval triggered');
+                updateCounter();
+            }, 2000); // Every 2 seconds
+            console.log('Interval ID:', interval);
+        }
+
+        function stopInterval() {
+            console.log('Stopping interval...');
+            if (interval) {
+                clearInterval(interval);
+                interval = null;
+            }
+        }
+
+        function toggleInterval() {
+            if (isRunning) {
+                stopInterval();
+                document.getElementById('status').textContent = 'Interval paused';
+                document.getElementById('toggleBtn').textContent = 'Start';
+                document.getElementById('status').style.color = '#f44336';
+            } else {
+                startInterval();
+                document.getElementById('status').textContent = 'Interval is running...';
+                document.getElementById('toggleBtn').textContent = 'Pause';
+                document.getElementById('status').style.color = '#4CAF50';
+            }
+            isRunning = !isRunning;
+        }
+
+        // Start the test
+        console.log('🚀 Interval test started');
+        startInterval();
+    </script>
+</body>
+</html> 

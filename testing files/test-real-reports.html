@@ -1,0 +1,780 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test Real Data Reports - Pahana Book Shop</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="src/admin-dashboard.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+    <div style="padding: 2rem; background: #f8fafc; min-height: 100vh;">
+        <h1 style="text-align: center; margin-bottom: 2rem; color: #1e293b;">
+            <i class="fas fa-chart-bar"></i> Test Real Data Reports & Analytics
+        </h1>
+        
+        <div style="max-width: 1200px; margin: 0 auto;">
+            <!-- Real Data Stats Cards -->
+            <div class="quick-stats-grid">
+                <div class="stat-card">
+                    <div class="stat-icon revenue">
+                        <i class="fas fa-dollar-sign"></i>
+                    </div>
+                    <div class="stat-content">
+                        <h3 id="total-revenue-stat">Rs. 0</h3>
+                        <p>Total Revenue</p>
+                        <span class="stat-change" id="revenue-change">Loading...</span>
+                    </div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon orders">
+                        <i class="fas fa-shopping-cart"></i>
+                    </div>
+                    <div class="stat-content">
+                        <h3 id="total-orders-stat">0</h3>
+                        <p>Total Orders</p>
+                        <span class="stat-change" id="orders-change">Loading...</span>
+                    </div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon customers">
+                        <i class="fas fa-users"></i>
+                    </div>
+                    <div class="stat-content">
+                        <h3 id="total-customers-stat">0</h3>
+                        <p>Total Customers</p>
+                        <span class="stat-change" id="customers-change">Loading...</span>
+                    </div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon books">
+                        <i class="fas fa-book"></i>
+                    </div>
+                    <div class="stat-content">
+                        <h3 id="total-books-stat">0</h3>
+                        <p>Total Books</p>
+                        <span class="stat-change" id="books-change">Loading...</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Real Data Analytics -->
+            <div class="analytics-grid">
+                <!-- Top Selling Books (Real Data) -->
+                <div class="analytics-card">
+                    <div class="card-header">
+                        <h3><i class="fas fa-trophy"></i> Top Selling Books</h3>
+                        <button class="view-all-btn" onclick="showAllTopBooks()">View All</button>
+                    </div>
+                    <div class="card-content">
+                        <div id="top-books-list" class="top-books-list">
+                            <div class="loading-state">
+                                <i class="fas fa-spinner fa-spin"></i>
+                                <p>Loading top books...</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Category Performance (Real Data) -->
+                <div class="analytics-card">
+                    <div class="card-header">
+                        <h3><i class="fas fa-chart-pie"></i> Category Performance</h3>
+                    </div>
+                    <div class="card-content">
+                        <canvas id="category-chart"></canvas>
+                    </div>
+                </div>
+
+                <!-- Recent Bills (Real Data) -->
+                <div class="analytics-card">
+                    <div class="card-header">
+                        <h3><i class="fas fa-clock"></i> Recent Bills</h3>
+                    </div>
+                    <div class="card-content">
+                        <div id="recent-bills-list" class="activity-list">
+                            <div class="loading-state">
+                                <i class="fas fa-spinner fa-spin"></i>
+                                <p>Loading recent bills...</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Revenue by Payment Method (Real Data) -->
+                <div class="analytics-card">
+                    <div class="card-header">
+                        <h3><i class="fas fa-chart-bar"></i> Revenue by Payment Method</h3>
+                    </div>
+                    <div class="card-content">
+                        <canvas id="revenue-chart"></canvas>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Test Controls -->
+            <div style="background: white; padding: 2rem; border-radius: 1rem; margin-top: 2rem; box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);">
+                <h3 style="margin-bottom: 1rem; color: #1f2937;">
+                    <i class="fas fa-cog"></i> Test Controls
+                </h3>
+                <div style="display: flex; gap: 1rem; flex-wrap: wrap;">
+                    <button onclick="loadRealStats()" style="padding: 0.75rem 1.5rem; background: #60a5fa; color: white; border: none; border-radius: 0.5rem; cursor: pointer;">
+                        <i class="fas fa-sync"></i> Reload Stats
+                    </button>
+                    <button onclick="loadTopBooks()" style="padding: 0.75rem 1.5rem; background: #10b981; color: white; border: none; border-radius: 0.5rem; cursor: pointer;">
+                        <i class="fas fa-book"></i> Reload Books
+                    </button>
+                    <button onclick="loadCategoryChart()" style="padding: 0.75rem 1.5rem; background: #f59e0b; color: white; border: none; border-radius: 0.5rem; cursor: pointer;">
+                        <i class="fas fa-chart-pie"></i> Reload Categories
+                    </button>
+                    <button onclick="loadRecentBills()" style="padding: 0.75rem 1.5rem; background: #8b5cf6; color: white; border: none; border-radius: 0.5rem; cursor: pointer;">
+                        <i class="fas fa-file-invoice"></i> Reload Bills
+                    </button>
+                    <button onclick="loadRevenueChart()" style="padding: 0.75rem 1.5rem; background: #ef4444; color: white; border: none; border-radius: 0.5rem; cursor: pointer;">
+                        <i class="fas fa-chart-bar"></i> Reload Revenue
+                    </button>
+                    <button onclick="exportReport('pdf')" style="padding: 0.75rem 1.5rem; background: #374151; color: white; border: none; border-radius: 0.5rem; cursor: pointer;">
+                        <i class="fas fa-file-pdf"></i> Export PDF
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Real data functions from admin-dashboard.js
+        async function loadRealStats() {
+            try {
+                console.log('Loading real statistics from database...');
+                
+                // Load bills data
+                const billsResponse = await fetch('http://localhost:8080/api/billing/all');
+                let bills = [];
+                if (billsResponse.ok) {
+                    const billsData = await billsResponse.json();
+                    bills = billsData.bills || [];
+                    console.log('Bills loaded:', bills.length);
+                }
+                
+                // Load orders data
+                const ordersResponse = await fetch('http://localhost:8080/api/orders');
+                let orders = [];
+                if (ordersResponse.ok) {
+                    const ordersData = await ordersResponse.json();
+                    orders = ordersData.orders || ordersData || [];
+                    console.log('Orders loaded:', orders.length);
+                }
+                
+                // Load books data
+                const booksResponse = await fetch('http://localhost:8080/api/books');
+                let books = [];
+                if (booksResponse.ok) {
+                    const booksData = await booksResponse.json();
+                    books = booksData.books || booksData || [];
+                    console.log('Books loaded:', books.length);
+                }
+                
+                // Load customers data - try different endpoints
+                let customers = [];
+                try {
+                    // First try the main customers endpoint
+                    const customersResponse = await fetch('http://localhost:8080/api/customers');
+                    if (customersResponse.ok) {
+                        const customersData = await customersResponse.json();
+                        customers = customersData.customers || customersData || [];
+                        console.log('Customers loaded from main endpoint:', customers.length);
+                    }
+                } catch (error) {
+                    console.log('Main customers endpoint failed, trying alternative...');
+                }
+                
+                // If no customers found, try to get from billing data
+                if (customers.length === 0) {
+                    // Extract unique customers from bills
+                    const uniqueCustomers = new Set();
+                    bills.forEach(bill => {
+                        if (bill.accountNumber) {
+                            uniqueCustomers.add(bill.accountNumber);
+                        }
+                    });
+                    customers = Array.from(uniqueCustomers).map(accountNumber => ({
+                        id: accountNumber,
+                        accountNumber: accountNumber,
+                        name: bills.find(bill => bill.accountNumber === accountNumber)?.customerName || 'Unknown'
+                    }));
+                    console.log('Customers extracted from bills:', customers.length);
+                }
+                
+                // Calculate real statistics with proper logic
+                let totalRevenue = 0;
+                bills.forEach(bill => {
+                    // Use total field first, fallback to totalAmount for legacy bills
+                    const billTotal = bill.total || bill.totalAmount || 0;
+                    totalRevenue += billTotal;
+                });
+                
+                // Add revenue from orders
+                orders.forEach(order => {
+                    totalRevenue += order.totalPrice || 0;
+                });
+                
+                const totalOrders = bills.length + orders.length;
+                const totalCustomers = customers.length;
+                const totalBooks = books.length;
+                
+                console.log('Calculated statistics:', {
+                    totalRevenue,
+                    totalOrders,
+                    totalCustomers,
+                    totalBooks
+                });
+                
+                // Update stats display
+                document.getElementById('total-revenue-stat').textContent = `Rs. ${totalRevenue.toLocaleString()}`;
+                document.getElementById('total-orders-stat').textContent = totalOrders.toLocaleString();
+                document.getElementById('total-customers-stat').textContent = totalCustomers.toLocaleString();
+                document.getElementById('total-books-stat').textContent = totalBooks.toLocaleString();
+                
+                // Calculate real change indicators based on previous data
+                const previousStats = JSON.parse(localStorage.getItem('previousStats') || '{}');
+                const currentStats = { totalRevenue, totalOrders, totalCustomers, totalBooks };
+                
+                // Calculate percentage changes
+                const revenueChange = previousStats.totalRevenue ? 
+                    ((totalRevenue - previousStats.totalRevenue) / previousStats.totalRevenue * 100) : 0;
+                const ordersChange = previousStats.totalOrders ? 
+                    ((totalOrders - previousStats.totalOrders) / previousStats.totalOrders * 100) : 0;
+                const customersChange = previousStats.totalCustomers ? 
+                    ((totalCustomers - previousStats.totalCustomers) / previousStats.totalCustomers * 100) : 0;
+                const booksChange = previousStats.totalBooks ? 
+                    ((totalBooks - previousStats.totalBooks) / previousStats.totalBooks * 100) : 0;
+                
+                // Save current stats for next comparison
+                localStorage.setItem('previousStats', JSON.stringify(currentStats));
+                
+                // Update change indicators
+                updateStatChanges({
+                    revenueChange: Math.round(revenueChange * 10) / 10, // Round to 1 decimal
+                    ordersChange: Math.round(ordersChange * 10) / 10,
+                    customersChange: Math.round(customersChange * 10) / 10,
+                    booksChange: Math.round(booksChange * 10) / 10
+                });
+                
+                console.log('Real stats updated successfully!');
+                
+            } catch (error) {
+                console.error('Error loading real stats:', error);
+                // Show error state
+                document.getElementById('total-revenue-stat').textContent = 'Rs. 0';
+                document.getElementById('total-orders-stat').textContent = '0';
+                document.getElementById('total-customers-stat').textContent = '0';
+                document.getElementById('total-books-stat').textContent = '0';
+                
+                updateStatChanges({
+                    revenueChange: 0,
+                    ordersChange: 0,
+                    customersChange: 0,
+                    booksChange: 0
+                });
+            }
+        }
+
+        function updateStatChanges(data) {
+            const changes = document.querySelectorAll('.stat-change');
+            const percentages = [
+                data.revenueChange || 0,
+                data.ordersChange || 0,
+                data.customersChange || 0,
+                data.booksChange || 0
+            ];
+            
+            changes.forEach((change, index) => {
+                const percentage = percentages[index];
+                const isPositive = percentage > 0;
+                const isNegative = percentage < 0;
+                
+                if (percentage === 0) {
+                    change.textContent = 'No change';
+                    change.className = 'stat-change';
+                } else if (isPositive) {
+                    change.className = 'stat-change positive';
+                    change.innerHTML = `+${percentage.toFixed(1)}% <i class="fas fa-arrow-up"></i>`;
+                } else if (isNegative) {
+                    change.className = 'stat-change negative';
+                    change.innerHTML = `${percentage.toFixed(1)}% <i class="fas fa-arrow-down"></i>`;
+                }
+            });
+        }
+
+        async function loadTopBooks() {
+            try {
+                console.log('Loading top books...');
+                const response = await fetch('http://localhost:8080/api/books');
+                if (response.ok) {
+                    const booksData = await response.json();
+                    const books = booksData.books || booksData || [];
+                    
+                    // Sort by multiple criteria: rating first, then stock quantity
+                    const sortedBooks = books
+                        .filter(book => !book.archived) // Exclude archived books
+                        .sort((a, b) => {
+                            // First sort by rating (descending)
+                            const ratingDiff = (b.rating || 0) - (a.rating || 0);
+                            if (ratingDiff !== 0) return ratingDiff;
+                            
+                            // Then by stock quantity (descending)
+                            return (b.stockQuantity || 0) - (a.stockQuantity || 0);
+                        })
+                        .slice(0, 5);
+                    
+                    displayTopBooks(sortedBooks);
+                    console.log('Top books loaded:', sortedBooks.length);
+                } else {
+                    displayNoBooksMessage();
+                }
+            } catch (error) {
+                console.error('Error loading top books:', error);
+                displayNoBooksMessage();
+            }
+        }
+
+        function displayTopBooks(books) {
+            const container = document.getElementById('top-books-list');
+            if (!container) return;
+            
+            container.innerHTML = '';
+            
+            if (books.length === 0) {
+                container.innerHTML = `
+                    <div class="no-data">
+                        <i class="fas fa-book-open"></i>
+                        <p>No books available</p>
+                    </div>
+                `;
+                return;
+            }
+            
+            books.forEach((book, index) => {
+                const rankClass = index === 0 ? 'gold' : index === 1 ? 'silver' : index === 2 ? 'bronze' : '';
+                
+                const bookItem = document.createElement('div');
+                bookItem.className = 'top-book-item';
+                bookItem.innerHTML = `
+                    <div class="rank ${rankClass}">${index + 1}</div>
+                    <div class="book-info">
+                        <div class="book-title">${book.title}</div>
+                        <div class="book-author">by ${book.author}</div>
+                        <div class="book-rating">
+                            <i class="fas fa-star"></i> ${(book.rating || 0).toFixed(1)} (${book.ratingCount || 0} reviews)
+                        </div>
+                    </div>
+                    <div class="sales-count">
+                        <div class="stock-info">${book.stockQuantity || 0} in stock</div>
+                        <div class="price-info">Rs. ${(book.price || 0).toLocaleString()}</div>
+                    </div>
+                `;
+                
+                container.appendChild(bookItem);
+            });
+        }
+
+        function displayNoBooksMessage() {
+            const container = document.getElementById('top-books-list');
+            if (!container) return;
+            
+            container.innerHTML = `
+                <div class="no-data">
+                    <i class="fas fa-book-open"></i>
+                    <p>No books available</p>
+                </div>
+            `;
+        }
+
+        function showAllTopBooks() {
+            alert('Opening full books list...');
+        }
+
+        async function loadCategoryChart() {
+            try {
+                console.log('Loading category chart...');
+                const response = await fetch('http://localhost:8080/api/books');
+                if (response.ok) {
+                    const booksData = await response.json();
+                    const books = booksData.books || booksData || [];
+                    
+                    // Group books by category
+                    const categoryData = {};
+                    books.forEach(book => {
+                        const category = book.category || 'Uncategorized';
+                        categoryData[category] = (categoryData[category] || 0) + 1;
+                    });
+                    
+                    createCategoryChart(categoryData);
+                    console.log('Category chart loaded:', Object.keys(categoryData).length);
+                } else {
+                    createEmptyCategoryChart();
+                }
+            } catch (error) {
+                console.error('Error loading category chart:', error);
+                createEmptyCategoryChart();
+            }
+        }
+
+        function createCategoryChart(categoryData) {
+            const ctx = document.getElementById('category-chart');
+            if (!ctx) return;
+            
+            if (window.categoryChart) {
+                window.categoryChart.destroy();
+            }
+            
+            const labels = Object.keys(categoryData);
+            const values = Object.values(categoryData);
+            
+            if (labels.length === 0) {
+                createEmptyCategoryChart();
+                return;
+            }
+            
+            window.categoryChart = new Chart(ctx, {
+                type: 'doughnut',
+                data: {
+                    labels: labels,
+                    datasets: [{
+                        data: values,
+                        backgroundColor: [
+                            '#60a5fa',
+                            '#10b981',
+                            '#fbbf24',
+                            '#ef4444',
+                            '#8b5cf6',
+                            '#ec4899'
+                        ],
+                        borderWidth: 3,
+                        borderColor: '#ffffff'
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            position: 'bottom',
+                            labels: {
+                                padding: 20,
+                                usePointStyle: true,
+                                pointStyle: 'circle'
+                            }
+                        },
+                        tooltip: {
+                            backgroundColor: 'rgba(0, 0, 0, 0.8)',
+                            titleColor: '#ffffff',
+                            bodyColor: '#ffffff',
+                            borderColor: '#60a5fa',
+                            borderWidth: 1,
+                            cornerRadius: 8
+                        }
+                    },
+                    animation: {
+                        duration: 1000,
+                        easing: 'easeInOutQuart'
+                    }
+                }
+            });
+        }
+
+        function createEmptyCategoryChart() {
+            const ctx = document.getElementById('category-chart');
+            if (!ctx) return;
+            
+            if (window.categoryChart) {
+                window.categoryChart.destroy();
+            }
+            
+            window.categoryChart = new Chart(ctx, {
+                type: 'doughnut',
+                data: {
+                    labels: ['No Data'],
+                    datasets: [{
+                        data: [1],
+                        backgroundColor: ['#e5e7eb'],
+                        borderWidth: 3,
+                        borderColor: '#ffffff'
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            position: 'bottom',
+                            labels: {
+                                padding: 20,
+                                usePointStyle: true,
+                                pointStyle: 'circle'
+                            }
+                        },
+                        tooltip: {
+                            enabled: false
+                        }
+                    }
+                }
+            });
+        }
+
+        async function loadRecentBills() {
+            try {
+                console.log('Loading recent bills...');
+                const response = await fetch('http://localhost:8080/api/billing/all');
+                if (response.ok) {
+                    const billsData = await response.json();
+                    const bills = billsData.bills || [];
+                    
+                    // Sort by date (newest first) and take top 5
+                    const recentBills = bills
+                        .filter(bill => bill.billDate) // Only bills with dates
+                        .sort((a, b) => new Date(b.billDate) - new Date(a.billDate))
+                        .slice(0, 5);
+                    
+                    displayRecentBills(recentBills);
+                    console.log('Recent bills loaded:', recentBills.length);
+                } else {
+                    displayNoBillsMessage();
+                }
+            } catch (error) {
+                console.error('Error loading recent bills:', error);
+                displayNoBillsMessage();
+            }
+        }
+
+        function displayRecentBills(bills) {
+            const container = document.getElementById('recent-bills-list');
+            if (!container) return;
+            
+            container.innerHTML = '';
+            
+            if (bills.length === 0) {
+                container.innerHTML = `
+                    <div class="no-data">
+                        <i class="fas fa-file-invoice"></i>
+                        <p>No bills available</p>
+                    </div>
+                `;
+                return;
+            }
+            
+            bills.forEach(bill => {
+                const billItem = document.createElement('div');
+                billItem.className = 'activity-item';
+                
+                // Format date properly
+                const billDate = new Date(bill.billDate);
+                const formattedDate = billDate.toLocaleDateString('en-US', {
+                    year: 'numeric',
+                    month: 'short',
+                    day: 'numeric'
+                });
+                
+                // Get total amount with fallback
+                const totalAmount = bill.total || bill.totalAmount || 0;
+                
+                billItem.innerHTML = `
+                    <div class="activity-icon">
+                        <i class="fas fa-file-invoice"></i>
+                    </div>
+                    <div class="activity-content">
+                        <div class="activity-title">Bill ${bill.billNumber}</div>
+                        <div class="activity-time">${formattedDate}</div>
+                        <div class="activity-customer">${bill.customerName || 'Unknown Customer'}</div>
+                    </div>
+                    <div class="activity-amount">Rs. ${totalAmount.toLocaleString()}</div>
+                `;
+                
+                container.appendChild(billItem);
+            });
+        }
+
+        function displayNoBillsMessage() {
+            const container = document.getElementById('recent-bills-list');
+            if (!container) return;
+            
+            container.innerHTML = `
+                <div class="no-data">
+                    <i class="fas fa-file-invoice"></i>
+                    <p>No bills available</p>
+                </div>
+            `;
+        }
+
+        async function loadRevenueChart() {
+            try {
+                console.log('Loading revenue chart...');
+                const response = await fetch('http://localhost:8080/api/billing/all');
+                if (response.ok) {
+                    const billsData = await response.json();
+                    const bills = billsData.bills || [];
+                    
+                    // Group by payment method with better categorization
+                    const paymentData = {};
+                    bills.forEach(bill => {
+                        const method = bill.paymentMethod || 'Cash';
+                        const amount = bill.total || bill.totalAmount || 0;
+                        paymentData[method] = (paymentData[method] || 0) + amount;
+                    });
+                    
+                    // If no payment data, show default categories
+                    if (Object.keys(paymentData).length === 0) {
+                        paymentData['Cash'] = 0;
+                        paymentData['Card'] = 0;
+                        paymentData['UPI'] = 0;
+                        paymentData['Bank Transfer'] = 0;
+                    }
+                    
+                    createRevenueChart(paymentData);
+                    console.log('Revenue chart loaded:', Object.keys(paymentData).length);
+                } else {
+                    createEmptyRevenueChart();
+                }
+            } catch (error) {
+                console.error('Error loading revenue chart:', error);
+                createEmptyRevenueChart();
+            }
+        }
+
+        function createRevenueChart(paymentData) {
+            const ctx = document.getElementById('revenue-chart');
+            if (!ctx) return;
+            
+            if (window.revenueChart) {
+                window.revenueChart.destroy();
+            }
+            
+            const labels = Object.keys(paymentData);
+            const values = Object.values(paymentData);
+            
+            if (labels.length === 0) {
+                createEmptyRevenueChart();
+                return;
+            }
+            
+            window.revenueChart = new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: labels,
+                    datasets: [{
+                        label: 'Revenue',
+                        data: values,
+                        backgroundColor: [
+                            'rgba(16, 185, 129, 0.8)',
+                            'rgba(96, 165, 250, 0.8)',
+                            'rgba(251, 191, 36, 0.8)',
+                            'rgba(139, 92, 246, 0.8)'
+                        ],
+                        borderColor: [
+                            '#10b981',
+                            '#60a5fa',
+                            '#fbbf24',
+                            '#8b5cf6'
+                        ],
+                        borderWidth: 2,
+                        borderRadius: 8
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: { display: false },
+                        tooltip: {
+                            backgroundColor: 'rgba(0, 0, 0, 0.8)',
+                            titleColor: '#ffffff',
+                            bodyColor: '#ffffff',
+                            borderColor: '#60a5fa',
+                            borderWidth: 1,
+                            cornerRadius: 8,
+                            callbacks: {
+                                label: function(context) {
+                                    return 'Rs. ' + context.parsed.toLocaleString();
+                                }
+                            }
+                        }
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            grid: { color: 'rgba(0, 0, 0, 0.1)' },
+                            ticks: {
+                                callback: function(value) {
+                                    return 'Rs. ' + value.toLocaleString();
+                                }
+                            }
+                        },
+                        x: { grid: { display: false } }
+                    },
+                    animation: {
+                        duration: 1000,
+                        easing: 'easeInOutQuart'
+                    }
+                }
+            });
+        }
+
+        function createEmptyRevenueChart() {
+            const ctx = document.getElementById('revenue-chart');
+            if (!ctx) return;
+            
+            if (window.revenueChart) {
+                window.revenueChart.destroy();
+            }
+            
+            window.revenueChart = new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: ['No Data'],
+                    datasets: [{
+                        label: 'Revenue',
+                        data: [0],
+                        backgroundColor: ['rgba(229, 231, 235, 0.8)'],
+                        borderColor: ['#e5e7eb'],
+                        borderWidth: 2,
+                        borderRadius: 8
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: { display: false },
+                        tooltip: { enabled: false }
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            grid: { color: 'rgba(0, 0, 0, 0.1)' }
+                        },
+                        x: { grid: { display: false } }
+                    }
+                }
+            });
+        }
+
+        function exportReport(type) {
+            alert(`Exporting ${type.toUpperCase()} report...`);
+        }
+
+        // Initialize on page load
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log('Initializing real data reports test...');
+            
+            // Load all data
+            loadRealStats();
+            loadTopBooks();
+            loadCategoryChart();
+            loadRecentBills();
+            loadRevenueChart();
+        });
+    </script>
+</body>
+</html> 

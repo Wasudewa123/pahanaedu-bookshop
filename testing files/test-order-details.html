@@ -1,0 +1,225 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test Order Details</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; }
+        .test-section { margin: 20px 0; padding: 15px; border: 1px solid #ddd; border-radius: 5px; }
+        .success { color: green; }
+        .error { color: red; }
+        .info { color: blue; }
+        button { padding: 10px 15px; margin: 5px; background: #007bff; color: white; border: none; border-radius: 3px; cursor: pointer; }
+        button:hover { background: #0056b3; }
+        .book-item { padding: 8px; border: 1px solid #eee; margin: 5px 0; border-radius: 3px; }
+        .order-link { color: #007bff; text-decoration: none; }
+        .order-link:hover { text-decoration: underline; }
+        .book-card { 
+            display: inline-block; 
+            width: 200px; 
+            margin: 10px; 
+            padding: 15px; 
+            border: 1px solid #ddd; 
+            border-radius: 8px; 
+            text-align: center;
+            cursor: pointer;
+            transition: transform 0.2s;
+        }
+        .book-card:hover { transform: translateY(-2px); }
+        .book-card img { width: 100px; height: 100px; object-fit: cover; border-radius: 5px; }
+    </style>
+</head>
+<body>
+    <h1>Test Order Details Display</h1>
+    
+    <div class="test-section">
+        <h2>Test Book Details Storage</h2>
+        <button onclick="testBookStorage()">Test Book Storage</button>
+        <div id="storage-result"></div>
+    </div>
+    
+    <div class="test-section">
+        <h2>Test Order Links with Real Data</h2>
+        <button onclick="generateOrderLinks()">Generate Order Links</button>
+        <div id="order-links-result"></div>
+    </div>
+    
+    <div class="test-section">
+        <h2>Test Recently Bought Books Selection</h2>
+        <div id="recently-bought-test">
+            <h3>Sample Recently Bought Books (Click to Test):</h3>
+            <div id="sample-books"></div>
+        </div>
+    </div>
+
+    <script>
+        async function testBookStorage() {
+            const resultDiv = document.getElementById('storage-result');
+            resultDiv.innerHTML = '<p class="info">Testing book storage...</p>';
+            
+            try {
+                const response = await fetch('http://localhost:8080/api/books/all');
+                
+                if (response.ok) {
+                    const data = await response.json();
+                    const books = data.books || [];
+                    
+                    if (books.length > 0) {
+                        const testBook = books[0];
+                        
+                        // Simulate storing book details
+                        const bookDetails = {
+                            id: testBook.id || testBook._id,
+                            title: testBook.title,
+                            author: testBook.author,
+                            price: testBook.price,
+                            description: testBook.description,
+                            imageUrl: testBook.imageUrl
+                        };
+                        
+                        localStorage.setItem('selectedBook', JSON.stringify(bookDetails));
+                        localStorage.setItem('selectedBookId', bookDetails.id);
+                        localStorage.setItem('selectedBookTitle', bookDetails.title);
+                        localStorage.setItem('bookBasePrice', bookDetails.price.toString());
+                        
+                        resultDiv.innerHTML = `
+                            <h3>Book Storage Test Results:</h3>
+                            <p class="success">✅ Book details stored in localStorage</p>
+                            
+                            <h4>Stored Book Details:</h4>
+                            <div class="book-item">
+                                <strong>ID:</strong> ${bookDetails.id}<br>
+                                <strong>Title:</strong> ${bookDetails.title}<br>
+                                <strong>Author:</strong> ${bookDetails.author}<br>
+                                <strong>Price:</strong> Rs. ${bookDetails.price}<br>
+                                <strong>Description:</strong> ${bookDetails.description || 'No description'}<br>
+                                <strong>Image URL:</strong> ${bookDetails.imageUrl || 'Default image'}
+                            </div>
+                            
+                            <h4>Test Order Page:</h4>
+                            <a href="order.html?bookId=${encodeURIComponent(bookDetails.id)}&bookTitle=${encodeURIComponent(bookDetails.title)}" 
+                               class="order-link" target="_blank">
+                                🛒 Open Order Page for "${bookDetails.title}"
+                            </a>
+                            
+                            <p class="info">💡 The order page should now display the real book details!</p>
+                        `;
+                    } else {
+                        resultDiv.innerHTML = '<p class="error">No books found in database</p>';
+                    }
+                } else {
+                    resultDiv.innerHTML = '<p class="error">Failed to load books from API</p>';
+                }
+            } catch (error) {
+                resultDiv.innerHTML = `<p class="error">Error: ${error.message}</p>`;
+            }
+        }
+        
+        async function generateOrderLinks() {
+            const resultDiv = document.getElementById('order-links-result');
+            resultDiv.innerHTML = '<p class="info">Generating order links...</p>';
+            
+            try {
+                const response = await fetch('http://localhost:8080/api/books/all');
+                
+                if (response.ok) {
+                    const data = await response.json();
+                    const books = data.books || [];
+                    
+                    // Take first 3 books for testing
+                    const testBooks = books.slice(0, 3);
+                    
+                    resultDiv.innerHTML = `
+                        <h3>Order Links with Real Book Data:</h3>
+                        <p><strong>Total books available:</strong> ${books.length}</p>
+                        <p><strong>Test links generated:</strong> ${testBooks.length}</p>
+                        
+                        <h4>Click these links to test the order page:</h4>
+                        ${testBooks.map((book, index) => {
+                            const bookId = book.id || book._id;
+                            const orderUrl = `order.html?bookId=${encodeURIComponent(bookId)}&bookTitle=${encodeURIComponent(book.title)}`;
+                            return `
+                                <div class="book-item">
+                                    <strong>${index + 1}. ${book.title}</strong><br>
+                                    Author: ${book.author} | Price: Rs. ${book.price}<br>
+                                    <a href="${orderUrl}" class="order-link" target="_blank">
+                                        🛒 Order this book
+                                    </a>
+                                </div>
+                            `;
+                        }).join('')}
+                        
+                        <p class="info">💡 Each link should open the order page with real book details!</p>
+                    `;
+                } else {
+                    resultDiv.innerHTML = '<p class="error">Failed to load books from API</p>';
+                }
+            } catch (error) {
+                resultDiv.innerHTML = `<p class="error">Error: ${error.message}</p>`;
+            }
+        }
+        
+        async function loadSampleBooks() {
+            const container = document.getElementById('sample-books');
+            
+            try {
+                const response = await fetch('http://localhost:8080/api/books/all');
+                
+                if (response.ok) {
+                    const data = await response.json();
+                    const books = data.books || [];
+                    
+                    // Take first 4 books for sample
+                    const sampleBooks = books.slice(0, 4);
+                    
+                    container.innerHTML = sampleBooks.map((book, index) => {
+                        const bookId = book.id || book._id;
+                        return `
+                            <div class="book-card" onclick="selectSampleBook('${bookId}', '${book.title}', '${book.author}', ${book.price}, '${book.imageUrl || 'image/bookstore.webp'}')">
+                                <img src="${book.imageUrl || 'image/bookstore.webp'}" alt="${book.title}" onerror="this.src='image/bookstore.webp'">
+                                <h4>${book.title}</h4>
+                                <p>by ${book.author}</p>
+                                <div class="price">Rs. ${book.price}</div>
+                                <div class="book-badges">
+                                    <span class="badge new">NEW</span>
+                                    <span class="badge discount">10%</span>
+                                </div>
+                            </div>
+                        `;
+                    }).join('');
+                } else {
+                    container.innerHTML = '<p class="error">Failed to load sample books</p>';
+                }
+            } catch (error) {
+                container.innerHTML = `<p class="error">Error: ${error.message}</p>`;
+            }
+        }
+        
+        function selectSampleBook(bookId, title, author, price, imageUrl) {
+            // Store complete book details
+            const bookDetails = {
+                id: bookId,
+                title: title,
+                author: author,
+                price: price,
+                description: `A fascinating book that will captivate your imagination and expand your knowledge.`,
+                imageUrl: imageUrl
+            };
+            
+            localStorage.setItem('selectedBook', JSON.stringify(bookDetails));
+            localStorage.setItem('selectedBookId', bookId);
+            localStorage.setItem('selectedBookTitle', title);
+            localStorage.setItem('bookBasePrice', price.toString());
+            
+            console.log("Selected sample book:", bookDetails);
+            
+            // Navigate to order page
+            window.location.href = `order.html?bookId=${encodeURIComponent(bookId)}&bookTitle=${encodeURIComponent(title)}`;
+        }
+        
+        // Load sample books when page loads
+        document.addEventListener('DOMContentLoaded', loadSampleBooks);
+    </script>
+</body>
+</html> 

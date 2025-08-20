@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test Book Addition</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        .form-group {
+            margin-bottom: 15px;
+        }
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+        }
+        input, select, textarea {
+            width: 100%;
+            padding: 8px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+        }
+        button {
+            background: #007bff;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+        button:hover {
+            background: #0056b3;
+        }
+        .toast {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            padding: 15px;
+            border-radius: 4px;
+            color: white;
+            z-index: 1000;
+            opacity: 0;
+            transform: translateX(100%);
+            transition: all 0.3s ease;
+        }
+        .toast.show {
+            opacity: 1;
+            transform: translateX(0);
+        }
+        .toast-success {
+            background: #28a745;
+        }
+        .toast-error {
+            background: #dc3545;
+        }
+        .toast-info {
+            background: #17a2b8;
+        }
+    </style>
+</head>
+<body>
+    <h1>Test Book Addition</h1>
+    
+    <form id="test-book-form">
+        <div class="form-group">
+            <label>Title *</label>
+            <input type="text" id="title" required>
+        </div>
+        <div class="form-group">
+            <label>Author *</label>
+            <input type="text" id="author" required>
+        </div>
+        <div class="form-group">
+            <label>Category *</label>
+            <select id="category" required>
+                <option value="">Select Category</option>
+                <option value="Novels">Novels</option>
+                <option value="Children">Children</option>
+                <option value="Featured">Featured</option>
+                <option value="New Arrivals">New Arrivals</option>
+            </select>
+        </div>
+        <div class="form-group">
+            <label>Format *</label>
+            <select id="format" required>
+                <option value="">Select Format</option>
+                <option value="Paperback">Paperback</option>
+                <option value="Hardcover">Hardcover</option>
+                <option value="Digital">Digital</option>
+            </select>
+        </div>
+        <div class="form-group">
+            <label>Price (Rs.) *</label>
+            <input type="number" id="price" step="0.01" required>
+        </div>
+        <div class="form-group">
+            <label>Stock Quantity *</label>
+            <input type="number" id="stockQuantity" min="0" value="10" required>
+        </div>
+        <div class="form-group">
+            <label>Description</label>
+            <textarea id="description" rows="4"></textarea>
+        </div>
+        <button type="submit">Add Book</button>
+    </form>
+
+    <div id="status"></div>
+
+    <script>
+        function showToast(message, type = 'info') {
+            const toast = document.createElement('div');
+            toast.className = `toast toast-${type}`;
+            toast.innerHTML = `
+                <strong>${type.toUpperCase()}:</strong> ${message}
+            `;
+            
+            document.body.appendChild(toast);
+            
+            setTimeout(() => {
+                toast.classList.add('show');
+            }, 100);
+            
+            setTimeout(() => {
+                toast.classList.remove('show');
+                setTimeout(() => {
+                    document.body.removeChild(toast);
+                }, 300);
+            }, 3000);
+        }
+
+        document.getElementById('test-book-form').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            
+            const formData = {
+                title: document.getElementById('title').value,
+                author: document.getElementById('author').value,
+                category: document.getElementById('category').value,
+                format: document.getElementById('format').value,
+                price: parseFloat(document.getElementById('price').value),
+                stockQuantity: parseInt(document.getElementById('stockQuantity').value),
+                description: document.getElementById('description').value,
+                isbn: '978-TEST-' + Date.now(),
+                language: 'English',
+                publishedYear: 2024,
+                pages: 200,
+                publisher: 'Test Publisher',
+                imageUrl: 'https://via.placeholder.com/300x400?text=Test+Book',
+                rating: 0,
+                ratingCount: 0,
+                status: 'IN_STOCK'
+            };
+            
+            document.getElementById('status').innerHTML = 'Adding book...';
+            
+            try {
+                const response = await fetch('http://localhost:8080/api/books', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(formData)
+                });
+                
+                const data = await response.json();
+                
+                if (response.ok && data.success) {
+                    showToast('Book added successfully!', 'success');
+                    document.getElementById('status').innerHTML = '✅ Book added successfully!';
+                    document.getElementById('test-book-form').reset();
+                } else {
+                    showToast('Error: ' + (data.message || 'Unknown error'), 'error');
+                    document.getElementById('status').innerHTML = '❌ Error: ' + (data.message || 'Unknown error');
+                }
+            } catch (error) {
+                showToast('Network error: ' + error.message, 'error');
+                document.getElementById('status').innerHTML = '❌ Network error: ' + error.message;
+            }
+        });
+    </script>
+</body>
+</html> 

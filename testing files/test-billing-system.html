@@ -1,0 +1,779 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Advanced Billing System - Pahana Book Shop</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        /* Copy the enhanced billing CSS */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: #f8fafc;
+            color: #1e293b;
+            line-height: 1.6;
+            padding: 2rem;
+        }
+
+        .billing-container {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 2rem;
+            margin-bottom: 2rem;
+        }
+
+        .billing-form {
+            background: white;
+            padding: 2rem;
+            border-radius: 1rem;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+            border: 1px solid #e2e8f0;
+            max-height: 80vh;
+            overflow-y: auto;
+        }
+
+        .billing-form h3 {
+            margin-bottom: 1.5rem;
+            color: #1e293b;
+            font-size: 1.5rem;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .form-section {
+            margin-bottom: 2rem;
+            padding: 1.5rem;
+            background: #f8fafc;
+            border-radius: 0.75rem;
+            border: 1px solid #e2e8f0;
+        }
+
+        .form-section h4 {
+            margin-bottom: 1rem;
+            color: #374151;
+            font-size: 1.1rem;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1rem;
+            margin-bottom: 1rem;
+        }
+
+        .form-group {
+            margin-bottom: 1rem;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 500;
+            color: #374151;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .form-group input,
+        .form-group select,
+        .form-group textarea {
+            width: 100%;
+            padding: 0.75rem 1rem;
+            border: 1px solid #d1d5db;
+            border-radius: 0.75rem;
+            font-size: 1rem;
+            background: white;
+            transition: all 0.3s ease;
+        }
+
+        .form-group input:focus,
+        .form-group select:focus,
+        .form-group textarea:focus {
+            outline: none;
+            border-color: #60a5fa;
+            box-shadow: 0 0 0 3px rgba(96, 165, 250, 0.1);
+        }
+
+        .fetch-btn {
+            background: #10b981;
+            color: white;
+            border: none;
+            padding: 0.75rem 1rem;
+            border-radius: 0.75rem;
+            cursor: pointer;
+            font-size: 0.875rem;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            margin-top: 0.5rem;
+        }
+
+        .fetch-btn:hover {
+            background: #059669;
+            transform: translateY(-1px);
+        }
+
+        .add-book-btn {
+            background: #3b82f6;
+            color: white;
+            border: none;
+            padding: 0.75rem 1rem;
+            border-radius: 0.75rem;
+            cursor: pointer;
+            font-size: 0.875rem;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            margin-top: 1.5rem;
+        }
+
+        .add-book-btn:hover {
+            background: #2563eb;
+            transform: translateY(-1px);
+        }
+
+        .bill-items-table {
+            margin-top: 1rem;
+            background: white;
+            border-radius: 0.75rem;
+            border: 1px solid #e2e8f0;
+            overflow: hidden;
+        }
+
+        .bill-items-table table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .bill-items-table th {
+            background: #f8fafc;
+            padding: 0.75rem;
+            text-align: left;
+            font-weight: 600;
+            color: #374151;
+            border-bottom: 1px solid #e5e7eb;
+            font-size: 0.875rem;
+        }
+
+        .bill-items-table td {
+            padding: 0.75rem;
+            border-bottom: 1px solid #f1f5f9;
+            font-size: 0.875rem;
+        }
+
+        .remove-item-btn {
+            background: #ef4444;
+            color: white;
+            border: none;
+            padding: 0.25rem 0.5rem;
+            border-radius: 0.375rem;
+            cursor: pointer;
+            font-size: 0.75rem;
+            transition: all 0.3s ease;
+        }
+
+        .remove-item-btn:hover {
+            background: #dc2626;
+        }
+
+        .generate-bill-btn {
+            background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+            color: white;
+            border: none;
+            padding: 1rem 2rem;
+            border-radius: 0.75rem;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            width: 100%;
+            justify-content: center;
+            margin-top: 1rem;
+        }
+
+        .generate-bill-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(16, 185, 129, 0.4);
+        }
+
+        .bill-preview {
+            background: white;
+            padding: 2rem;
+            border-radius: 1rem;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+            border: 1px solid #e2e8f0;
+            max-height: 80vh;
+            overflow-y: auto;
+        }
+
+        .bill-preview h3 {
+            margin-bottom: 1.5rem;
+            color: #1e293b;
+            font-size: 1.5rem;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .bill-details {
+            margin-bottom: 2rem;
+        }
+
+        .bill-details p {
+            margin-bottom: 0.5rem;
+            display: flex;
+            justify-content: space-between;
+            padding: 0.5rem 0;
+            border-bottom: 1px solid #f1f5f9;
+        }
+
+        .bill-details p:last-child {
+            border-bottom: none;
+            font-weight: 600;
+            font-size: 1.1rem;
+            color: #1e293b;
+        }
+
+        .bill-actions {
+            display: flex;
+            gap: 1rem;
+            margin-top: 2rem;
+        }
+
+        .bill-actions button {
+            flex: 1;
+            padding: 0.75rem 1rem;
+            border: none;
+            border-radius: 0.75rem;
+            font-size: 0.875rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+        }
+
+        .print-bill-btn {
+            background: #3b82f6;
+            color: white;
+        }
+
+        .print-bill-btn:hover {
+            background: #2563eb;
+            transform: translateY(-1px);
+        }
+
+        .save-bill-btn {
+            background: #10b981;
+            color: white;
+        }
+
+        .save-bill-btn:hover {
+            background: #059669;
+            transform: translateY(-1px);
+        }
+
+        .download-pdf-btn {
+            background: #f59e0b;
+            color: white;
+        }
+
+        .download-pdf-btn:hover {
+            background: #d97706;
+            transform: translateY(-1px);
+        }
+
+        .email-bill-btn {
+            background: #8b5cf6;
+            color: white;
+        }
+
+        .email-bill-btn:hover {
+            background: #7c3aed;
+            transform: translateY(-1px);
+        }
+
+        .bill-status {
+            padding: 0.25rem 0.75rem;
+            border-radius: 1rem;
+            font-size: 0.75rem;
+            font-weight: 500;
+            text-transform: uppercase;
+        }
+
+        .bill-status.pending {
+            background: #fef3c7;
+            color: #d97706;
+        }
+
+        .bill-status.paid {
+            background: #d1fae5;
+            color: #059669;
+        }
+
+        .bill-status.failed {
+            background: #fee2e2;
+            color: #dc2626;
+        }
+
+        /* Toast Notifications */
+        .toast {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: white;
+            border-radius: 0.75rem;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
+            padding: 1rem 1.5rem;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            z-index: 10000;
+            transform: translateX(100%);
+            transition: transform 0.3s ease;
+            border-left: 4px solid #3b82f6;
+            min-width: 300px;
+        }
+
+        .toast.show {
+            transform: translateX(0);
+        }
+
+        .toast-success {
+            border-left-color: #10b981;
+        }
+
+        .toast-error {
+            border-left-color: #ef4444;
+        }
+
+        .toast-info {
+            border-left-color: #3b82f6;
+        }
+
+        .toast i {
+            font-size: 1.25rem;
+        }
+
+        .toast-success i {
+            color: #10b981;
+        }
+
+        .toast-error i {
+            color: #ef4444;
+        }
+
+        .toast-info i {
+            color: #3b82f6;
+        }
+
+        .toast span {
+            font-weight: 500;
+            color: #374151;
+        }
+
+        @media (max-width: 1024px) {
+            .billing-container {
+                grid-template-columns: 1fr;
+            }
+            
+            .form-row {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <h1 style="text-align: center; margin-bottom: 2rem; color: #1e293b;">
+        <i class="fas fa-book-open"></i> Advanced Billing System - Pahana Book Shop
+    </h1>
+    
+    <div class="billing-container">
+        <!-- Generate Bill Form -->
+        <div class="billing-form">
+            <h3><i class="fas fa-calculator"></i> Generate Bill</h3>
+            <form id="billing-form">
+                <!-- Customer Information -->
+                <div class="form-section">
+                    <h4><i class="fas fa-user"></i> Customer Information</h4>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label><i class="fas fa-id-card"></i> Account Number</label>
+                            <input type="text" id="customer-account" placeholder="Enter account number" value="ACC74773">
+                            <button type="button" class="fetch-btn" onclick="fetchCustomer()">
+                                <i class="fas fa-search"></i> Fetch
+                            </button>
+                        </div>
+                        <div class="form-group">
+                            <label><i class="fas fa-user"></i> Customer Name</label>
+                            <input type="text" id="customer-name" value="pasindi" readonly>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Book Selection -->
+                <div class="form-section">
+                    <h4><i class="fas fa-book"></i> Book Selection</h4>
+                    <div class="book-selector">
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label><i class="fas fa-book"></i> Select Book</label>
+                                <select id="book-select" onchange="updateBookPrice()">
+                                    <option value="">Choose a book...</option>
+                                    <option value="1" data-price="1500">The Great Gatsby - Rs. 1500</option>
+                                    <option value="2" data-price="1200">To Kill a Mockingbird - Rs. 1200</option>
+                                    <option value="3" data-price="1800">1984 - Rs. 1800</option>
+                                    <option value="4" data-price="900">Pride and Prejudice - Rs. 900</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label><i class="fas fa-hashtag"></i> Quantity</label>
+                                <input type="number" id="book-quantity" min="1" value="1" onchange="updateBookSubtotal()">
+                            </div>
+                            <div class="form-group">
+                                <label><i class="fas fa-dollar-sign"></i> Price per Unit</label>
+                                <input type="number" id="book-price" step="0.01" readonly>
+                            </div>
+                            <div class="form-group">
+                                <button type="button" class="add-book-btn" onclick="addBookToBill()">
+                                    <i class="fas fa-plus"></i> Add
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Book Items Table -->
+                    <div class="bill-items-table">
+                        <table id="bill-items">
+                            <thead>
+                                <tr>
+                                    <th>Book Title</th>
+                                    <th>Quantity</th>
+                                    <th>Price/Unit</th>
+                                    <th>Subtotal</th>
+                                    <th>Action</th>
+                                </tr>
+                            </thead>
+                            <tbody id="bill-items-body">
+                                <!-- Items will be added here -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- Discounts & Taxes -->
+                <div class="form-section">
+                    <h4><i class="fas fa-percentage"></i> Discounts & Taxes</h4>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label><i class="fas fa-tag"></i> Discount Type</label>
+                            <select id="discount-type" onchange="updateDiscount()">
+                                <option value="none">No Discount</option>
+                                <option value="percentage">Percentage (%)</option>
+                                <option value="amount">Fixed Amount (Rs.)</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label><i class="fas fa-tag"></i> Discount Value</label>
+                            <input type="number" id="discount-value" step="0.01" min="0" onchange="updateDiscount()">
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label><i class="fas fa-receipt"></i> Tax Type</label>
+                            <select id="tax-type" onchange="updateTax()">
+                                <option value="none">No Tax</option>
+                                <option value="vat">VAT (15%)</option>
+                                <option value="nbt">NBT (2%)</option>
+                                <option value="both">VAT + NBT</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Payment Information -->
+                <div class="form-section">
+                    <h4><i class="fas fa-credit-card"></i> Payment Information</h4>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label><i class="fas fa-credit-card"></i> Payment Method</label>
+                            <select id="payment-method" required>
+                                <option value="">Select payment method...</option>
+                                <option value="cash">Cash</option>
+                                <option value="card">Card</option>
+                                <option value="upi">UPI</option>
+                                <option value="bank-transfer">Bank Transfer</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label><i class="fas fa-receipt"></i> Transaction ID</label>
+                            <input type="text" id="transaction-id" placeholder="Optional">
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Admin Notes -->
+                <div class="form-section">
+                    <h4><i class="fas fa-sticky-note"></i> Admin Notes</h4>
+                    <div class="form-group">
+                        <textarea id="admin-notes" placeholder="Add internal notes or remarks..."></textarea>
+                    </div>
+                </div>
+
+                <button type="submit" class="generate-bill-btn">
+                    <i class="fas fa-calculator"></i> Generate Bill
+                </button>
+            </form>
+        </div>
+
+        <!-- Bill Preview -->
+        <div class="bill-preview" id="bill-preview">
+            <h3><i class="fas fa-file-invoice"></i> Bill Preview</h3>
+            <p style="color: #64748b; text-align: center; margin-top: 2rem;">
+                Generate a bill to see the preview here
+            </p>
+        </div>
+    </div>
+
+    <script>
+        // Demo billing system functionality
+        let billItems = [];
+        let selectedCustomer = { name: 'pasindi', accountNumber: 'ACC74773' };
+
+        function fetchCustomer() {
+            const accountNumber = document.getElementById('customer-account').value;
+            if (accountNumber) {
+                document.getElementById('customer-name').value = 'pasindi';
+                showToast('Customer found successfully!', 'success');
+            }
+        }
+
+        function updateBookPrice() {
+            const bookSelect = document.getElementById('book-select');
+            const bookPrice = document.getElementById('book-price');
+            
+            if (bookSelect.value) {
+                const selectedOption = bookSelect.options[bookSelect.selectedIndex];
+                bookPrice.value = selectedOption.dataset.price;
+            } else {
+                bookPrice.value = '';
+            }
+        }
+
+        function updateBookSubtotal() {
+            // Demo function
+        }
+
+        function addBookToBill() {
+            const bookSelect = document.getElementById('book-select');
+            const quantity = document.getElementById('book-quantity').value;
+            const price = document.getElementById('book-price').value;
+            
+            if (!bookSelect.value || !quantity || !price) {
+                alert('Please select a book and enter quantity');
+                return;
+            }
+            
+            const selectedOption = bookSelect.options[bookSelect.selectedIndex];
+            const item = {
+                id: Date.now(),
+                title: selectedOption.textContent.split(' - ')[0],
+                quantity: parseInt(quantity),
+                price: parseFloat(price),
+                subtotal: parseInt(quantity) * parseFloat(price)
+            };
+            
+            billItems.push(item);
+            updateBillItemsTable();
+            clearBookSelection();
+            showToast('Book added to bill!', 'success');
+        }
+
+        function updateBillItemsTable() {
+            const tbody = document.getElementById('bill-items-body');
+            tbody.innerHTML = '';
+            
+            billItems.forEach(item => {
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td>${item.title}</td>
+                    <td>${item.quantity}</td>
+                    <td>Rs. ${item.price.toFixed(2)}</td>
+                    <td>Rs. ${item.subtotal.toFixed(2)}</td>
+                    <td>
+                        <button class="remove-item-btn" onclick="removeBillItem(${item.id})">
+                            <i class="fas fa-trash"></i>
+                        </button>
+                    </td>
+                `;
+                tbody.appendChild(row);
+            });
+        }
+
+        function removeBillItem(itemId) {
+            billItems = billItems.filter(item => item.id !== itemId);
+            updateBillItemsTable();
+            showToast('Item removed from bill!', 'info');
+        }
+
+        function clearBookSelection() {
+            document.getElementById('book-select').value = '';
+            document.getElementById('book-quantity').value = '1';
+            document.getElementById('book-price').value = '';
+        }
+
+        function updateDiscount() {
+            // Demo function
+        }
+
+        function updateTax() {
+            // Demo function
+        }
+
+        function calculateBillTotal() {
+            const subtotal = billItems.reduce((sum, item) => sum + item.subtotal, 0);
+            const discountType = document.getElementById('discount-type').value;
+            const discountValue = parseFloat(document.getElementById('discount-value').value) || 0;
+            const taxType = document.getElementById('tax-type').value;
+            
+            let discount = 0;
+            if (discountType === 'percentage') {
+                discount = (subtotal * discountValue) / 100;
+            } else if (discountType === 'amount') {
+                discount = discountValue;
+            }
+            
+            let tax = 0;
+            if (taxType === 'vat') {
+                tax = (subtotal - discount) * 0.15;
+            } else if (taxType === 'nbt') {
+                tax = (subtotal - discount) * 0.02;
+            } else if (taxType === 'both') {
+                tax = (subtotal - discount) * 0.17;
+            }
+            
+            const total = subtotal - discount + tax;
+            
+            return { subtotal, discount, tax, total };
+        }
+
+        function displayBillPreview() {
+            const billPreview = document.getElementById('bill-preview');
+            const calculations = calculateBillTotal();
+            
+            billPreview.innerHTML = `
+                <h3><i class="fas fa-check-circle"></i> Bill Generated Successfully!</h3>
+                <div class="bill-details">
+                    <p><strong>Bill Number:</strong> <span>BILL${Date.now()}</span></p>
+                    <p><strong>Customer Name:</strong> <span>${selectedCustomer.name}</span></p>
+                    <p><strong>Account Number:</strong> <span>${selectedCustomer.accountNumber}</span></p>
+                    <p><strong>Bill Date:</strong> <span>${new Date().toLocaleDateString()}</span></p>
+                    <p><strong>Payment Method:</strong> <span>${document.getElementById('payment-method').value.toUpperCase()}</span></p>
+                    <hr style="margin: 1rem 0; border: 1px solid #e5e7eb;">
+                    <p><strong>Subtotal:</strong> <span>Rs. ${calculations.subtotal.toFixed(2)}</span></p>
+                    <p><strong>Discount:</strong> <span>- Rs. ${calculations.discount.toFixed(2)}</span></p>
+                    <p><strong>Tax:</strong> <span>Rs. ${calculations.tax.toFixed(2)}</span></p>
+                    <p><strong>Total Amount:</strong> <span>Rs. ${calculations.total.toFixed(2)}</span></p>
+                    <p><strong>Status:</strong> <span class="bill-status pending">PENDING</span></p>
+                </div>
+                <div class="bill-actions">
+                    <button class="print-bill-btn" onclick="printBill()">
+                        <i class="fas fa-print"></i> Print Bill
+                    </button>
+                    <button class="save-bill-btn" onclick="saveBill()">
+                        <i class="fas fa-save"></i> Save Bill
+                    </button>
+                    <button class="download-pdf-btn" onclick="downloadPDF()">
+                        <i class="fas fa-download"></i> Download PDF
+                    </button>
+                    <button class="email-bill-btn" onclick="emailBill()">
+                        <i class="fas fa-envelope"></i> Email Bill
+                    </button>
+                </div>
+            `;
+        }
+
+        function printBill() {
+            showToast('Printing bill...', 'info');
+        }
+
+        function saveBill() {
+            showToast('Bill saved successfully!', 'success');
+        }
+
+        function downloadPDF() {
+            showToast('PDF download started...', 'info');
+        }
+
+        function emailBill() {
+            const email = prompt('Enter customer email address:');
+            if (email) {
+                showToast('Bill sent to ' + email, 'success');
+            }
+        }
+
+        function showToast(message, type = 'info') {
+            const toast = document.createElement('div');
+            toast.className = `toast toast-${type}`;
+            toast.innerHTML = `
+                <i class="fas fa-${type === 'success' ? 'check-circle' : type === 'error' ? 'exclamation-circle' : 'info-circle'}"></i>
+                <span>${message}</span>
+            `;
+            
+            document.body.appendChild(toast);
+            setTimeout(() => toast.classList.add('show'), 100);
+            
+            setTimeout(() => {
+                toast.classList.remove('show');
+                setTimeout(() => document.body.removeChild(toast), 300);
+            }, 3000);
+        }
+
+        // Handle form submission
+        document.getElementById('billing-form').addEventListener('submit', function(event) {
+            event.preventDefault();
+            
+            if (billItems.length === 0) {
+                alert('Please add at least one book to the bill');
+                return;
+            }
+            
+            const paymentMethod = document.getElementById('payment-method').value;
+            if (!paymentMethod) {
+                alert('Please select a payment method');
+                return;
+            }
+            
+            displayBillPreview();
+            showToast('Bill generated successfully!', 'success');
+        });
+
+        // Auto-fetch customer on load
+        fetchCustomer();
+    </script>
+</body>
+</html> 

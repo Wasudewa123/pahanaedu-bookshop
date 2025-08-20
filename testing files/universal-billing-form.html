@@ -1,0 +1,759 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Universal Billing Form - Pahana Book Shop</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: #f8fafc;
+            color: #1e293b;
+            line-height: 1.6;
+            padding: 2rem;
+        }
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            padding: 2rem;
+            border-radius: 1rem;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+        }
+        .header {
+            text-align: center;
+            margin-bottom: 2rem;
+            padding-bottom: 1rem;
+            border-bottom: 2px solid #e2e8f0;
+        }
+        .section {
+            margin-bottom: 2rem;
+            padding: 1.5rem;
+            border: 1px solid #e2e8f0;
+            border-radius: 0.5rem;
+            background: #f8fafc;
+        }
+        .button {
+            background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+            color: white;
+            border: none;
+            padding: 1rem 2rem;
+            border-radius: 0.5rem;
+            cursor: pointer;
+            font-weight: 500;
+            font-size: 1rem;
+            width: 100%;
+            margin-bottom: 1rem;
+            transition: all 0.3s ease;
+        }
+        .button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3);
+        }
+        .result {
+            margin-top: 1rem;
+            padding: 1rem;
+            border-radius: 0.5rem;
+            background: white;
+            border-left: 4px solid #3b82f6;
+        }
+        .result.success {
+            border-left-color: #10b981;
+            background: #f0fdf4;
+        }
+        .result.error {
+            border-left-color: #ef4444;
+            background: #fef2f2;
+        }
+        .form-group {
+            margin-bottom: 1rem;
+        }
+        .form-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 500;
+        }
+        .form-group input, .form-group select, .form-group textarea {
+            width: 100%;
+            padding: 0.75rem;
+            border: 1px solid #d1d5db;
+            border-radius: 0.5rem;
+            font-size: 1rem;
+        }
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1rem;
+        }
+        .customer-list {
+            max-height: 200px;
+            overflow-y: auto;
+            border: 1px solid #e2e8f0;
+            border-radius: 0.5rem;
+            margin-top: 1rem;
+        }
+        .customer-item {
+            padding: 0.75rem;
+            border-bottom: 1px solid #e2e8f0;
+            cursor: pointer;
+            transition: background-color 0.2s;
+        }
+        .customer-item:hover {
+            background: #f1f5f9;
+        }
+        .customer-item.selected {
+            background: #dbeafe;
+            border-left: 4px solid #3b82f6;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 1rem;
+        }
+        th, td {
+            padding: 0.75rem;
+            text-align: left;
+            border-bottom: 1px solid #e2e8f0;
+        }
+        th {
+            background: #f8fafc;
+            font-weight: 600;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1><i class="fas fa-users"></i> Universal Billing Form</h1>
+            <p>Billing system that works with ALL customers in your database</p>
+        </div>
+
+        <div class="section">
+            <h3><i class="fas fa-server"></i> Step 1: Check Backend</h3>
+            <button class="button" onclick="checkBackend()">
+                <i class="fas fa-server"></i> Check Backend Status
+            </button>
+            <div id="backend-result"></div>
+        </div>
+
+        <div class="section">
+            <h3><i class="fas fa-users"></i> Step 2: Load All Customers</h3>
+            <button class="button" onclick="loadAllCustomers()">
+                <i class="fas fa-users"></i> Load All Customers
+            </button>
+            <div id="customers-result"></div>
+        </div>
+
+        <div class="section">
+            <h3><i class="fas fa-calculator"></i> Step 3: Universal Billing</h3>
+            
+            <h4><i class="fas fa-user"></i> Customer Selection</h4>
+            <div class="form-row">
+                <div class="form-group">
+                    <label>Search by Account Number</label>
+                    <input type="text" id="customer-account" placeholder="Enter any account number">
+                </div>
+                <div class="form-group">
+                    <label>Customer Name</label>
+                    <input type="text" id="customer-name" readonly>
+                </div>
+            </div>
+            <button class="button" onclick="fetchCustomer()">
+                <i class="fas fa-search"></i> Fetch Customer
+            </button>
+
+            <h4><i class="fas fa-list"></i> Available Customers</h4>
+            <p>Click on any customer below to select them:</p>
+            <div id="customer-list" class="customer-list">
+                <div style="text-align: center; padding: 2rem; color: #64748b;">
+                    <i class="fas fa-spinner fa-spin"></i> Loading customers...
+                </div>
+            </div>
+
+            <h4><i class="fas fa-book"></i> Book Selection</h4>
+            <div class="form-row">
+                <div class="form-group">
+                    <label>Select Book</label>
+                    <select id="book-select" onchange="updateBookPrice()">
+                        <option value="">Choose a book...</option>
+                        <option value="1">The Great Gatsby - Rs. 1500</option>
+                        <option value="2">To Kill a Mockingbird - Rs. 1200</option>
+                        <option value="3">1984 - Rs. 1800</option>
+                        <option value="4">Pride and Prejudice - Rs. 1000</option>
+                        <option value="5">The Hobbit - Rs. 1600</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Quantity</label>
+                    <input type="number" id="book-quantity" value="1" min="1" onchange="updateBookSubtotal()">
+                </div>
+                <div class="form-group">
+                    <label>Price per Unit</label>
+                    <input type="number" id="book-price" readonly>
+                </div>
+                <div class="form-group">
+                    <button type="button" class="button" onclick="addBookToBill()">
+                        <i class="fas fa-plus"></i> Add Book
+                    </button>
+                </div>
+            </div>
+
+            <h4><i class="fas fa-list"></i> Bill Items</h4>
+            <table id="bill-items">
+                <thead>
+                    <tr>
+                        <th>Book Title</th>
+                        <th>Quantity</th>
+                        <th>Price/Unit</th>
+                        <th>Subtotal</th>
+                        <th>Action</th>
+                    </tr>
+                </thead>
+                <tbody id="bill-items-body">
+                    <tr>
+                        <td colspan="5" style="text-align: center; color: #64748b; padding: 1rem;">No items added to bill</td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <h4><i class="fas fa-credit-card"></i> Payment Information</h4>
+            <div class="form-row">
+                <div class="form-group">
+                    <label>Payment Method</label>
+                    <select id="payment-method" required>
+                        <option value="">Select payment method...</option>
+                        <option value="cash">Cash</option>
+                        <option value="card">Card</option>
+                        <option value="upi">UPI</option>
+                        <option value="bank-transfer">Bank Transfer</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Transaction ID (Optional)</label>
+                    <input type="text" id="transaction-id" placeholder="Optional">
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label>Admin Notes (Optional)</label>
+                <textarea id="admin-notes" rows="3" placeholder="Add internal notes or remarks..."></textarea>
+            </div>
+
+            <button class="button" onclick="generateBill()">
+                <i class="fas fa-calculator"></i> Generate Bill
+            </button>
+            
+            <div id="bill-result"></div>
+        </div>
+
+        <div class="section">
+            <h3><i class="fas fa-list"></i> Step 4: Check Generated Bills</h3>
+            <button class="button" onclick="checkGeneratedBills()">
+                <i class="fas fa-list"></i> Check Generated Bills
+            </button>
+            <div id="bills-result"></div>
+        </div>
+    </div>
+
+    <script>
+        // Global variables
+        let selectedCustomer = null;
+        let billItems = [];
+        let allCustomers = [];
+        let availableBooks = [
+            { id: '1', title: 'The Great Gatsby', price: 1500 },
+            { id: '2', title: 'To Kill a Mockingbird', price: 1200 },
+            { id: '3', title: '1984', price: 1800 },
+            { id: '4', title: 'Pride and Prejudice', price: 1000 },
+            { id: '5', title: 'The Hobbit', price: 1600 }
+        ];
+
+        // Check backend status
+        async function checkBackend() {
+            const resultDiv = document.getElementById('backend-result');
+            resultDiv.innerHTML = '<div class="loading"><i class="fas fa-spinner fa-spin"></i><p>Checking backend...</p></div>';
+            
+            try {
+                const response = await fetch('http://localhost:8080/api/admin/customers');
+                
+                if (response.ok) {
+                    resultDiv.innerHTML = `
+                        <div class="result success">
+                            <h4><i class="fas fa-check-circle"></i> Backend Online</h4>
+                            <p><strong>Status:</strong> ✓ Running</p>
+                            <p><strong>Message:</strong> Spring Boot application is running successfully</p>
+                        </div>
+                    `;
+                } else {
+                    resultDiv.innerHTML = `
+                        <div class="result error">
+                            <h4><i class="fas fa-times-circle"></i> Backend Error</h4>
+                            <p><strong>Status:</strong> ✗ Error</p>
+                            <p><strong>Solution:</strong> Start your Spring Boot application</p>
+                        </div>
+                    `;
+                }
+            } catch (error) {
+                resultDiv.innerHTML = `
+                    <div class="result error">
+                        <h4><i class="fas fa-times-circle"></i> Connection Failed</h4>
+                        <p><strong>Error:</strong> ${error.message}</p>
+                        <p><strong>Solution:</strong> Start your Spring Boot application on port 8080</p>
+                    </div>
+                `;
+            }
+        }
+
+        // Load all customers
+        async function loadAllCustomers() {
+            const resultDiv = document.getElementById('customers-result');
+            resultDiv.innerHTML = '<div class="loading"><i class="fas fa-spinner fa-spin"></i><p>Loading all customers...</p></div>';
+            
+            try {
+                const response = await fetch('http://localhost:8080/api/admin/customers');
+                const data = await response.json();
+                
+                if (response.ok && data && data.length > 0) {
+                    allCustomers = data;
+                    displayCustomerList();
+                    resultDiv.innerHTML = `
+                        <div class="result success">
+                            <h4><i class="fas fa-check-circle"></i> Customers Loaded Successfully</h4>
+                            <p><strong>Total Customers:</strong> ${data.length}</p>
+                            <p><strong>Message:</strong> All customers loaded. You can now select any customer for billing.</p>
+                        </div>
+                    `;
+                } else {
+                    resultDiv.innerHTML = `
+                        <div class="result error">
+                            <h4><i class="fas fa-exclamation-triangle"></i> No Customers Found</h4>
+                            <p>There are no customers in the database yet.</p>
+                            <p><strong>Solution:</strong> Add some customers first</p>
+                        </div>
+                    `;
+                }
+            } catch (error) {
+                resultDiv.innerHTML = `
+                    <div class="result error">
+                        <h4><i class="fas fa-times-circle"></i> Error Loading Customers</h4>
+                        <p><strong>Error:</strong> ${error.message}</p>
+                    </div>
+                `;
+            }
+        }
+
+        // Display customer list
+        function displayCustomerList() {
+            const customerListDiv = document.getElementById('customer-list');
+            
+            if (allCustomers.length === 0) {
+                customerListDiv.innerHTML = `
+                    <div style="text-align: center; padding: 2rem; color: #64748b;">
+                        <i class="fas fa-users"></i> No customers found
+                    </div>
+                `;
+                return;
+            }
+            
+            let html = '';
+            allCustomers.forEach(customer => {
+                html += `
+                    <div class="customer-item" onclick="selectCustomer('${customer.accountNumber}')">
+                        <strong>${customer.name}</strong> (${customer.accountNumber})
+                        <br><small>${customer.email || 'No email'} | ${customer.phone || 'No phone'}</small>
+                    </div>
+                `;
+            });
+            
+            customerListDiv.innerHTML = html;
+        }
+
+        // Select customer from list
+        function selectCustomer(accountNumber) {
+            const customer = allCustomers.find(c => c.accountNumber === accountNumber);
+            if (customer) {
+                selectedCustomer = customer;
+                document.getElementById('customer-account').value = customer.accountNumber;
+                document.getElementById('customer-name').value = customer.name;
+                
+                // Update visual selection
+                document.querySelectorAll('.customer-item').forEach(item => {
+                    item.classList.remove('selected');
+                });
+                event.target.closest('.customer-item').classList.add('selected');
+                
+                alert(`Customer selected: ${customer.name} (${customer.accountNumber})`);
+            }
+        }
+
+        // Fetch customer by account number
+        async function fetchCustomer() {
+            const accountNumber = document.getElementById('customer-account').value;
+            const customerNameInput = document.getElementById('customer-name');
+            
+            if (!accountNumber) {
+                alert('Please enter an account number');
+                return;
+            }
+            
+            try {
+                // Try billing API first
+                const response = await fetch(`http://localhost:8080/api/billing/customer/${accountNumber}`);
+                if (response.ok) {
+                    const data = await response.json();
+                    if (data.success && data.customer) {
+                        selectedCustomer = data.customer;
+                        customerNameInput.value = data.customer.name;
+                        alert('Customer found successfully');
+                        return;
+                    }
+                }
+                
+                // Try admin API as fallback
+                const adminResponse = await fetch('http://localhost:8080/api/admin/customers');
+                if (adminResponse.ok) {
+                    const customers = await adminResponse.json();
+                    const customer = customers.find(c => c.accountNumber === accountNumber);
+                    if (customer) {
+                        selectedCustomer = customer;
+                        customerNameInput.value = customer.name;
+                        alert('Customer found successfully');
+                        return;
+                    }
+                }
+                
+                alert('Customer not found. Please check the account number.');
+                customerNameInput.value = '';
+                selectedCustomer = null;
+            } catch (error) {
+                console.error('Error fetching customer:', error);
+                alert('Error fetching customer. Please try again.');
+                customerNameInput.value = '';
+                selectedCustomer = null;
+            }
+        }
+
+        // Update book price
+        function updateBookPrice() {
+            const bookSelect = document.getElementById('book-select');
+            const priceInput = document.getElementById('book-price');
+            
+            if (bookSelect && priceInput) {
+                const selectedBook = availableBooks.find(book => book.id === bookSelect.value);
+                if (selectedBook) {
+                    priceInput.value = selectedBook.price;
+                    updateBookSubtotal();
+                }
+            }
+        }
+
+        // Update book subtotal
+        function updateBookSubtotal() {
+            const quantity = document.getElementById('book-quantity').value;
+            const price = document.getElementById('book-price').value;
+            
+            if (quantity && price) {
+                const subtotal = quantity * price;
+                console.log('Subtotal:', subtotal);
+            }
+        }
+
+        // Add book to bill
+        function addBookToBill() {
+            const bookSelect = document.getElementById('book-select');
+            const quantityInput = document.getElementById('book-quantity');
+            const priceInput = document.getElementById('book-price');
+            
+            if (!bookSelect.value) {
+                alert('Please select a book');
+                return;
+            }
+            
+            if (!quantityInput.value || quantityInput.value <= 0) {
+                alert('Please enter a valid quantity');
+                return;
+            }
+            
+            const selectedBook = availableBooks.find(book => book.id === bookSelect.value);
+            if (!selectedBook) {
+                alert('Selected book not found');
+                return;
+            }
+            
+            const quantity = parseInt(quantityInput.value);
+            const price = parseFloat(priceInput.value);
+            const subtotal = quantity * price;
+            
+            // Check if book is already in the bill
+            const existingItem = billItems.find(item => item.bookId === bookSelect.value);
+            if (existingItem) {
+                existingItem.quantity += quantity;
+                existingItem.subtotal = existingItem.quantity * existingItem.price;
+                alert('Quantity updated for existing book');
+            } else {
+                // Add new item to bill
+                const newItem = {
+                    id: Date.now(),
+                    bookId: bookSelect.value,
+                    title: selectedBook.title,
+                    price: price,
+                    quantity: quantity,
+                    subtotal: subtotal
+                };
+                billItems.push(newItem);
+                alert('Book added to bill');
+            }
+            
+            // Update the bill items table
+            updateBillItemsTable();
+            
+            // Clear the form
+            bookSelect.value = '';
+            quantityInput.value = '1';
+            priceInput.value = '';
+        }
+
+        // Update bill items table
+        function updateBillItemsTable() {
+            const tableBody = document.getElementById('bill-items-body');
+            if (!tableBody) return;
+            
+            tableBody.innerHTML = '';
+            
+            if (billItems.length === 0) {
+                const row = document.createElement('tr');
+                row.innerHTML = '<td colspan="5" style="text-align: center; color: #64748b; padding: 1rem;">No items added to bill</td>';
+                tableBody.appendChild(row);
+                return;
+            }
+            
+            billItems.forEach(item => {
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td>${item.title}</td>
+                    <td>${item.quantity}</td>
+                    <td>Rs. ${item.price.toFixed(2)}</td>
+                    <td>Rs. ${item.subtotal.toFixed(2)}</td>
+                    <td>
+                        <button onclick="removeBillItem(${item.id})" style="background: #ef4444; color: white; border: none; padding: 0.5rem 1rem; border-radius: 0.25rem; cursor: pointer;">
+                            <i class="fas fa-trash"></i> Remove
+                        </button>
+                    </td>
+                `;
+                tableBody.appendChild(row);
+            });
+        }
+
+        // Remove bill item
+        function removeBillItem(itemId) {
+            billItems = billItems.filter(item => item.id !== itemId);
+            updateBillItemsTable();
+            alert('Item removed from bill');
+        }
+
+        // Generate bill
+        async function generateBill() {
+            const resultDiv = document.getElementById('bill-result');
+            
+            if (!selectedCustomer) {
+                resultDiv.innerHTML = `
+                    <div class="result error">
+                        <h4><i class="fas fa-times-circle"></i> No Customer Selected</h4>
+                        <p><strong>Error:</strong> Please select a customer first</p>
+                    </div>
+                `;
+                return;
+            }
+            
+            if (billItems.length === 0) {
+                resultDiv.innerHTML = `
+                    <div class="result error">
+                        <h4><i class="fas fa-times-circle"></i> No Items in Bill</h4>
+                        <p><strong>Error:</strong> Please add at least one book to the bill</p>
+                    </div>
+                `;
+                return;
+            }
+            
+            const paymentMethod = document.getElementById('payment-method').value;
+            if (!paymentMethod) {
+                resultDiv.innerHTML = `
+                    <div class="result error">
+                        <h4><i class="fas fa-times-circle"></i> No Payment Method</h4>
+                        <p><strong>Error:</strong> Please select a payment method</p>
+                    </div>
+                `;
+                return;
+            }
+            
+            resultDiv.innerHTML = '<div class="loading"><i class="fas fa-spinner fa-spin"></i><p>Generating bill...</p></div>';
+            
+            try {
+                // Calculate totals
+                const subtotal = billItems.reduce((sum, item) => sum + item.subtotal, 0);
+                const discount = 0; // No discount for test
+                const tax = subtotal * 0.15; // 15% tax
+                const total = subtotal + tax;
+                
+                const billData = {
+                    customerAccountNumber: selectedCustomer.accountNumber,
+                    items: billItems.map(item => ({
+                        bookId: item.bookId,
+                        title: item.title,
+                        quantity: item.quantity,
+                        price: item.price
+                    })),
+                    subtotal: subtotal,
+                    discount: discount,
+                    tax: tax,
+                    total: total,
+                    paymentMethod: paymentMethod,
+                    transactionId: document.getElementById('transaction-id').value || '',
+                    adminNotes: document.getElementById('admin-notes').value || ''
+                };
+                
+                console.log('Sending bill data:', billData);
+                
+                const response = await fetch('http://localhost:8080/api/billing/generate', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(billData)
+                });
+                
+                const responseText = await response.text();
+                console.log('Response text:', responseText);
+                
+                let data;
+                try {
+                    data = JSON.parse(responseText);
+                } catch (e) {
+                    data = { message: 'Invalid JSON response', raw: responseText };
+                }
+                
+                if (response.ok && data.success) {
+                    const bill = data.bill;
+                    resultDiv.innerHTML = `
+                        <div class="result success">
+                            <h4><i class="fas fa-check-circle"></i> Bill Generated Successfully!</h4>
+                            <p><strong>Bill Number:</strong> ${bill.billNumber}</p>
+                            <p><strong>Customer:</strong> ${bill.customerName}</p>
+                            <p><strong>Total:</strong> Rs. ${bill.total}</p>
+                            <p><strong>Status:</strong> ${bill.status}</p>
+                            <p><strong>Items:</strong> ${bill.items ? bill.items.length : 0} books</p>
+                            <p style="margin-top: 1rem; color: #059669; font-weight: bold;">
+                                <i class="fas fa-trophy"></i> SUCCESS! The billing system works with ALL customers!
+                            </p>
+                        </div>
+                    `;
+                    
+                    // Clear the form
+                    billItems = [];
+                    updateBillItemsTable();
+                    selectedCustomer = null;
+                    document.getElementById('customer-name').value = '';
+                    document.getElementById('payment-method').value = '';
+                    document.getElementById('transaction-id').value = '';
+                    document.getElementById('admin-notes').value = '';
+                    
+                    // Clear customer selection
+                    document.querySelectorAll('.customer-item').forEach(item => {
+                        item.classList.remove('selected');
+                    });
+                } else {
+                    resultDiv.innerHTML = `
+                        <div class="result error">
+                            <h4><i class="fas fa-times-circle"></i> Failed to Generate Bill</h4>
+                            <p><strong>Error:</strong> ${data.message || 'Unknown error'}</p>
+                            <p><strong>Response Status:</strong> ${response.status}</p>
+                            <p><strong>Raw Response:</strong></p>
+                            <pre>${responseText}</pre>
+                        </div>
+                    `;
+                }
+            } catch (error) {
+                resultDiv.innerHTML = `
+                    <div class="result error">
+                        <h4><i class="fas fa-times-circle"></i> Connection Error</h4>
+                        <p><strong>Error:</strong> ${error.message}</p>
+                        <p><strong>Solution:</strong> Make sure your Spring Boot application is running</p>
+                    </div>
+                `;
+            }
+        }
+
+        // Check generated bills
+        async function checkGeneratedBills() {
+            const resultDiv = document.getElementById('bills-result');
+            resultDiv.innerHTML = '<div class="loading"><i class="fas fa-spinner fa-spin"></i><p>Loading bills...</p></div>';
+            
+            try {
+                const response = await fetch('http://localhost:8080/api/admin/bills');
+                const data = await response.json();
+                
+                if (response.ok && data.success && data.bills && data.bills.length > 0) {
+                    let tableHTML = `
+                        <div class="result success">
+                            <h4><i class="fas fa-check-circle"></i> Bills Found</h4>
+                            <p><strong>Total Bills:</strong> ${data.bills.length}</p>
+                            <table style="width: 100%; border-collapse: collapse; margin-top: 1rem;">
+                                <thead>
+                                    <tr style="background: #f8fafc;">
+                                        <th style="padding: 0.5rem; text-align: left; border-bottom: 1px solid #e2e8f0;">Bill #</th>
+                                        <th style="padding: 0.5rem; text-align: left; border-bottom: 1px solid #e2e8f0;">Customer</th>
+                                        <th style="padding: 0.5rem; text-align: left; border-bottom: 1px solid #e2e8f0;">Total</th>
+                                        <th style="padding: 0.5rem; text-align: left; border-bottom: 1px solid #e2e8f0;">Status</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                    `;
+                    
+                    data.bills.slice(0, 10).forEach(bill => {
+                        tableHTML += `
+                            <tr>
+                                <td style="padding: 0.5rem; border-bottom: 1px solid #e2e8f0;">${bill.billNumber || 'N/A'}</td>
+                                <td style="padding: 0.5rem; border-bottom: 1px solid #e2e8f0;">${bill.customerName || 'N/A'}</td>
+                                <td style="padding: 0.5rem; border-bottom: 1px solid #e2e8f0;">Rs. ${bill.total || 0}</td>
+                                <td style="padding: 0.5rem; border-bottom: 1px solid #e2e8f0;">${bill.status || 'N/A'}</td>
+                            </tr>
+                        `;
+                    });
+                    
+                    tableHTML += `
+                                </tbody>
+                            </table>
+                            ${data.bills.length > 10 ? `<p><em>Showing first 10 bills of ${data.bills.length} total</em></p>` : ''}
+                        </div>
+                    `;
+                    
+                    resultDiv.innerHTML = tableHTML;
+                } else {
+                    resultDiv.innerHTML = `
+                        <div class="result error">
+                            <h4><i class="fas fa-exclamation-triangle"></i> No Bills Found</h4>
+                            <p>There are no bills in the database yet.</p>
+                            <p><strong>Solution:</strong> Generate a test bill first</p>
+                        </div>
+                    `;
+                }
+            } catch (error) {
+                resultDiv.innerHTML = `
+                    <div class="result error">
+                        <h4><i class="fas fa-times-circle"></i> Error Loading Bills</h4>
+                        <p><strong>Error:</strong> ${error.message}</p>
+                    </div>
+                `;
+            }
+        }
+
+        // Initialize page
+        document.addEventListener('DOMContentLoaded', function() {
+            checkBackend();
+            loadAllCustomers();
+        });
+    </script>
+</body>
+</html>

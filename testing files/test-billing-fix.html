@@ -1,0 +1,349 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Billing Fix Test - Pahana Book Shop</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: #f8fafc;
+            color: #1e293b;
+            line-height: 1.6;
+            padding: 2rem;
+        }
+        .container {
+            max-width: 600px;
+            margin: 0 auto;
+            background: white;
+            padding: 2rem;
+            border-radius: 1rem;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+        }
+        .header {
+            text-align: center;
+            margin-bottom: 2rem;
+            padding-bottom: 1rem;
+            border-bottom: 2px solid #e2e8f0;
+        }
+        .test-section {
+            margin-bottom: 2rem;
+            padding: 1.5rem;
+            border: 1px solid #e2e8f0;
+            border-radius: 0.5rem;
+            background: #f8fafc;
+        }
+        .test-button {
+            background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+            color: white;
+            border: none;
+            padding: 1rem 2rem;
+            border-radius: 0.5rem;
+            cursor: pointer;
+            font-weight: 500;
+            font-size: 1rem;
+            width: 100%;
+            margin-bottom: 1rem;
+            transition: all 0.3s ease;
+        }
+        .test-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3);
+        }
+        .result {
+            margin-top: 1rem;
+            padding: 1rem;
+            border-radius: 0.5rem;
+            background: white;
+            border-left: 4px solid #3b82f6;
+        }
+        .result.success {
+            border-left-color: #10b981;
+            background: #f0fdf4;
+        }
+        .result.error {
+            border-left-color: #ef4444;
+            background: #fef2f2;
+        }
+        .result pre {
+            background: #1e293b;
+            color: #e2e8f0;
+            padding: 1rem;
+            border-radius: 0.5rem;
+            overflow-x: auto;
+            font-size: 0.875rem;
+        }
+        .steps {
+            background: #f1f5f9;
+            padding: 1rem;
+            border-radius: 0.5rem;
+            margin-bottom: 1rem;
+        }
+        .steps ol {
+            margin: 0;
+            padding-left: 1.5rem;
+        }
+        .steps li {
+            margin-bottom: 0.5rem;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1><i class="fas fa-check-circle"></i> Billing Fix Test</h1>
+            <p>Testing the billing system fix</p>
+        </div>
+
+        <div class="steps">
+            <h3><i class="fas fa-list-ol"></i> Steps to Test:</h3>
+            <ol>
+                <li><strong>Start your Spring Boot application</strong> (if not already running)</li>
+                <li><strong>Add a test customer</strong> using the button below</li>
+                <li><strong>Test bill generation</strong> with the test button</li>
+                <li><strong>Check the results</strong> to see if the fix worked</li>
+            </ol>
+        </div>
+
+        <div class="test-section">
+            <h3><i class="fas fa-user-plus"></i> Step 1: Add Test Customer</h3>
+            <p>First, let's add a test customer to the database:</p>
+            <button class="test-button" onclick="addTestCustomer()">
+                <i class="fas fa-user-plus"></i> Add Test Customer (ACC71751)
+            </button>
+            <div id="customer-result"></div>
+        </div>
+
+        <div class="test-section">
+            <h3><i class="fas fa-calculator"></i> Step 2: Test Bill Generation</h3>
+            <p>Now let's test if bill generation works:</p>
+            <button class="test-button" onclick="testBillGeneration()">
+                <i class="fas fa-calculator"></i> Generate Test Bill
+            </button>
+            <div id="bill-result"></div>
+        </div>
+
+        <div class="test-section">
+            <h3><i class="fas fa-list"></i> Step 3: Check All Bills</h3>
+            <p>Let's see all bills in the database:</p>
+            <button class="test-button" onclick="checkAllBills()">
+                <i class="fas fa-list"></i> Check All Bills
+            </button>
+            <div id="bills-result"></div>
+        </div>
+    </div>
+
+    <script>
+        // Add test customer
+        async function addTestCustomer() {
+            const resultDiv = document.getElementById('customer-result');
+            resultDiv.innerHTML = '<div class="loading"><i class="fas fa-spinner fa-spin"></i><p>Adding test customer...</p></div>';
+            
+            try {
+                const customerData = {
+                    accountNumber: 'ACC71751',
+                    name: 'Pasan Perera',
+                    email: 'pasan@example.com',
+                    phone: '+94 77 123 4567',
+                    address: '123 Main Street, Colombo, Sri Lanka'
+                };
+                
+                const response = await fetch('http://localhost:8080/api/admin/customers', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(customerData)
+                });
+                
+                const data = await response.json();
+                
+                if (response.ok) {
+                    resultDiv.innerHTML = `
+                        <div class="result success">
+                            <h4><i class="fas fa-check-circle"></i> Test Customer Added Successfully</h4>
+                            <p><strong>Account Number:</strong> ${customerData.accountNumber}</p>
+                            <p><strong>Name:</strong> ${customerData.name}</p>
+                            <p><strong>Status:</strong> Customer created successfully</p>
+                            <p style="margin-top: 1rem; color: #059669;">
+                                <i class="fas fa-arrow-down"></i> Now you can test bill generation!
+                            </p>
+                        </div>
+                    `;
+                } else {
+                    resultDiv.innerHTML = `
+                        <div class="result error">
+                            <h4><i class="fas fa-times-circle"></i> Failed to Add Customer</h4>
+                            <p><strong>Error:</strong> ${data.message || 'Unknown error'}</p>
+                            <p><strong>Status:</strong> ${response.status}</p>
+                        </div>
+                    `;
+                }
+            } catch (error) {
+                resultDiv.innerHTML = `
+                    <div class="result error">
+                        <h4><i class="fas fa-times-circle"></i> Connection Error</h4>
+                        <p><strong>Error:</strong> ${error.message}</p>
+                        <p>Make sure your Spring Boot application is running on port 8080</p>
+                    </div>
+                `;
+            }
+        }
+
+        // Test bill generation
+        async function testBillGeneration() {
+            const resultDiv = document.getElementById('bill-result');
+            resultDiv.innerHTML = '<div class="loading"><i class="fas fa-spinner fa-spin"></i><p>Generating test bill...</p></div>';
+            
+            try {
+                // Create test bill data
+                const testBillData = {
+                    customerAccountNumber: 'ACC71751',
+                    items: [
+                        {
+                            bookId: 'test-book-1',
+                            title: 'Test Book 1',
+                            quantity: 2,
+                            price: 1500
+                        },
+                        {
+                            bookId: 'test-book-2',
+                            title: 'Test Book 2',
+                            quantity: 1,
+                            price: 2000
+                        }
+                    ],
+                    subtotal: 5000,
+                    discount: 250,
+                    tax: 475,
+                    total: 5225,
+                    paymentMethod: 'Cash',
+                    transactionId: 'TEST' + Date.now(),
+                    adminNotes: 'Test bill generated from fix test'
+                };
+                
+                console.log('Sending bill data:', testBillData);
+                
+                const response = await fetch('http://localhost:8080/api/billing/generate', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(testBillData)
+                });
+                
+                const responseText = await response.text();
+                console.log('Response text:', responseText);
+                
+                let data;
+                try {
+                    data = JSON.parse(responseText);
+                } catch (e) {
+                    data = { message: 'Invalid JSON response', raw: responseText };
+                }
+                
+                if (response.ok && data.success) {
+                    const bill = data.bill;
+                    resultDiv.innerHTML = `
+                        <div class="result success">
+                            <h4><i class="fas fa-check-circle"></i> Bill Generated Successfully!</h4>
+                            <p><strong>Bill Number:</strong> ${bill.billNumber}</p>
+                            <p><strong>Customer:</strong> ${bill.customerName}</p>
+                            <p><strong>Total:</strong> Rs. ${bill.total}</p>
+                            <p><strong>Status:</strong> ${bill.status}</p>
+                            <p><strong>Items:</strong> ${bill.items ? bill.items.length : 0} books</p>
+                            <p style="margin-top: 1rem; color: #059669; font-weight: bold;">
+                                <i class="fas fa-trophy"></i> SUCCESS! The billing system is now working!
+                            </p>
+                        </div>
+                    `;
+                } else {
+                    resultDiv.innerHTML = `
+                        <div class="result error">
+                            <h4><i class="fas fa-times-circle"></i> Failed to Generate Bill</h4>
+                            <p><strong>Error:</strong> ${data.message || 'Unknown error'}</p>
+                            <p><strong>Response Status:</strong> ${response.status}</p>
+                            <p><strong>Raw Response:</strong></p>
+                            <pre>${responseText}</pre>
+                        </div>
+                    `;
+                }
+            } catch (error) {
+                resultDiv.innerHTML = `
+                    <div class="result error">
+                        <h4><i class="fas fa-times-circle"></i> Connection Error</h4>
+                        <p><strong>Error:</strong> ${error.message}</p>
+                        <p>Make sure your Spring Boot application is running on port 8080</p>
+                    </div>
+                `;
+            }
+        }
+
+        // Check all bills
+        async function checkAllBills() {
+            const resultDiv = document.getElementById('bills-result');
+            resultDiv.innerHTML = '<div class="loading"><i class="fas fa-spinner fa-spin"></i><p>Loading bills...</p></div>';
+            
+            try {
+                const response = await fetch('http://localhost:8080/api/admin/bills');
+                const data = await response.json();
+                
+                if (response.ok && data.success && data.bills && data.bills.length > 0) {
+                    let tableHTML = `
+                        <div class="result success">
+                            <h4><i class="fas fa-check-circle"></i> Bills Found</h4>
+                            <p><strong>Total Bills:</strong> ${data.bills.length}</p>
+                            <table style="width: 100%; border-collapse: collapse; margin-top: 1rem;">
+                                <thead>
+                                    <tr style="background: #f8fafc;">
+                                        <th style="padding: 0.5rem; text-align: left; border-bottom: 1px solid #e2e8f0;">Bill #</th>
+                                        <th style="padding: 0.5rem; text-align: left; border-bottom: 1px solid #e2e8f0;">Customer</th>
+                                        <th style="padding: 0.5rem; text-align: left; border-bottom: 1px solid #e2e8f0;">Total</th>
+                                        <th style="padding: 0.5rem; text-align: left; border-bottom: 1px solid #e2e8f0;">Status</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                    `;
+                    
+                    data.bills.slice(0, 10).forEach(bill => {
+                        tableHTML += `
+                            <tr>
+                                <td style="padding: 0.5rem; border-bottom: 1px solid #e2e8f0;">${bill.billNumber || 'N/A'}</td>
+                                <td style="padding: 0.5rem; border-bottom: 1px solid #e2e8f0;">${bill.customerName || 'N/A'}</td>
+                                <td style="padding: 0.5rem; border-bottom: 1px solid #e2e8f0;">Rs. ${bill.total || 0}</td>
+                                <td style="padding: 0.5rem; border-bottom: 1px solid #e2e8f0;">${bill.status || 'N/A'}</td>
+                            </tr>
+                        `;
+                    });
+                    
+                    tableHTML += `
+                                </tbody>
+                            </table>
+                            ${data.bills.length > 10 ? `<p><em>Showing first 10 bills of ${data.bills.length} total</em></p>` : ''}
+                        </div>
+                    `;
+                    
+                    resultDiv.innerHTML = tableHTML;
+                } else {
+                    resultDiv.innerHTML = `
+                        <div class="result error">
+                            <h4><i class="fas fa-exclamation-triangle"></i> No Bills Found</h4>
+                            <p>There are no bills in the database yet.</p>
+                            <p><strong>Solution:</strong> Generate a test bill first</p>
+                        </div>
+                    `;
+                }
+            } catch (error) {
+                resultDiv.innerHTML = `
+                    <div class="result error">
+                        <h4><i class="fas fa-times-circle"></i> Error Loading Bills</h4>
+                        <p><strong>Error:</strong> ${error.message}</p>
+                    </div>
+                `;
+            }
+        }
+    </script>
+</body>
+</html>

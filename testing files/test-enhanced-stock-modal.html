@@ -1,0 +1,525 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Enhanced Stock Update Modal Test</title>
+    <link rel="stylesheet" href="src/admin-dashboard.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
+            padding: 2rem;
+            background: #f8fafc;
+        }
+        
+        .test-container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        
+        .test-header {
+            text-align: center;
+            margin-bottom: 3rem;
+        }
+        
+        .test-header h1 {
+            color: #1e293b;
+            margin-bottom: 1rem;
+        }
+        
+        .test-header p {
+            color: #64748b;
+            font-size: 1.125rem;
+        }
+        
+        .test-buttons {
+            display: flex;
+            gap: 1rem;
+            justify-content: center;
+            margin-bottom: 3rem;
+            flex-wrap: wrap;
+        }
+        
+        .test-btn {
+            padding: 1rem 2rem;
+            background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
+            color: white;
+            border: none;
+            border-radius: 0.75rem;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        
+        .test-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(59, 130, 246, 0.3);
+        }
+        
+        .test-btn.secondary {
+            background: linear-gradient(135deg, #64748b 0%, #475569 100%);
+        }
+        
+        .test-btn.secondary:hover {
+            box-shadow: 0 8px 25px rgba(100, 116, 139, 0.3);
+        }
+        
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+            margin-bottom: 3rem;
+        }
+        
+        .feature-card {
+            background: white;
+            padding: 2rem;
+            border-radius: 1rem;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+            border: 1px solid #e2e8f0;
+        }
+        
+        .feature-card h3 {
+            color: #1e293b;
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        
+        .feature-card h3 i {
+            color: #3b82f6;
+        }
+        
+        .feature-card p {
+            color: #64748b;
+            line-height: 1.6;
+        }
+        
+        .demo-books {
+            background: white;
+            padding: 2rem;
+            border-radius: 1rem;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+            border: 1px solid #e2e8f0;
+        }
+        
+        .demo-books h3 {
+            color: #1e293b;
+            margin-bottom: 1.5rem;
+            text-align: center;
+        }
+        
+        .books-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1.5rem;
+        }
+        
+        .book-card {
+            background: #f8fafc;
+            border-radius: 0.75rem;
+            overflow: hidden;
+            border: 1px solid #e2e8f0;
+            transition: all 0.2s ease;
+        }
+        
+        .book-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+        }
+        
+        .book-image {
+            height: 200px;
+            overflow: hidden;
+        }
+        
+        .book-image img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 0.3s ease;
+        }
+        
+        .book-card:hover .book-image img {
+            transform: scale(1.05);
+        }
+        
+        .book-content {
+            padding: 1rem;
+        }
+        
+        .book-title {
+            font-weight: 600;
+            color: #1e293b;
+            margin-bottom: 0.5rem;
+            font-size: 1.125rem;
+        }
+        
+        .book-author {
+            color: #64748b;
+            margin-bottom: 0.75rem;
+        }
+        
+        .book-price {
+            font-weight: 600;
+            color: #059669;
+            font-size: 1.25rem;
+        }
+        
+        .stock-btn {
+            width: 100%;
+            margin-top: 1rem;
+            padding: 0.75rem;
+            background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
+            color: white;
+            border: none;
+            border-radius: 0.5rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+        
+        .stock-btn:hover {
+            background: linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%);
+            transform: translateY(-1px);
+        }
+    </style>
+</head>
+<body>
+    <div class="test-container">
+        <div class="test-header">
+            <h1>Enhanced Stock Update Modal</h1>
+            <p>Test the redesigned stock update modal with real book images and improved functionality</p>
+        </div>
+        
+        <div class="test-buttons">
+            <button class="test-btn" onclick="testStockModal('book1')">
+                <i class="fas fa-box"></i>
+                Test Stock Modal - Book 1
+            </button>
+            <button class="test-btn" onclick="testStockModal('book2')">
+                <i class="fas fa-box"></i>
+                Test Stock Modal - Book 2
+            </button>
+            <button class="test-btn secondary" onclick="showFeatures()">
+                <i class="fas fa-info-circle"></i>
+                View Features
+            </button>
+        </div>
+        
+        <div class="features-grid" id="features-section" style="display: none;">
+            <div class="feature-card">
+                <h3><i class="fas fa-image"></i> Real Book Images</h3>
+                <p>Display actual book cover images in the stock update modal for better visual identification and user experience.</p>
+            </div>
+            <div class="feature-card">
+                <h3><i class="fas fa-database"></i> Backend Integration</h3>
+                <p>Connected to the Spring Boot backend API endpoint <code>/api/books/{id}/stock</code> for real-time stock updates.</p>
+            </div>
+            <div class="feature-card">
+                <h3><i class="fas fa-sync"></i> Auto-Refresh</h3>
+                <p>Automatically updates the book list, dashboard stats, and book statistics after successful stock updates.</p>
+            </div>
+            <div class="feature-card">
+                <h3><i class="fas fa-mobile-alt"></i> Responsive Design</h3>
+                <p>Mobile-friendly design that adapts to different screen sizes with optimized layouts for mobile devices.</p>
+            </div>
+            <div class="feature-card">
+                <h3><i class="fas fa-bell"></i> Toast Notifications</h3>
+                <p>User-friendly toast notifications for success, error, and validation messages during stock updates.</p>
+            </div>
+            <div class="feature-card">
+                <h3><i class="fas fa-spinner"></i> Loading States</h3>
+                <p>Visual feedback with loading spinners and disabled states during API calls to prevent multiple submissions.</p>
+            </div>
+        </div>
+        
+        <div class="demo-books">
+            <h3>Sample Books for Testing</h3>
+            <div class="books-grid">
+                <div class="book-card">
+                    <div class="book-image">
+                        <img src="https://images.unsplash.com/photo-1544947950-fa07a98d237f?w=400&h=300&fit=crop" alt="Book 1">
+                    </div>
+                    <div class="book-content">
+                        <div class="book-title">The Great Adventure</div>
+                        <div class="book-author">by John Smith</div>
+                        <div class="book-price">Rs. 1,250</div>
+                        <button class="stock-btn" onclick="testStockModal('book1')">
+                            <i class="fas fa-box"></i> Update Stock
+                        </button>
+                    </div>
+                </div>
+                
+                <div class="book-card">
+                    <div class="book-image">
+                        <img src="https://images.unsplash.com/photo-1481627834876-b7833e8f5570?w=400&h=300&fit=crop" alt="Book 2">
+                    </div>
+                    <div class="book-content">
+                        <div class="book-title">Mystery of the Ages</div>
+                        <div class="book-author">by Sarah Johnson</div>
+                        <div class="book-price">Rs. 980</div>
+                        <button class="stock-btn" onclick="testStockModal('book2')">
+                            <i class="fas fa-box"></i> Update Stock
+                        </button>
+                    </div>
+                </div>
+                
+                <div class="book-card">
+                    <div class="book-image">
+                        <img src="https://images.unsplash.com/photo-1512820790803-83ca734da794?w=400&h=300&fit=crop" alt="Book 3">
+                    </div>
+                    <div class="book-content">
+                        <div class="book-title">Science & Discovery</div>
+                        <div class="book-author">by Dr. Michael Brown</div>
+                        <div class="book-price">Rs. 1,450</div>
+                        <button class="stock-btn" onclick="testStockModal('book3')">
+                            <i class="fas fa-box"></i> Update Stock
+                        </button>
+                    </div>
+                </div>
+                
+                <div class="book-card">
+                    <div class="book-image">
+                        <img src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=400&h=300&fit=crop" alt="Book 4">
+                    </div>
+                    <div class="book-content">
+                        <div class="book-title">Art & Creativity</div>
+                        <div class="book-author">by Emma Wilson</div>
+                        <div class="book-price">Rs. 1,120</div>
+                        <button class="stock-btn" onclick="testStockModal('book4')">
+                            <i class="fas fa-box"></i> Update Stock
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Mock data for testing
+        const mockBooks = {
+            book1: {
+                id: 'book1',
+                title: 'The Great Adventure',
+                author: 'John Smith',
+                price: 1250,
+                rating: 4.5,
+                stockQuantity: 25,
+                status: 'IN_STOCK',
+                imageUrl: 'https://images.unsplash.com/photo-1544947950-fa07a98d237f?w=400&h=300&fit=crop'
+            },
+            book2: {
+                id: 'book2',
+                title: 'Mystery of the Ages',
+                author: 'Sarah Johnson',
+                price: 980,
+                rating: 4.2,
+                stockQuantity: 8,
+                status: 'LOW_STOCK',
+                imageUrl: 'https://images.unsplash.com/photo-1481627834876-b7833e8f5570?w=400&h=300&fit=crop'
+            },
+            book3: {
+                id: 'book3',
+                title: 'Science & Discovery',
+                author: 'Dr. Michael Brown',
+                price: 1450,
+                rating: 4.8,
+                stockQuantity: 0,
+                status: 'OUT_OF_STOCK',
+                imageUrl: 'https://images.unsplash.com/photo-1512820790803-83ca734da794?w=400&h=300&fit=crop'
+            },
+            book4: {
+                id: 'book4',
+                title: 'Art & Creativity',
+                author: 'Emma Wilson',
+                price: 1120,
+                rating: 4.3,
+                stockQuantity: 15,
+                status: 'IN_STOCK',
+                imageUrl: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=400&h=300&fit=crop'
+            }
+        };
+
+        function testStockModal(bookId) {
+            const book = mockBooks[bookId];
+            if (!book) return;
+
+            // Create and show stock update modal with enhanced styling and real book image
+            const modal = document.createElement('div');
+            modal.className = 'modal stock-update-modal';
+            modal.style.display = 'flex';
+            modal.innerHTML = `
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h3><i class="fas fa-box"></i> Update Stock</h3>
+                        <button class="close-btn" onclick="this.closest('.modal').remove()">&times;</button>
+                    </div>
+                    <div class="stock-update-form">
+                        <!-- Book Image and Info Section -->
+                        <div class="stock-book-preview">
+                            <div class="stock-book-image">
+                                <img src="${book.imageUrl}" 
+                                     alt="${book.title}" 
+                                     onerror="this.src='https://via.placeholder.com/200x300?text=Book'">
+                            </div>
+                            <div class="stock-book-details">
+                                <h4 class="stock-book-title">${book.title}</h4>
+                                <p class="stock-book-author">by ${book.author}</p>
+                                <div class="stock-book-meta">
+                                    <div class="meta-item">
+                                        <i class="fas fa-tag"></i>
+                                        <span>Price: Rs. ${book.price}</span>
+                                    </div>
+                                    <div class="meta-item">
+                                        <i class="fas fa-star"></i>
+                                        <span>Rating: ${book.rating}/5</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Current Stock Status -->
+                        <div class="stock-current-status">
+                            <div class="status-header">
+                                <i class="fas fa-info-circle"></i>
+                                <span>Current Stock Information</span>
+                            </div>
+                            <div class="status-grid">
+                                <div class="status-item">
+                                    <label>Current Quantity:</label>
+                                    <span class="current-quantity">${book.stockQuantity} units</span>
+                                </div>
+                                <div class="status-item">
+                                    <label>Current Status:</label>
+                                    <span class="current-status ${getStatusClass(book.status)}">${getStatusText(book.status)}</span>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Stock Update Form -->
+                        <div class="stock-update-form-fields">
+                            <div class="form-section">
+                                <h5><i class="fas fa-edit"></i> Update Stock</h5>
+                                <div class="form-row">
+                                    <div class="form-group">
+                                        <label for="new-stock-quantity">
+                                            <i class="fas fa-hashtag"></i> New Stock Quantity
+                                        </label>
+                                        <input type="number" 
+                                               id="new-stock-quantity" 
+                                               value="${book.stockQuantity}" 
+                                               min="0" 
+                                               placeholder="Enter new quantity">
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="new-stock-status">
+                                            <i class="fas fa-toggle-on"></i> Stock Status
+                                        </label>
+                                        <select id="new-stock-status">
+                                            <option value="IN_STOCK" ${book.status === 'IN_STOCK' ? 'selected' : ''}>In Stock</option>
+                                            <option value="LOW_STOCK" ${book.status === 'LOW_STOCK' ? 'selected' : ''}>Low Stock</option>
+                                            <option value="OUT_OF_STOCK" ${book.status === 'OUT_OF_STOCK' ? 'selected' : ''}>Out of Stock</option>
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Action Buttons -->
+                        <div class="form-actions">
+                            <button type="button" class="cancel-btn" onclick="this.closest('.modal').remove()">
+                                <i class="fas fa-times"></i> Cancel
+                            </button>
+                            <button type="submit" class="save-btn" onclick="saveStockUpdate('${book.id}')">
+                                <i class="fas fa-save"></i> Save Changes
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            `;
+            document.body.appendChild(modal);
+            
+            // Add animation
+            setTimeout(() => {
+                modal.classList.add('modal-active');
+            }, 10);
+        }
+
+        function getStatusClass(status) {
+            switch (status) {
+                case 'IN_STOCK': return 'in-stock';
+                case 'LOW_STOCK': return 'low-stock';
+                case 'OUT_OF_STOCK': return 'out-of-stock';
+                default: return 'in-stock';
+            }
+        }
+
+        function getStatusText(status) {
+            switch (status) {
+                case 'IN_STOCK': return 'In Stock';
+                case 'LOW_STOCK': return 'Low Stock';
+                case 'OUT_OF_STOCK': return 'Out of Stock';
+                default: return 'In Stock';
+            }
+        }
+
+        function saveStockUpdate(bookId) {
+            const newQuantity = parseInt(document.getElementById('new-stock-quantity').value);
+            const newStatus = document.getElementById('new-stock-status').value;
+            
+            if (newQuantity < 0) {
+                alert('Stock quantity cannot be negative');
+                return;
+            }
+            
+            if (isNaN(newQuantity)) {
+                alert('Please enter a valid quantity');
+                return;
+            }
+            
+            // Show loading state
+            const saveBtn = document.querySelector('.save-btn');
+            const originalText = saveBtn.innerHTML;
+            saveBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Updating...';
+            saveBtn.disabled = true;
+            
+            // Simulate API call
+            setTimeout(() => {
+                // Update the book in mock data
+                mockBooks[bookId].stockQuantity = newQuantity;
+                mockBooks[bookId].status = newStatus;
+                
+                // Close modal
+                document.querySelector('.stock-update-modal').remove();
+                
+                // Show success message
+                alert('Stock updated successfully!');
+                
+                // Reset button state
+                saveBtn.innerHTML = originalText;
+                saveBtn.disabled = false;
+                
+                // Refresh the page to show updated data
+                location.reload();
+            }, 1500);
+        }
+
+        function showFeatures() {
+            const featuresSection = document.getElementById('features-section');
+            if (featuresSection.style.display === 'none') {
+                featuresSection.style.display = 'grid';
+            } else {
+                featuresSection.style.display = 'none';
+            }
+        }
+    </script>
+</body>
+</html>

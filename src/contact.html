@@ -1,0 +1,511 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Contact Us - Pahana Book Shop</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="contact.css">
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body>
+  <!-- Dashboard Popup Modal -->
+  <div class="dashboard-modal" id="dashboardModal">
+    <div class="dashboard-modal-content">
+      <div class="dashboard-modal-header">
+        <div class="dashboard-modal-logo">
+          <i class="fas fa-book-open"></i>
+          <span>Pahana Edu</span>
+        </div>
+        <button class="dashboard-modal-close" id="dashboardModalClose">
+          <i class="fas fa-times"></i>
+        </button>
+      </div>
+      <div class="dashboard-modal-body">
+        <div class="dashboard-user-info">
+          <div class="dashboard-user-avatar" id="dashboardUserAvatar">
+            <i class="fas fa-user"></i>
+          </div>
+          <div class="dashboard-user-details">
+            <h3 id="dashboardUserName">Welcome</h3>
+            <p id="dashboardUserEmail">pahanaedu.com</p>
+          </div>
+        </div>
+        <div class="dashboard-menu">
+          <a href="dashboard.html" class="dashboard-menu-item">
+            <i class="fas fa-tachometer-alt"></i>
+            <span>Dashboard</span>
+          </a>
+          <a href="profile-edit.html" class="dashboard-menu-item">
+            <i class="fas fa-user-edit"></i>
+            <span>Edit Profile</span>
+          </a>
+          <a href="order.html" class="dashboard-menu-item">
+            <i class="fas fa-shopping-cart"></i>
+            <span>My Orders</span>
+          </a>
+          <a href="#" class="dashboard-menu-item" id="logoutBtn">
+            <i class="fas fa-sign-out-alt"></i>
+            <span>Logout</span>
+          </a>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Header -->
+  <header class="main-header">
+    <div class="header-container">
+      <div class="logo-section">
+        <div class="logo">
+          <span class="logo-icon">📚</span>
+          <span class="logo-text">Pahana Edu</span>
+        </div>
+        <span class="tagline">The Book Shop</span>
+      </div>
+      
+      <!-- Navigation Bar -->
+      <nav class="main-navigation">
+        <a href="landingpage.html" class="nav-item">
+          <i class="fas fa-home"></i>
+          <span>Home</span>
+        </a>
+        <a href="booklist.html" class="nav-item">
+          <i class="fas fa-book"></i>
+          <span>Browse Books</span>
+        </a>
+        <a href="contact.html" class="nav-item active">
+          <i class="fas fa-envelope"></i>
+          <span>Contact</span>
+        </a>
+        <a href="blog-new.html" class="nav-item">
+          <i class="fas fa-blog"></i>
+          <span>Blog</span>
+        </a>
+        <a href="order.html" class="nav-item">
+          <i class="fas fa-shopping-cart"></i>
+          <span>Order</span>
+        </a>
+      </nav>
+    </div>
+  </header>
+
+  <!-- Main Content -->
+  <main class="main-content">
+    <!-- Hero Section with Auto-Changing Image Carousel -->
+    <section class="hero-section">
+      <div class="hero-container">
+        <div class="hero-content">
+          <div class="hero-text">
+            <h1 class="hero-title">You're only one book away from a good mood</h1>
+            <p class="hero-subtitle">We're here to help you find your perfect book and answer any questions you may have. Reach out to us through any of the channels below.</p>
+            <div class="hero-buttons">
+              <a href="#contact-form" class="btn-primary">
+                <i class="fas fa-envelope"></i>
+                Send Message
+              </a>
+              <a href="#contact-info" class="btn-secondary">
+                <i class="fas fa-info-circle"></i>
+                Contact Info
+              </a>
+            </div>
+            <div class="hero-note">
+              <small>ebooks starting @ as low as $0.99</small>
+            </div>
+          </div>
+        </div>
+        <div class="hero-image-carousel">
+          <div class="carousel-container">
+            <div class="carousel-slide active">
+              <img src="image/Best-Book-Covers.jpg" alt="Pahana Book Store Exterior" onerror="this.style.display='none'; this.parentElement.style.background='linear-gradient(135deg, #667eea 0%, #764ba2 100%)'; this.parentElement.innerHTML='<div style=\'display:flex;align-items:center;justify-content:center;height:100%;color:white;font-size:1.5rem;\'><i class=\'fas fa-book-open\'></i> Pahana Book Store</div>'">
+            </div>
+            <div class="carousel-slide">
+              <img src="image/Nature-Books-collage.png" alt="Pahana Book Store Interior" onerror="this.style.display='none'; this.parentElement.style.background='linear-gradient(135deg, #667eea 0%, #764ba2 100%)'; this.parentElement.innerHTML='<div style=\'display:flex;align-items:center;justify-content:center;height:100%;color:white;font-size:1.5rem;\'><i class=\'fas fa-book-open\'></i> Pahana Book Store</div>'">
+            </div>
+            <div class="carousel-slide">
+              <img src="image/TTT-NatureCovers.jpg" alt="Pahana Book Store Reading Area" onerror="this.style.display='none'; this.parentElement.style.background='linear-gradient(135deg, #667eea 0%, #764ba2 100%)'; this.parentElement.innerHTML='<div style=\'display:flex;align-items:center;justify-content:center;height:100%;color:white;font-size:1.5rem;\'><i class=\'fas fa-book-open\'></i> Pahana Book Store</div>'">
+            </div>
+            <div class="carousel-dots">
+              <span class="dot active" data-slide="0"></span>
+              <span class="dot" data-slide="1"></span>
+              <span class="dot" data-slide="2"></span>
+            </div>
+            <div class="carousel-indicator" id="carouselIndicator">
+              <span>Slide 1 of 3</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Contact Information Section -->
+    <section class="contact-info-section" id="contact-info">
+      <div class="container">
+        <div class="section-header">
+          <h2>Get in Touch</h2>
+          <p>We'd love to hear from you. Choose your preferred way to reach us.</p>
+        </div>
+        
+        <div class="contact-cards">
+          <div class="contact-card">
+            <div class="card-icon">
+              <i class="fas fa-map-marker-alt"></i>
+            </div>
+            <h3>Visit Our Store</h3>
+            <p>No.30, Stanley Thilakarathne Mawatha, Nugegoda, Sri Lanka, 10250</p>
+            <a href="https://maps.google.com" target="_blank" class="card-link">
+              <i class="fas fa-directions"></i>
+              Get Directions
+            </a>
+          </div>
+          
+          <div class="contact-card">
+            <div class="card-icon">
+              <i class="fas fa-phone"></i>
+            </div>
+            <h3>Call Us</h3>
+            <p>+94 711304050 / 0112820820</p>
+            <a href="tel:+94711304050" class="card-link">
+              <i class="fas fa-phone"></i>
+              Call Now
+            </a>
+          </div>
+          
+          <div class="contact-card">
+            <div class="card-icon">
+              <i class="fas fa-envelope"></i>
+            </div>
+            <h3>Email Us</h3>
+            <p>pahanaedu@gmail.com</p>
+            <a href="mailto:pahanaedu@gmail.com" class="card-link">
+              <i class="fas fa-envelope"></i>
+              Send Email
+            </a>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Contact Form Section -->
+    <section class="contact-form-section" id="contact-form">
+      <div class="container">
+        <div class="form-container">
+          <div class="form-header">
+            <h2>Send Us a Message</h2>
+            <p>Have a question or need assistance? Fill out the form below and we'll get back to you as soon as possible.</p>
+          </div>
+          
+          <form class="contact-form" id="contactForm" action="https://formspree.io/f/mdkdwkkq" method="POST" enctype="multipart/form-data">
+            <div class="form-row">
+              <div class="form-group">
+                <label for="name">Full Name *</label>
+                <input type="text" id="name" name="name" required>
+                <i class="fas fa-user"></i>
+              </div>
+              
+              <div class="form-group">
+                <label for="email">Email Address *</label>
+                <input type="email" id="email" name="email" required>
+                <i class="fas fa-envelope"></i>
+              </div>
+            </div>
+            
+            <div class="form-row">
+              <div class="form-group">
+                <label for="phone">Phone Number</label>
+                <input type="tel" id="phone" name="phone">
+                <i class="fas fa-phone"></i>
+              </div>
+              
+              <div class="form-group">
+                <label for="subject">Subject *</label>
+                <select id="subject" name="subject" required>
+                  <option value="">Select a subject</option>
+                  <option value="general">General Inquiry</option>
+                  <option value="order">Order Status</option>
+                  <option value="book">Book Availability</option>
+                  <option value="delivery">Delivery Question</option>
+                  <option value="payment">Payment Issue</option>
+                  <option value="return">Return/Refund</option>
+                  <option value="suggestion">Suggestion</option>
+                  <option value="other">Other</option>
+                </select>
+                <i class="fas fa-tag"></i>
+              </div>
+            </div>
+            
+            <div class="form-group full-width">
+              <label for="message">Message *</label>
+              <textarea id="message" name="message" rows="6" required placeholder="Please describe your inquiry in detail..."></textarea>
+              <i class="fas fa-comment"></i>
+            </div>
+            
+            <div class="form-group full-width">
+              <label class="checkbox-label">
+                <input type="checkbox" name="newsletter" id="newsletter">
+                Subscribe to our newsletter for updates and special offers
+              </label>
+            </div>
+            
+            <div class="form-actions">
+              <button type="submit" class="submit-btn">
+                <i class="fas fa-paper-plane"></i>
+                Send Message
+              </button>
+              <button type="reset" class="reset-btn">
+                <i class="fas fa-undo"></i>
+                Reset Form
+              </button>
+            </div>
+          </form>
+        </div>
+        
+        <div class="form-info">
+          <div class="info-card">
+            <div class="info-icon">
+              <i class="fas fa-clock"></i>
+            </div>
+            <h3>Response Time</h3>
+            <p>We typically respond within 2-4 hours during business hours.</p>
+          </div>
+          
+          <div class="info-card">
+            <div class="info-icon">
+              <i class="fas fa-shield-alt"></i>
+            </div>
+            <h3>Privacy Protected</h3>
+            <p>Your information is secure and will never be shared with third parties.</p>
+          </div>
+          
+          <div class="info-card">
+            <div class="info-icon">
+              <i class="fas fa-headset"></i>
+            </div>
+            <h3>24/7 Support</h3>
+            <p>Our customer service team is always ready to help you.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+
+  </main>
+
+  <!-- Beautiful Animated Footer -->
+  <footer class="pahana-footer">
+    <div class="footer-waves">
+      <div class="wave wave1"></div>
+      <div class="wave wave2"></div>
+      <div class="wave wave3"></div>
+    </div>
+    
+    <div class="footer-content">
+      <!-- Categories Section -->
+      <div class="footer-section animate-on-scroll">
+        <div class="section-icon">
+          <i class="fas fa-book-open"></i>
+        </div>
+        <h4>Categories</h4>
+        <ul class="footer-links">
+          <li><a href="booklist.html#featuredCarousel" class="hover-effect">Featured Books</a></li>
+          <li><a href="booklist.html#newArrivalsCarousel" class="hover-effect">New Arrivals</a></li>
+          <li><a href="booklist.html#childrenCarousel" class="hover-effect">Children's Books</a></li>
+          <li><a href="booklist.html#novelsCarousel" class="hover-effect">Novels</a></li>
+          <li><a href="#" class="hover-effect">Galle Literary</a></li>
+        </ul>
+      </div>
+      
+      <!-- Quick Links Section -->
+      <div class="footer-section animate-on-scroll">
+        <div class="section-icon">
+          <i class="fas fa-link"></i>
+        </div>
+        <h4>Quick Links</h4>
+        <ul class="footer-links">
+          <li><a href="landingpage.html" class="hover-effect">Home</a></li>
+          <li><a href="#" class="hover-effect">About Us</a></li>
+          <li><a href="contact.html" class="hover-effect">Contact Us</a></li>
+          <li><a href="login.html" class="hover-effect">Sign Up/ Login</a></li>
+          <li><a href="#" class="hover-effect" id="dashboardLink">My Account</a></li>
+        </ul>
+      </div>
+      
+      <!-- Information Section -->
+      <div class="footer-section animate-on-scroll">
+        <div class="section-icon">
+          <i class="fas fa-info-circle"></i>
+        </div>
+        <h4>Information</h4>
+        <ul class="footer-links">
+          <li><a href="#" class="hover-effect">Shipping & Return Policy</a></li>
+          <li><a href="#" class="hover-effect">Privacy And Cookies Policy</a></li>
+          <li><a href="#" class="hover-effect">Terms & Conditions</a></li>
+          <li><a href="#" class="hover-effect">Payment Policy</a></li>
+          <li><a href="#" class="hover-effect">Coupon T&C</a></li>
+          <li><a href="#" class="hover-effect">FAQ</a></li>
+        </ul>
+      </div>
+      
+      <!-- Contact Details Section -->
+      <div class="footer-section contact-section animate-on-scroll">
+        <div class="section-icon">
+          <i class="fas fa-address-card"></i>
+        </div>
+        <h4>Contact Details</h4>
+        <div class="contact-info">
+          <div class="contact-item">
+            <div class="contact-icon">
+              <i class="fas fa-map-marker-alt"></i>
+            </div>
+            <span>No.30, Stanley Thilakarathne Mawatha, Nugegoda, Sri Lanka, 10250</span>
+          </div>
+          <div class="contact-item">
+            <div class="contact-icon">
+              <i class="fas fa-phone"></i>
+            </div>
+            <span>+94 711304050 / 0112820820</span>
+          </div>
+          <div class="contact-item">
+            <div class="contact-icon">
+              <i class="fas fa-envelope"></i>
+            </div>
+            <span>pahanaedu@gmail.com</span>
+          </div>
+        </div>
+      </div>
+    </div>
+    
+    <!-- Footer Bottom -->
+    <div class="footer-bottom">
+      <div class="footer-bottom-content">
+        <div class="footer-logo">
+          <div class="logo-container">
+            <span class="logo-icon">📚</span>
+            <div class="logo-text-container">
+              <span class="logo-text">Pahana Edu</span>
+              <span class="tagline">The Book Shop</span>
+            </div>
+          </div>
+        </div>
+        <div class="social-links">
+          <a href="#" class="social-link facebook"><i class="fab fa-facebook"></i></a>
+          <a href="#" class="social-link twitter"><i class="fab fa-twitter"></i></a>
+          <a href="#" class="social-link instagram"><i class="fab fa-instagram"></i></a>
+          <a href="#" class="social-link linkedin"><i class="fab fa-linkedin"></i></a>
+        </div>
+        <div class="copyright">
+          <p>&copy; 2024 Pahana Edu Book Shop. All rights reserved.</p>
+        </div>
+      </div>
+    </div>
+  </footer>
+
+  <script src="contact.js"></script>
+  
+  <!-- EmailJS for backup email sending -->
+  <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js"></script>
+  <script type="text/javascript">
+    (function() {
+      emailjs.init("YOUR_EMAILJS_PUBLIC_KEY"); // You'll need to replace this with your actual EmailJS key
+    })();
+  </script>
+  
+  <!-- Standalone Carousel Script -->
+  <script>
+    // Standalone carousel initialization
+    document.addEventListener('DOMContentLoaded', function() {
+        console.log('🎠 Standalone carousel starting...');
+        
+        const slides = document.querySelectorAll('.carousel-slide');
+        const dots = document.querySelectorAll('.dot');
+        let currentSlide = 0;
+        let autoPlayInterval = null;
+
+        console.log('Found slides:', slides.length);
+        console.log('Found dots:', dots.length);
+
+        function showSlide(index) {
+            console.log('🖼️ Showing slide:', index);
+            
+            // Remove active class from all slides and dots
+            slides.forEach(slide => slide.classList.remove('active'));
+            dots.forEach(dot => dot.classList.remove('active'));
+            
+            // Add active class to current slide and dot
+            slides[index].classList.add('active');
+            dots[index].classList.add('active');
+            
+            // Update the indicator text
+            const indicator = document.getElementById('carouselIndicator');
+            if (indicator) {
+                indicator.querySelector('span').textContent = `Slide ${index + 1} of ${slides.length}`;
+            }
+            
+            currentSlide = index;
+            console.log('✅ Slide visibility updated, currentSlide:', currentSlide);
+        }
+
+        function nextSlide() {
+            const nextIndex = (currentSlide + 1) % slides.length;
+            console.log('⏭️ Next slide:', nextIndex);
+            showSlide(nextIndex);
+        }
+
+        function startAutoPlay() {
+            console.log('▶️ Starting auto-play');
+            if (autoPlayInterval) {
+                clearInterval(autoPlayInterval);
+            }
+            autoPlayInterval = setInterval(() => {
+                console.log('⏰ Auto-play interval triggered');
+                nextSlide();
+            }, 2000); // Change every 2 seconds
+            console.log('⏰ Auto-play interval set');
+        }
+
+        function stopAutoPlay() {
+            console.log('⏸️ Stopping auto-play');
+            if (autoPlayInterval) {
+                clearInterval(autoPlayInterval);
+                autoPlayInterval = null;
+            }
+        }
+
+        // Initialize the carousel
+        if (slides.length > 0) {
+            console.log('🎠 Initializing standalone carousel with', slides.length, 'slides');
+            
+            // Show the first slide
+            showSlide(0);
+            
+            // Start auto-play
+            startAutoPlay();
+
+            // Add click events to dots
+            dots.forEach((dot, index) => {
+                dot.addEventListener('click', () => {
+                    console.log('👆 Dot clicked:', index);
+                    showSlide(index);
+                    stopAutoPlay();
+                    setTimeout(() => {
+                        startAutoPlay();
+                    }, 1000);
+                });
+            });
+
+            // Pause auto-play on hover
+            const carouselContainer = document.querySelector('.carousel-container');
+            if (carouselContainer) {
+                carouselContainer.addEventListener('mouseenter', stopAutoPlay);
+                carouselContainer.addEventListener('mouseleave', startAutoPlay);
+                console.log('🎯 Hover events added to carousel container');
+            }
+            
+            console.log('✅ Standalone carousel initialization complete');
+        } else {
+            console.error('❌ No carousel slides found!');
+        }
+    });
+  </script>
+</body>
+</html> 

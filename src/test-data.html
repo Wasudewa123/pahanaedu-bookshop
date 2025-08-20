@@ -1,0 +1,229 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Generate Test Data</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 50px auto;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+        .container {
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        h1 {
+            color: #333;
+            text-align: center;
+        }
+        button {
+            background: #007bff;
+            color: white;
+            padding: 12px 30px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+            margin: 10px;
+        }
+        button:hover {
+            background: #0056b3;
+        }
+        .success {
+            background: #d4edda;
+            color: #155724;
+            padding: 15px;
+            border-radius: 5px;
+            margin: 10px 0;
+        }
+        .error {
+            background: #f8d7da;
+            color: #721c24;
+            padding: 15px;
+            border-radius: 5px;
+            margin: 10px 0;
+        }
+        .data-section {
+            margin: 20px 0;
+            padding: 15px;
+            background: #f8f9fa;
+            border-radius: 5px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Generate Test Data for Admin Dashboard</h1>
+        
+        <div class="data-section">
+            <h3>1. Create Test Customers</h3>
+            <button onclick="createTestCustomers()">Create 5 Test Customers</button>
+            <div id="customers-result"></div>
+        </div>
+        
+        <div class="data-section">
+            <h3>2. Create Test Books</h3>
+            <button onclick="createTestBooks()">Create 3 Test Books</button>
+            <div id="books-result"></div>
+        </div>
+        
+        <div class="data-section">
+            <h3>3. Create Test Orders</h3>
+            <button onclick="createTestOrders()">Create 3 Test Orders</button>
+            <div id="orders-result"></div>
+        </div>
+        
+        <div class="data-section">
+            <h3>4. Check Dashboard Data</h3>
+            <button onclick="checkDashboardData()">Check Current Data</button>
+            <div id="dashboard-result"></div>
+        </div>
+        
+        <div class="data-section">
+            <h3>5. Go to Admin Dashboard</h3>
+            <button onclick="goToDashboard()">Open Admin Dashboard</button>
+        </div>
+    </div>
+
+    <script>
+        async function createTestCustomers() {
+            const resultDiv = document.getElementById('customers-result');
+            resultDiv.innerHTML = '<div class="success">Creating test customers...</div>';
+            
+            const customers = [
+                {username: 'john_doe', name: 'John Doe', email: 'john@example.com', password: 'password123', dob: '1990-01-01'},
+                {username: 'jane_smith', name: 'Jane Smith', email: 'jane@example.com', password: 'password123', dob: '1985-05-15'},
+                {username: 'mike_wilson', name: 'Mike Wilson', email: 'mike@example.com', password: 'password123', dob: '1992-08-20'},
+                {username: 'sarah_jones', name: 'Sarah Jones', email: 'sarah@example.com', password: 'password123', dob: '1988-12-10'},
+                {username: 'david_brown', name: 'David Brown', email: 'david@example.com', password: 'password123', dob: '1995-03-25'}
+            ];
+            
+            let successCount = 0;
+            for (const customer of customers) {
+                try {
+                    const response = await fetch('http://localhost:8080/api/customers/register', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify(customer)
+                    });
+                    
+                    if (response.ok) {
+                        successCount++;
+                    }
+                } catch (error) {
+                    console.error('Error creating customer:', error);
+                }
+            }
+            
+            resultDiv.innerHTML = `<div class="success">✅ Created ${successCount} test customers successfully!</div>`;
+        }
+
+        async function createTestBooks() {
+            const resultDiv = document.getElementById('books-result');
+            resultDiv.innerHTML = '<div class="success">Creating test books...</div>';
+            
+            const books = [
+                {title: 'The Great Gatsby', author: 'F. Scott Fitzgerald', description: 'A story of the fabulously wealthy Jay Gatsby', price: 15.99, imageUrl: 'https://images.unsplash.com/photo-1543002588-bfa74002ed7e?w=300'},
+                {title: 'To Kill a Mockingbird', author: 'Harper Lee', description: 'The story of young Scout Finch', price: 12.99, imageUrl: 'https://images.unsplash.com/photo-1481627834876-b7833e8f5570?w=300'},
+                {title: '1984', author: 'George Orwell', description: 'A dystopian novel about totalitarianism', price: 14.99, imageUrl: 'https://images.unsplash.com/photo-1512820790803-83ca734da794?w=300'}
+            ];
+            
+            let successCount = 0;
+            for (const book of books) {
+                try {
+                    const response = await fetch('http://localhost:8080/api/books', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify(book)
+                    });
+                    
+                    if (response.ok) {
+                        successCount++;
+                    }
+                } catch (error) {
+                    console.error('Error creating book:', error);
+                }
+            }
+            
+            resultDiv.innerHTML = `<div class="success">✅ Created ${successCount} test books successfully!</div>`;
+        }
+
+        async function createTestOrders() {
+            const resultDiv = document.getElementById('orders-result');
+            resultDiv.innerHTML = '<div class="success">Creating test orders...</div>';
+            
+            const orders = [
+                {customerEmail: 'john@example.com', bookTitle: 'The Great Gatsby', quantity: 2, totalPrice: 31.98},
+                {customerEmail: 'jane@example.com', bookTitle: 'To Kill a Mockingbird', quantity: 1, totalPrice: 12.99},
+                {customerEmail: 'mike@example.com', bookTitle: '1984', quantity: 3, totalPrice: 44.97}
+            ];
+            
+            let successCount = 0;
+            for (const order of orders) {
+                try {
+                    const response = await fetch('http://localhost:8080/api/orders', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify(order)
+                    });
+                    
+                    if (response.ok) {
+                        successCount++;
+                    }
+                } catch (error) {
+                    console.error('Error creating order:', error);
+                }
+            }
+            
+            resultDiv.innerHTML = `<div class="success">✅ Created ${successCount} test orders successfully!</div>`;
+        }
+
+        async function checkDashboardData() {
+            const resultDiv = document.getElementById('dashboard-result');
+            resultDiv.innerHTML = '<div class="success">Checking dashboard data...</div>';
+            
+            try {
+                // Check customers
+                const customersResponse = await fetch('http://localhost:8080/api/admin/customers');
+                const customers = customersResponse.ok ? await customersResponse.json() : [];
+                
+                // Check books
+                const booksResponse = await fetch('http://localhost:8080/api/books');
+                const books = booksResponse.ok ? await booksResponse.json() : [];
+                
+                // Check orders
+                const ordersResponse = await fetch('http://localhost:8080/api/admin/orders');
+                const orders = ordersResponse.ok ? await ordersResponse.json() : [];
+                
+                resultDiv.innerHTML = `
+                    <div class="success">
+                        <h4>Current Data:</h4>
+                        <p>📊 Customers: ${customers.length}</p>
+                        <p>📚 Books: ${books.length}</p>
+                        <p>🛒 Orders: ${orders.length}</p>
+                        <p>💰 Revenue: Rs. ${(orders.reduce((sum, order) => sum + (order.totalPrice || 0), 0)).toFixed(2)}</p>
+                    </div>
+                `;
+            } catch (error) {
+                resultDiv.innerHTML = `<div class="error">❌ Error checking data: ${error.message}</div>`;
+            }
+        }
+
+        function goToDashboard() {
+            window.open('http://localhost:8080/admin-dashboard.html', '_blank');
+        }
+    </script>
+</body>
+</html> 

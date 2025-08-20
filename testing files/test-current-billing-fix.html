@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test Current Billing Fix - Pahana Book Shop</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 20px;
+            background: #f5f5f5;
+        }
+        .container {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        .button {
+            background: #007bff;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            margin: 5px;
+        }
+        .button:hover {
+            background: #0056b3;
+        }
+        .result {
+            margin: 10px 0;
+            padding: 10px;
+            border-radius: 5px;
+        }
+        .success {
+            background: #d4edda;
+            border: 1px solid #c3e6cb;
+            color: #155724;
+        }
+        .error {
+            background: #f8d7da;
+            border: 1px solid #f5c6cb;
+            color: #721c24;
+        }
+        .loading {
+            color: #007bff;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>✅ Current Billing System Fix Test</h1>
+        <p>Testing your EXISTING admin dashboard billing system...</p>
+        
+        <div>
+            <h3>🔧 What Was Fixed:</h3>
+            <ul>
+                <li>✅ Fixed <code>item.id</code> → <code>item.bookId</code> bug in bill data</li>
+                <li>✅ Added PDF generation and printing functionality</li>
+                <li>✅ Added download PDF functionality</li>
+                <li>✅ Fixed security configuration (403 error)</li>
+                <li>✅ Added proper error handling</li>
+            </ul>
+        </div>
+        
+        <div>
+            <h3>🧪 Test Steps:</h3>
+            <ol>
+                <li>Open <code>src/admin-dashboard.html</code></li>
+                <li>Go to <strong>Billing</strong> section</li>
+                <li>Click <strong>"Add Test Customer"</strong> (if no customers)</li>
+                <li>Enter account number and click <strong>"Fetch"</strong></li>
+                <li>Select a book and click <strong>"Add to Bill"</strong></li>
+                <li>Select payment method</li>
+                <li>Click <strong>"Generate Bill"</strong></li>
+                <li>✅ Bill should generate successfully!</li>
+                <li>✅ PDF should auto-print and download!</li>
+            </ol>
+        </div>
+        
+        <div>
+            <h3>🎯 Expected Results:</h3>
+            <ul>
+                <li>✅ No more 403 errors</li>
+                <li>✅ Bill generation works</li>
+                <li>✅ PDF auto-prints</li>
+                <li>✅ PDF downloads automatically</li>
+                <li>✅ Print/Download buttons work in bill history</li>
+            </ul>
+        </div>
+        
+        <div>
+            <h3>📁 Files Modified:</h3>
+            <ul>
+                <li><code>src/admin-dashboard.js</code> - Fixed bill data bug and added PDF functions</li>
+                <li><code>src/main/java/com/example/demo/config/SecurityConfig.java</code> - Fixed 403 error</li>
+            </ul>
+        </div>
+        
+        <div style="margin-top: 20px;">
+            <button class="button" onclick="window.open('src/admin-dashboard.html', '_blank')">
+                🚀 Open Admin Dashboard
+            </button>
+        </div>
+        
+        <div id="result"></div>
+    </div>
+
+    <script>
+        // Auto-test backend connection
+        async function testBackend() {
+            const resultDiv = document.getElementById('result');
+            resultDiv.innerHTML = '<div class="loading">Testing backend connection...</div>';
+            
+            try {
+                const response = await fetch('http://localhost:8080/api/admin/customers');
+                if (response.ok) {
+                    resultDiv.innerHTML = '<div class="result success">✅ Backend is running! Your billing system should work now.</div>';
+                } else {
+                    resultDiv.innerHTML = '<div class="result error">❌ Backend error: ' + response.status + '</div>';
+                }
+            } catch (error) {
+                resultDiv.innerHTML = '<div class="result error">❌ Backend not accessible: ' + error.message + '</div>';
+            }
+        }
+        
+        // Auto-test on page load
+        document.addEventListener('DOMContentLoaded', function() {
+            setTimeout(testBackend, 1000);
+        });
+    </script>
+</body>
+</html>

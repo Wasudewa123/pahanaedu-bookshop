@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test Book Categories</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; }
+        .test-section { margin: 20px 0; padding: 15px; border: 1px solid #ddd; border-radius: 5px; }
+        .success { color: green; }
+        .error { color: red; }
+        .info { color: blue; }
+        button { padding: 10px 15px; margin: 5px; background: #007bff; color: white; border: none; border-radius: 3px; cursor: pointer; }
+        button:hover { background: #0056b3; }
+        .category-section { margin: 15px 0; padding: 10px; border: 1px solid #eee; border-radius: 3px; }
+        .book-item { padding: 5px; margin: 2px 0; font-size: 12px; background: #f9f9f9; border-radius: 2px; }
+    </style>
+</head>
+<body>
+    <h1>Test Book Categories</h1>
+    
+    <div class="test-section">
+        <h2>Test Categorization Logic</h2>
+        <button onclick="testCategorization()">Test Book Categorization</button>
+        <div id="categorization-result"></div>
+    </div>
+    
+    <div class="test-section">
+        <h2>Check Each Category</h2>
+        <button onclick="checkCategories()">Check All Categories</button>
+        <div id="categories-result"></div>
+    </div>
+
+    <script>
+        // Copy the categorization logic from booklist.js
+        function categorizeBooks(books) {
+            const categories = {
+                featured: [],
+                newArrivals: [],
+                children: [],
+                novels: []
+            };
+            
+            books.forEach((book) => {
+                const title = (book.title || '').toLowerCase();
+                const author = (book.author || '').toLowerCase();
+                const desc = (book.description || '').toLowerCase();
+                
+                // Add book to ALL categories so users can see all books
+                categories.featured.push(book);
+                categories.newArrivals.push(book);
+                categories.children.push(book);
+                categories.novels.push(book);
+                
+                // Also categorize based on content keywords for better organization
+                if (title.includes('children') || title.includes('kid') || title.includes('story') || 
+                    desc.includes('children') || desc.includes('kid') || desc.includes('story')) {
+                    // Book is already in children category
+                }
+                
+                if (title.includes('novel') || title.includes('fiction') || 
+                    desc.includes('novel') || desc.includes('fiction') || 
+                    author.includes('author')) {
+                    // Book is already in novels category
+                }
+            });
+            
+            return categories;
+        }
+        
+        async function testCategorization() {
+            const resultDiv = document.getElementById('categorization-result');
+            resultDiv.innerHTML = '<p class="info">Testing categorization...</p>';
+            
+            try {
+                const response = await fetch('http://localhost:8080/api/books/all', {
+                    method: 'GET',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    }
+                });
+                
+                const data = await response.json();
+                const books = data.books || [];
+                
+                // Test the categorization logic
+                const categorizedBooks = categorizeBooks(books);
+                
+                resultDiv.innerHTML = `
+                    <h3>Categorization Results:</h3>
+                    <p><strong>Total books from API:</strong> ${books.length}</p>
+                    <p><strong>Featured books:</strong> ${categorizedBooks.featured.length}</p>
+                    <p><strong>New Arrivals books:</strong> ${categorizedBooks.newArrivals.length}</p>
+                    <p><strong>Children books:</strong> ${categorizedBooks.children.length}</p>
+                    <p><strong>Novels books:</strong> ${categorizedBooks.novels.length}</p>
+                    
+                    <h4>Sample Books from Each Category:</h4>
+                    <div class="category-section">
+                        <h5>Featured (${categorizedBooks.featured.length} books):</h5>
+                        ${categorizedBooks.featured.slice(0, 5).map(book => `
+                            <div class="book-item">${book.title} by ${book.author}</div>
+                        `).join('')}
+                        ${categorizedBooks.featured.length > 5 ? `<div class="book-item">... and ${categorizedBooks.featured.length - 5} more</div>` : ''}
+                    </div>
+                    
+                    <div class="category-section">
+                        <h5>New Arrivals (${categorizedBooks.newArrivals.length} books):</h5>
+                        ${categorizedBooks.newArrivals.slice(0, 5).map(book => `
+                            <div class="book-item">${book.title} by ${book.author}</div>
+                        `).join('')}
+                        ${categorizedBooks.newArrivals.length > 5 ? `<div class="book-item">... and ${categorizedBooks.newArrivals.length - 5} more</div>` : ''}
+                    </div>
+                    
+                    <div class="category-section">
+                        <h5>Children (${categorizedBooks.children.length} books):</h5>
+                        ${categorizedBooks.children.slice(0, 5).map(book => `
+                            <div class="book-item">${book.title} by ${book.author}</div>
+                        `).join('')}
+                        ${categorizedBooks.children.length > 5 ? `<div class="book-item">... and ${categorizedBooks.children.length - 5} more</div>` : ''}
+                    </div>
+                    
+                    <div class="category-section">
+                        <h5>Novels (${categorizedBooks.novels.length} books):</h5>
+                        ${categorizedBooks.novels.slice(0, 5).map(book => `
+                            <div class="book-item">${book.title} by ${book.author}</div>
+                        `).join('')}
+                        ${categorizedBooks.novels.length > 5 ? `<div class="book-item">... and ${categorizedBooks.novels.length - 5} more</div>` : ''}
+                    </div>
+                    
+                    <p class="success">✅ All categories should now have ${books.length} books each!</p>
+                `;
+            } catch (error) {
+                resultDiv.innerHTML = `<p class="error">❌ Error: ${error.message}</p>`;
+            }
+        }
+        
+        async function checkCategories() {
+            const resultDiv = document.getElementById('categories-result');
+            resultDiv.innerHTML = '<p class="info">Checking categories...</p>';
+            
+            try {
+                const response = await fetch('http://localhost:8080/api/books/all', {
+                    method: 'GET',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    }
+                });
+                
+                const data = await response.json();
+                const books = data.books || [];
+                
+                resultDiv.innerHTML = `
+                    <h3>Category Check Results:</h3>
+                    <p><strong>Total books in database:</strong> ${books.length}</p>
+                    <p class="success">✅ Expected: Each category should show ALL ${books.length} books</p>
+                    <p class="info">💡 Now open src/booklist.html to see all books in each category!</p>
+                    
+                    <h4>All Books List:</h4>
+                    ${books.map((book, index) => `
+                        <div class="book-item">
+                            <strong>${index + 1}. ${book.title}</strong> by ${book.author} - Rs. ${book.price}
+                        </div>
+                    `).join('')}
+                `;
+            } catch (error) {
+                resultDiv.innerHTML = `<p class="error">❌ Error: ${error.message}</p>`;
+            }
+        }
+    </script>
+</body>
+</html> 

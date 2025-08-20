@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Carousel Test - Pahana Book Shop</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="src/contact.css">
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+  <style>
+    body {
+      background: #0a0a0a;
+      color: white;
+      font-family: 'Poppins', sans-serif;
+      padding: 20px;
+    }
+    .test-container {
+      max-width: 800px;
+      margin: 0 auto;
+      background: #1a1a1a;
+      padding: 20px;
+      border-radius: 15px;
+    }
+    .debug-info {
+      background: #2a2a2a;
+      padding: 15px;
+      border-radius: 10px;
+      margin-bottom: 20px;
+    }
+    .debug-info h3 {
+      color: #667eea;
+      margin-bottom: 10px;
+    }
+    .debug-info p {
+      margin: 5px 0;
+      font-size: 14px;
+    }
+    .carousel-test {
+      margin-top: 20px;
+    }
+  </style>
+</head>
+<body>
+  <div class="test-container">
+    <h1>🎠 Carousel Test Page</h1>
+    
+    <div class="debug-info">
+      <h3>🔍 Debug Information</h3>
+      <p><strong>Purpose:</strong> Testing the carousel functionality on the contact page</p>
+      <p><strong>Expected:</strong> Three images should cycle automatically every 4 seconds</p>
+      <p><strong>Controls:</strong> Click the dots below to manually change slides</p>
+      <p><strong>Hover:</strong> Hover over the carousel to pause auto-play</p>
+    </div>
+
+    <div class="carousel-test">
+      <h2>📸 Image Carousel Test</h2>
+      
+      <!-- Hero Section with Auto-Changing Image Carousel -->
+      <section class="hero-section">
+        <div class="hero-container">
+          <div class="hero-image-carousel">
+            <div class="carousel-container">
+              <div class="carousel-slide active">
+                <img src="src/image/Book Shop.jpg" alt="Pahana Book Store Exterior">
+              </div>
+              <div class="carousel-slide">
+                <img src="src/image/bookstore.webp" alt="Pahana Book Store Interior">
+              </div>
+              <div class="carousel-slide">
+                <img src="src/image/Bookshop2.png" alt="Pahana Book Store Reading Area">
+              </div>
+              <div class="carousel-dots">
+                <span class="dot active" data-slide="0"></span>
+                <span class="dot" data-slide="1"></span>
+                <span class="dot" data-slide="2"></span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+    </div>
+
+    <div class="debug-info">
+      <h3>📋 Test Instructions</h3>
+      <ol>
+        <li>Open browser developer tools (F12)</li>
+        <li>Go to the Console tab</li>
+        <li>Watch for carousel debug messages</li>
+        <li>Check if images are loading properly</li>
+        <li>Verify auto-play is working (4-second intervals)</li>
+        <li>Test manual navigation with dots</li>
+        <li>Test hover pause functionality</li>
+      </ol>
+    </div>
+
+    <div class="debug-info">
+      <h3>🔗 Links</h3>
+      <p><a href="src/contact.html" style="color: #667eea;">📞 Go to Contact Page</a></p>
+      <p><a href="src/landingpage.html" style="color: #667eea;">🏠 Go to Landing Page</a></p>
+    </div>
+  </div>
+
+  <script>
+    // Simplified carousel test
+    document.addEventListener('DOMContentLoaded', function() {
+      console.log('🚀 Carousel Test Page Loaded');
+      
+      const slides = document.querySelectorAll('.carousel-slide');
+      const dots = document.querySelectorAll('.dot');
+      let currentSlide = 0;
+      let interval;
+
+      console.log('Found slides:', slides.length);
+      console.log('Found dots:', dots.length);
+
+      function showSlide(index) {
+        console.log('🖼️ Showing slide:', index);
+        // Hide all slides
+        slides.forEach(slide => slide.classList.remove('active'));
+        dots.forEach(dot => dot.classList.remove('active'));
+        
+        // Show current slide
+        slides[index].classList.add('active');
+        dots[index].classList.add('active');
+      }
+
+      function nextSlide() {
+        currentSlide = (currentSlide + 1) % slides.length;
+        console.log('⏭️ Next slide:', currentSlide);
+        showSlide(currentSlide);
+      }
+
+      function startAutoPlay() {
+        console.log('▶️ Starting auto-play');
+        interval = setInterval(nextSlide, 4000);
+      }
+
+      function stopAutoPlay() {
+        console.log('⏸️ Stopping auto-play');
+        clearInterval(interval);
+      }
+
+      // Initialize carousel
+      if (slides.length > 0) {
+        console.log('🎠 Initializing carousel with', slides.length, 'slides');
+        showSlide(0);
+        startAutoPlay();
+
+        // Add click events to dots
+        dots.forEach((dot, index) => {
+          dot.addEventListener('click', () => {
+            console.log('👆 Dot clicked:', index);
+            currentSlide = index;
+            showSlide(currentSlide);
+            stopAutoPlay();
+            startAutoPlay();
+          });
+        });
+
+        // Pause auto-play on hover
+        const carouselContainer = document.querySelector('.carousel-container');
+        if (carouselContainer) {
+          carouselContainer.addEventListener('mouseenter', stopAutoPlay);
+          carouselContainer.addEventListener('mouseleave', startAutoPlay);
+        }
+      } else {
+        console.error('❌ No carousel slides found!');
+      }
+    });
+  </script>
+</body>
+</html> 

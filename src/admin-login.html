@@ -1,0 +1,420 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Login - Pahana Edu Book Shop</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: radial-gradient(1200px circle at 10% 10%, rgba(99,102,241,.25), transparent 40%),
+                        radial-gradient(900px circle at 90% 20%, rgba(16,185,129,.18), transparent 40%),
+                        radial-gradient(800px circle at 30% 90%, rgba(59,130,246,.18), transparent 40%),
+                        linear-gradient(135deg, #5b6be6 0%, #7a4fd1 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 2rem;
+            overflow: hidden;
+            animation: bgPulse 12s ease-in-out infinite alternate;
+        }
+
+        @keyframes bgPulse {
+            0% { filter: saturate(1) hue-rotate(0deg); }
+            100% { filter: saturate(1.15) hue-rotate(-8deg); }
+        }
+
+        /* Floating book icons */
+        .bg-floaters i {
+            position: absolute;
+            color: rgba(255,255,255,.25);
+            font-size: 28px;
+            animation: float 12s ease-in-out infinite;
+            filter: drop-shadow(0 6px 16px rgba(0,0,0,.25));
+        }
+        .bg-floaters i:nth-child(1){ left:8%; top:18%; animation-delay: -.5s; }
+        .bg-floaters i:nth-child(2){ left:82%; top:12%; animation-delay: -2s; font-size: 34px; }
+        .bg-floaters i:nth-child(3){ left:12%; top:78%; animation-delay: -4s; font-size: 22px; }
+        .bg-floaters i:nth-child(4){ left:76%; top:70%; animation-delay: -6s; font-size: 26px; }
+        .bg-floaters i:nth-child(5){ left:46%; top:8%;  animation-delay: -8s; font-size: 30px; }
+
+        @keyframes float {
+            0% { transform: translateY(0) rotate(0); opacity:.5; }
+            50%{ transform: translateY(-18px) rotate(6deg); opacity:.9; }
+            100%{ transform: translateY(0) rotate(0); opacity:.5; }
+        }
+
+        .login-container {
+            background: rgba(255,255,255,.92);
+            backdrop-filter: blur(14px);
+            border-radius: 1.5rem;
+            box-shadow: 0 30px 90px rgba(0, 0, 0, 0.38), 0 0 0 1px rgba(255,255,255,.65) inset;
+            overflow: hidden;
+            width: 100%;
+            max-width: 520px;
+            position: relative;
+            transform: translateY(18px) scale(.98);
+            opacity: 0;
+            animation: popIn .9s cubic-bezier(.21,.9,.26,1) .15s forwards;
+        }
+
+        @keyframes popIn {
+            to { transform: translateY(0) scale(1); opacity: 1; }
+        }
+
+        .login-header {
+            background: linear-gradient(135deg, #0f172a 0%, #1f2a44 100%);
+            color: white;
+            padding: 2.25rem 2.25rem 1.75rem 2.25rem;
+            text-align: center;
+            position: relative;
+        }
+
+        .login-header h1 {
+            font-size: 2rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.75rem;
+        }
+
+        .login-header h1 i {
+            color: #60a5fa;
+            font-size: 2rem;
+        }
+
+        .login-header p {
+            color: #cbd5e1;
+            font-size: 1rem;
+        }
+
+        .login-form {
+            padding: 2.25rem;
+        }
+
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 500;
+            color: #374151;
+            font-size: 1rem;
+        }
+
+        .form-group input {
+            width: 100%;
+            padding: 1rem 1.15rem;
+            border: 2px solid #e5e7eb;
+            border-radius: 0.75rem;
+            font-size: 1.05rem;
+            transition: all 0.3s ease;
+            background: #f9fafb;
+        }
+
+        .form-group input:focus {
+            outline: none;
+            border-color: #60a5fa;
+            background: white;
+            box-shadow: 0 0 0 3px rgba(96, 165, 250, 0.1);
+        }
+
+        .input-icon {
+            position: relative;
+        }
+
+        .input-icon i {
+            position: absolute;
+            left: 1rem;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #9ca3af;
+        }
+
+        .input-icon input { padding-left: 2.75rem; }
+
+        /* Show/Hide password eye icon */
+        .input-icon .toggle-visibility {
+            position: absolute;
+            right: 12px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #9ca3af;
+            cursor: pointer;
+            transition: color .2s ease;
+        }
+        .input-icon .toggle-visibility:hover { color: #374151; }
+
+        .login-btn {
+            width: 100%;
+            background: linear-gradient(135deg, #60a5fa 0%, #2563eb 100%);
+            color: white;
+            border: none;
+            padding: 1.15rem 1rem;
+            border-radius: 0.9rem;
+            font-size: 1.05rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin-bottom: 1rem;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .login-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 14px 28px rgba(37, 99, 235, 0.35);
+        }
+
+        .login-btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .login-btn::before{
+            content: '';
+            position: absolute; inset: 0; left:-100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,.35), transparent);
+            transition: left .6s ease;
+        }
+        .login-btn:hover::before{ left: 100%; }
+
+        .error-message {
+            background: #fee2e2;
+            color: #dc2626;
+            padding: 0.75rem;
+            border-radius: 0.5rem;
+            margin-bottom: 1rem;
+            font-size: 0.875rem;
+            display: none;
+        }
+
+        .success-message {
+            background: #d1fae5;
+            color: #059669;
+            padding: 0.75rem;
+            border-radius: 0.5rem;
+            margin-bottom: 1rem;
+            font-size: 0.875rem;
+            display: none;
+        }
+
+        .back-to-main {
+            text-align: center;
+            margin-top: 1rem;
+        }
+
+        .back-to-main a {
+            color: #60a5fa;
+            text-decoration: none;
+            font-weight: 500;
+            transition: color 0.3s ease;
+        }
+
+        .back-to-main a:hover {
+            color: #3b82f6;
+        }
+
+        .loading {
+            display: none;
+            text-align: center;
+            margin-top: 1rem;
+        }
+
+        .spinner {
+            border: 2px solid #f3f4f6;
+            border-top: 2px solid #60a5fa;
+            border-radius: 50%;
+            width: 20px;
+            height: 20px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        @media (max-width: 480px) {
+            .login-container {
+                margin: 1rem;
+            }
+            
+            .login-header {
+                padding: 1.5rem;
+            }
+            
+            .login-form {
+                padding: 1.5rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="bg-floaters" aria-hidden="true">
+        <i class="fas fa-book"></i>
+        <i class="fas fa-book-open"></i>
+        <i class="fas fa-book"></i>
+        <i class="fas fa-book-open"></i>
+        <i class="fas fa-book"></i>
+    </div>
+    <div class="login-container">
+        <div class="login-header">
+            <h1>
+                <i class="fas fa-book-open"></i>
+                Pahana Admin
+            </h1>
+            <p>Welcome back! Manage Pahana Edu Book Shop with confidence.</p>
+        </div>
+        
+        <form class="login-form" id="admin-login-form">
+            <div class="error-message" id="error-message"></div>
+            <div class="success-message" id="success-message"></div>
+            
+            <div class="form-group">
+                <label for="username">Username</label>
+                <div class="input-icon">
+                    <i class="fas fa-user"></i>
+                    <input type="text" id="username" name="username" required>
+                </div>
+            </div>
+            
+            <div class="form-group">
+                <label for="password">Password</label>
+                <div class="input-icon">
+                    <i class="fas fa-lock"></i>
+                    <input type="password" id="password" name="password" required>
+                    <i id="toggle-password" class="fas fa-eye toggle-visibility" title="Show password"></i>
+                </div>
+                <div style="display:flex;justify-content:flex-start;align-items:center;margin-top:.5rem">
+                    <label style="display:flex;align-items:center;gap:.5rem;color:#64748b;font-size:.9rem">
+                        <input id="remember" type="checkbox" style="accent-color:#2563eb"> Remember me
+                    </label>
+                </div>
+            </div>
+            
+            <button type="submit" class="login-btn" id="login-btn">
+                <span id="login-text">Login</span>
+                <div class="loading" id="loading">
+                    <div class="spinner"></div>
+                </div>
+            </button>
+        </form>
+        
+        <div class="back-to-main">
+            <a href="landingpage.html">
+                <i class="fas fa-arrow-left"></i> Back to Main Site
+            </a>
+        </div>
+    </div>
+
+    <script>
+        // Toggle password visibility (lock icon or eye icon)
+        (function(){
+            const input = document.getElementById('password');
+            const lock = document.querySelector('.input-icon i.fa-lock');
+            const eye = document.getElementById('toggle-password');
+            function toggle() {
+                const showing = input.type === 'text';
+                input.type = showing ? 'password' : 'text';
+                // Eye state
+                eye?.classList.toggle('fa-eye', showing);
+                eye?.classList.toggle('fa-eye-slash', !showing);
+                eye && (eye.title = showing ? 'Show password' : 'Hide password');
+                // Lock state (optional visual)
+                lock?.classList.toggle('fa-lock', showing);
+                lock?.classList.toggle('fa-unlock', !showing);
+            }
+            if (lock) { lock.style.cursor = 'pointer'; lock.title = 'Show/Hide password'; lock.addEventListener('click', toggle); }
+            if (eye) { eye.addEventListener('click', toggle); }
+        })();
+
+        document.getElementById('admin-login-form').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            
+            const username = document.getElementById('username').value;
+            const password = document.getElementById('password').value;
+            const loginBtn = document.getElementById('login-btn');
+            const loginText = document.getElementById('login-text');
+            const loading = document.getElementById('loading');
+            const errorMessage = document.getElementById('error-message');
+            const successMessage = document.getElementById('success-message');
+            
+            // Hide previous messages
+            errorMessage.style.display = 'none';
+            successMessage.style.display = 'none';
+            
+            // Show loading state
+            loginBtn.disabled = true;
+            loginText.style.display = 'none';
+            loading.style.display = 'block';
+            
+            try {
+                const response = await fetch('http://localhost:8080/api/admin/login', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ username, password })
+                });
+                
+                const data = await response.json();
+                
+                if (response.ok && data.success) {
+                    // Store admin token
+                    localStorage.setItem('adminToken', data.token);
+                    
+                    // Show success message
+                    successMessage.textContent = 'Welcome, Admin! Redirecting to dashboard...';
+                    successMessage.style.display = 'block';
+                    
+                    // Redirect to intended page or dashboard
+                    setTimeout(() => {
+                        const params = new URLSearchParams(location.search);
+                        const redirect = params.get('redirect') || 'admin-dashboard.html';
+                        window.location.href = redirect;
+                    }, 1000);
+                } else {
+                    // Show error message
+                    errorMessage.textContent = data.message || 'Login failed. Please check your credentials.';
+                    errorMessage.style.display = 'block';
+                }
+            } catch (error) {
+                console.error('Login error:', error);
+                errorMessage.textContent = 'Network error. Please try again.';
+                errorMessage.style.display = 'block';
+            } finally {
+                // Reset button state
+                loginBtn.disabled = false;
+                loginText.style.display = 'block';
+                loading.style.display = 'none';
+            }
+        });
+        
+        // Check if already logged in
+        document.addEventListener('DOMContentLoaded', function() {
+            const token = localStorage.getItem('adminToken');
+            if (token) {
+                const params = new URLSearchParams(location.search);
+                const redirect = params.get('redirect') || 'admin-dashboard.html';
+                window.location.href = redirect;
+            }
+        });
+    </script>
+</body>
+</html> 

@@ -1,0 +1,548 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test Reports & Analytics - Pahana Book Shop</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="src/admin-dashboard.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+    <div style="padding: 2rem; background: #f8fafc; min-height: 100vh;">
+        <h1 style="text-align: center; margin-bottom: 2rem; color: #1e293b;">
+            <i class="fas fa-chart-bar"></i> Test Reports & Analytics
+        </h1>
+        
+        <div style="max-width: 1200px; margin: 0 auto;">
+            <!-- Quick Stats Test -->
+            <div class="quick-stats-grid">
+                <div class="stat-card">
+                    <div class="stat-icon revenue">
+                        <i class="fas fa-dollar-sign"></i>
+                    </div>
+                    <div class="stat-content">
+                        <h3 id="total-revenue-stat">Rs. 125,000</h3>
+                        <p>Total Revenue</p>
+                        <span class="stat-change positive">+12.5% <i class="fas fa-arrow-up"></i></span>
+                    </div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon orders">
+                        <i class="fas fa-shopping-cart"></i>
+                    </div>
+                    <div class="stat-content">
+                        <h3 id="total-orders-stat">342</h3>
+                        <p>Total Orders</p>
+                        <span class="stat-change positive">+8.3% <i class="fas fa-arrow-up"></i></span>
+                    </div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon customers">
+                        <i class="fas fa-users"></i>
+                    </div>
+                    <div class="stat-content">
+                        <h3 id="total-customers-stat">28</h3>
+                        <p>New Customers</p>
+                        <span class="stat-change positive">+15.2% <i class="fas fa-arrow-up"></i></span>
+                    </div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon books">
+                        <i class="fas fa-book"></i>
+                    </div>
+                    <div class="stat-content">
+                        <h3 id="total-books-sold-stat">456</h3>
+                        <p>Books Sold</p>
+                        <span class="stat-change positive">+22.1% <i class="fas fa-arrow-up"></i></span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Charts Test -->
+            <div class="charts-grid">
+                <div class="chart-card">
+                    <div class="chart-header">
+                        <h3><i class="fas fa-chart-line"></i> Sales Report</h3>
+                        <div class="chart-controls">
+                            <select id="sales-chart-type" onchange="updateSalesChart()">
+                                <option value="monthly">Monthly</option>
+                                <option value="weekly">Weekly</option>
+                                <option value="daily">Daily</option>
+                            </select>
+                            <button class="refresh-btn" onclick="refreshSalesChart()">
+                                <i class="fas fa-sync-alt"></i>
+                            </button>
+                        </div>
+                    </div>
+                    <div class="chart-content">
+                        <canvas id="sales-chart"></canvas>
+                    </div>
+                </div>
+
+                <div class="chart-card">
+                    <div class="chart-header">
+                        <h3><i class="fas fa-users"></i> Customer Analytics</h3>
+                        <div class="chart-controls">
+                            <select id="customer-chart-type" onchange="updateCustomerChart()">
+                                <option value="registration">Registration</option>
+                                <option value="purchases">Purchases</option>
+                                <option value="loyalty">Loyalty</option>
+                            </select>
+                            <button class="refresh-btn" onclick="refreshCustomerChart()">
+                                <i class="fas fa-sync-alt"></i>
+                            </button>
+                        </div>
+                    </div>
+                    <div class="chart-content">
+                        <canvas id="customer-chart"></canvas>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Analytics Test -->
+            <div class="analytics-grid">
+                <div class="analytics-card">
+                    <div class="card-header">
+                        <h3><i class="fas fa-trophy"></i> Top Selling Books</h3>
+                        <button class="view-all-btn" onclick="showAllTopBooks()">View All</button>
+                    </div>
+                    <div class="card-content">
+                        <div id="top-books-list" class="top-books-list">
+                            <!-- Top books will be loaded here -->
+                        </div>
+                    </div>
+                </div>
+
+                <div class="analytics-card">
+                    <div class="card-header">
+                        <h3><i class="fas fa-chart-pie"></i> Category Performance</h3>
+                    </div>
+                    <div class="card-content">
+                        <canvas id="category-chart"></canvas>
+                    </div>
+                </div>
+
+                <div class="analytics-card">
+                    <div class="card-header">
+                        <h3><i class="fas fa-clock"></i> Recent Activity</h3>
+                    </div>
+                    <div class="card-content">
+                        <div id="recent-activity-list" class="activity-list">
+                            <!-- Recent activities will be loaded here -->
+                        </div>
+                    </div>
+                </div>
+
+                <div class="analytics-card">
+                    <div class="card-header">
+                        <h3><i class="fas fa-chart-bar"></i> Revenue Breakdown</h3>
+                    </div>
+                    <div class="card-content">
+                        <canvas id="revenue-chart"></canvas>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Test functions
+        function updateSalesChart() {
+            console.log('Sales chart type changed');
+            createDemoSalesChart();
+        }
+
+        function refreshSalesChart() {
+            console.log('Refreshing sales chart');
+            createDemoSalesChart();
+        }
+
+        function updateCustomerChart() {
+            console.log('Customer chart type changed');
+            createDemoCustomerChart();
+        }
+
+        function refreshCustomerChart() {
+            console.log('Refreshing customer chart');
+            createDemoCustomerChart();
+        }
+
+        function showAllTopBooks() {
+            alert('View All Top Books clicked!');
+        }
+
+        // Demo chart functions
+        function createDemoSalesChart() {
+            const ctx = document.getElementById('sales-chart');
+            if (!ctx) return;
+            
+            if (window.salesChart) {
+                window.salesChart.destroy();
+            }
+            
+            const chartType = document.getElementById('sales-chart-type').value;
+            const demoData = {
+                monthly: {
+                    labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'],
+                    values: [15000, 18000, 22000, 25000, 28000, 32000, 35000, 38000, 42000, 45000, 48000, 52000]
+                },
+                weekly: {
+                    labels: ['Week 1', 'Week 2', 'Week 3', 'Week 4'],
+                    values: [8500, 9200, 10500, 11800]
+                },
+                daily: {
+                    labels: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'],
+                    values: [1200, 1400, 1600, 1800, 2200, 2800, 3200]
+                }
+            };
+            
+            const data = demoData[chartType] || demoData.monthly;
+            
+            window.salesChart = new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: data.labels,
+                    datasets: [{
+                        label: 'Sales Revenue',
+                        data: data.values,
+                        borderColor: '#60a5fa',
+                        backgroundColor: 'rgba(96, 165, 250, 0.1)',
+                        borderWidth: 3,
+                        fill: true,
+                        tension: 0.4,
+                        pointBackgroundColor: '#60a5fa',
+                        pointBorderColor: '#ffffff',
+                        pointBorderWidth: 2,
+                        pointRadius: 6,
+                        pointHoverRadius: 8
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: { display: false },
+                        tooltip: {
+                            backgroundColor: 'rgba(0, 0, 0, 0.8)',
+                            titleColor: '#ffffff',
+                            bodyColor: '#ffffff',
+                            borderColor: '#60a5fa',
+                            borderWidth: 1,
+                            cornerRadius: 8,
+                            displayColors: false
+                        }
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            grid: { color: 'rgba(0, 0, 0, 0.1)' },
+                            ticks: {
+                                callback: function(value) {
+                                    return 'Rs. ' + value.toLocaleString();
+                                }
+                            }
+                        },
+                        x: { grid: { display: false } }
+                    },
+                    animation: {
+                        duration: 1000,
+                        easing: 'easeInOutQuart'
+                    }
+                }
+            });
+        }
+
+        function createDemoCustomerChart() {
+            const ctx = document.getElementById('customer-chart');
+            if (!ctx) return;
+            
+            if (window.customerChart) {
+                window.customerChart.destroy();
+            }
+            
+            const chartType = document.getElementById('customer-chart-type').value;
+            const demoData = {
+                registration: {
+                    labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun'],
+                    values: [12, 18, 25, 22, 30, 28]
+                },
+                purchases: {
+                    labels: ['New', 'Returning', 'VIP', 'Bulk'],
+                    values: [45, 32, 18, 5]
+                },
+                loyalty: {
+                    labels: ['Bronze', 'Silver', 'Gold', 'Platinum'],
+                    values: [25, 35, 30, 10]
+                }
+            };
+            
+            const data = demoData[chartType] || demoData.registration;
+            
+            window.customerChart = new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: data.labels,
+                    datasets: [{
+                        label: 'Customers',
+                        data: data.values,
+                        backgroundColor: [
+                            'rgba(96, 165, 250, 0.8)',
+                            'rgba(16, 185, 129, 0.8)',
+                            'rgba(251, 191, 36, 0.8)',
+                            'rgba(239, 68, 68, 0.8)',
+                            'rgba(139, 92, 246, 0.8)'
+                        ],
+                        borderColor: [
+                            '#60a5fa',
+                            '#10b981',
+                            '#fbbf24',
+                            '#ef4444',
+                            '#8b5cf6'
+                        ],
+                        borderWidth: 2,
+                        borderRadius: 8,
+                        borderSkipped: false
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: { display: false },
+                        tooltip: {
+                            backgroundColor: 'rgba(0, 0, 0, 0.8)',
+                            titleColor: '#ffffff',
+                            bodyColor: '#ffffff',
+                            borderColor: '#60a5fa',
+                            borderWidth: 1,
+                            cornerRadius: 8
+                        }
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            grid: { color: 'rgba(0, 0, 0, 0.1)' }
+                        },
+                        x: { grid: { display: false } }
+                    },
+                    animation: {
+                        duration: 1000,
+                        easing: 'easeInOutQuart'
+                    }
+                }
+            });
+        }
+
+        // Initialize charts on page load
+        document.addEventListener('DOMContentLoaded', function() {
+            createDemoSalesChart();
+            createDemoCustomerChart();
+            
+            // Load demo data
+            loadDemoTopBooks();
+            loadDemoRecentActivity();
+            loadDemoCategoryChart();
+            loadDemoRevenueChart();
+        });
+
+        function loadDemoTopBooks() {
+            const container = document.getElementById('top-books-list');
+            if (!container) return;
+            
+            const demoBooks = [
+                { title: 'The Great Gatsby', author: 'F. Scott Fitzgerald', salesCount: 156 },
+                { title: 'Lord of the Rings', author: 'J.R.R. Tolkien', salesCount: 142 },
+                { title: 'Harry Potter', author: 'J.K. Rowling', salesCount: 128 },
+                { title: 'Mistborn', author: 'Brandon Sanderson', salesCount: 98 },
+                { title: 'Pride and Prejudice', author: 'Jane Austen', salesCount: 87 }
+            ];
+            
+            container.innerHTML = '';
+            demoBooks.forEach((book, index) => {
+                const rankClass = index === 0 ? 'gold' : index === 1 ? 'silver' : index === 2 ? 'bronze' : '';
+                
+                const bookItem = document.createElement('div');
+                bookItem.className = 'top-book-item';
+                bookItem.innerHTML = `
+                    <div class="rank ${rankClass}">${index + 1}</div>
+                    <div class="book-info">
+                        <div class="book-title">${book.title}</div>
+                        <div class="book-author">by ${book.author}</div>
+                    </div>
+                    <div class="sales-count">${book.salesCount} sold</div>
+                `;
+                
+                container.appendChild(bookItem);
+            });
+        }
+
+        function loadDemoRecentActivity() {
+            const container = document.getElementById('recent-activity-list');
+            if (!container) return;
+            
+            const demoActivities = [
+                { type: 'sale', title: 'New order placed', time: '2 minutes ago', amount: '2,500' },
+                { type: 'customer', title: 'New customer registered', time: '15 minutes ago', amount: '0' },
+                { type: 'book', title: 'Book stock updated', time: '1 hour ago', amount: '0' },
+                { type: 'sale', title: 'Bulk order completed', time: '2 hours ago', amount: '8,750' },
+                { type: 'sale', title: 'Online payment received', time: '3 hours ago', amount: '1,200' }
+            ];
+            
+            container.innerHTML = '';
+            demoActivities.forEach(activity => {
+                const activityItem = document.createElement('div');
+                activityItem.className = 'activity-item';
+                activityItem.innerHTML = `
+                    <div class="activity-icon">
+                        <i class="fas ${getActivityIcon(activity.type)}"></i>
+                    </div>
+                    <div class="activity-content">
+                        <div class="activity-title">${activity.title}</div>
+                        <div class="activity-time">${activity.time}</div>
+                    </div>
+                    <div class="activity-amount">Rs. ${activity.amount}</div>
+                `;
+                
+                container.appendChild(activityItem);
+            });
+        }
+
+        function getActivityIcon(type) {
+            const icons = {
+                sale: 'fa-shopping-cart',
+                customer: 'fa-user-plus',
+                book: 'fa-book',
+                payment: 'fa-credit-card',
+                refund: 'fa-undo'
+            };
+            
+            return icons[type] || 'fa-info-circle';
+        }
+
+        function loadDemoCategoryChart() {
+            const ctx = document.getElementById('category-chart');
+            if (!ctx) return;
+            
+            if (window.categoryChart) {
+                window.categoryChart.destroy();
+            }
+            
+            window.categoryChart = new Chart(ctx, {
+                type: 'doughnut',
+                data: {
+                    labels: ['Featured', 'New Arrivals', 'Children', 'Novels'],
+                    datasets: [{
+                        data: [35, 25, 20, 20],
+                        backgroundColor: [
+                            '#60a5fa',
+                            '#10b981',
+                            '#fbbf24',
+                            '#ef4444'
+                        ],
+                        borderWidth: 3,
+                        borderColor: '#ffffff'
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            position: 'bottom',
+                            labels: {
+                                padding: 20,
+                                usePointStyle: true,
+                                pointStyle: 'circle'
+                            }
+                        },
+                        tooltip: {
+                            backgroundColor: 'rgba(0, 0, 0, 0.8)',
+                            titleColor: '#ffffff',
+                            bodyColor: '#ffffff',
+                            borderColor: '#60a5fa',
+                            borderWidth: 1,
+                            cornerRadius: 8
+                        }
+                    },
+                    animation: {
+                        duration: 1000,
+                        easing: 'easeInOutQuart'
+                    }
+                }
+            });
+        }
+
+        function loadDemoRevenueChart() {
+            const ctx = document.getElementById('revenue-chart');
+            if (!ctx) return;
+            
+            if (window.revenueChart) {
+                window.revenueChart.destroy();
+            }
+            
+            window.revenueChart = new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: ['Cash', 'Card', 'UPI', 'Bank Transfer'],
+                    datasets: [{
+                        label: 'Revenue',
+                        data: [45000, 35000, 25000, 20000],
+                        backgroundColor: [
+                            'rgba(16, 185, 129, 0.8)',
+                            'rgba(96, 165, 250, 0.8)',
+                            'rgba(251, 191, 36, 0.8)',
+                            'rgba(139, 92, 246, 0.8)'
+                        ],
+                        borderColor: [
+                            '#10b981',
+                            '#60a5fa',
+                            '#fbbf24',
+                            '#8b5cf6'
+                        ],
+                        borderWidth: 2,
+                        borderRadius: 8
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: { display: false },
+                        tooltip: {
+                            backgroundColor: 'rgba(0, 0, 0, 0.8)',
+                            titleColor: '#ffffff',
+                            bodyColor: '#ffffff',
+                            borderColor: '#60a5fa',
+                            borderWidth: 1,
+                            cornerRadius: 8,
+                            callbacks: {
+                                label: function(context) {
+                                    return 'Rs. ' + context.parsed.toLocaleString();
+                                }
+                            }
+                        }
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            grid: { color: 'rgba(0, 0, 0, 0.1)' },
+                            ticks: {
+                                callback: function(value) {
+                                    return 'Rs. ' + value.toLocaleString();
+                                }
+                            }
+                        },
+                        x: { grid: { display: false } }
+                    },
+                    animation: {
+                        duration: 1000,
+                        easing: 'easeInOutQuart'
+                    }
+                }
+            });
+        }
+    </script>
+</body>
+</html> 

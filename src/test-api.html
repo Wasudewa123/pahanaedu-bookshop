@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>API Test</title>
+</head>
+<body>
+    <h1>API Connection Test</h1>
+    <button onclick="testAPI()">Test API Connection</button>
+    <div id="result"></div>
+
+    <script>
+        async function testAPI() {
+            const resultDiv = document.getElementById('result');
+            resultDiv.innerHTML = 'Testing...';
+            
+            try {
+                const response = await fetch('http://localhost:8080/api/books');
+                const books = await response.json();
+                
+                resultDiv.innerHTML = `
+                    <h3>✅ API Connection Successful!</h3>
+                    <p>Server is running and responding correctly.</p>
+                    <p>Found ${books.length} books in the database.</p>
+                    <h4>First 3 books:</h4>
+                    <ul>
+                        ${books.slice(0, 3).map(book => `<li>${book.title} by ${book.author}</li>`).join('')}
+                    </ul>
+                `;
+            } catch (error) {
+                resultDiv.innerHTML = `
+                    <h3>❌ API Connection Failed</h3>
+                    <p>Error: ${error.message}</p>
+                    <p>Make sure the server is running on port 8080.</p>
+                `;
+            }
+        }
+    </script>
+</body>
+</html> 
